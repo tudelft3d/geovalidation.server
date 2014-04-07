@@ -1,25 +1,53 @@
 from flask import Flask, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 import os
+import pickle
+import time
+import val3dity
 
-UPLOAD_FOLDER      = './uploads'
-REPORTS            = './reports'
+UPLOAD_FOLDER      = '/Users/hugo/www/geovalidation/uploads/'
+REPORTS            = '/Users/hugo/www/geovalidation/reports/'
 ALLOWED_EXTENSIONS = set(['gml', 'xml'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+try:
+    inputjobs = open('alljobs.pkl', 'rb')
+    ALLJOBS = pickle.load(inputjobs)
+except IOError:
+    ALLJOBS = []
 
-jobid = 1
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-@app.route('/')
-def index():
-    return 'Hello World!'
-    # return app.send_static_file('index.html')
-    # return send_from_directory('/Users/hugo/Dropbox/temp/flask', 'index.html')
+
+def validate(jobid):
+    fname = ALLJOBS[jobid][0]
+    totalxml = val3dity.validate(UPLOAD_FOLDER+fname)
+    s = REPORTS + str(jobid) + ".xml"
+    fout = open(s, 'w')
+    fout.write('\n'.join(totalxml))
+    fout.close()
+
+
+    #-- save to file the updated list with all jobs
+    # job = ALLJOBS[jobid]
+    # job.append(time.gmtime())
+    # output = open('alljobs.pkl', 'wb')
+    # pickle.dump(ALLJOBS, output)
+
+
+
+
+
+# @app.route('/')
+# def index():
+#     return 'Hello World!'
+#     # return app.send_static_file('index.html')
+#     # return send_from_directory('/Users/hugo/Dropbox/temp/flask', 'index.html')
 
 
 @app.route('/test1')
@@ -27,15 +55,11 @@ def test1():
     s = "your are at: " + os.getcwd()
     return s
 
-@app.route('/reports/<int:pid>')
-def show_post(pid):
-    # show the post with the given id, the id is an integer
-    # return 'Report%d.xml' % pid
-    return send_from_directory('/Users/hugo/temp', 'report133.xml')
+@app.route('/reports/<int:jobid>')
+def show_post(jobid):
+    return "Report"
 
-
-
-@app.route('/up', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def upload_file():
     global jobid
     if request.method == 'POST':
@@ -44,12 +68,14 @@ def upload_file():
             fname = secure_filename(f.filename)
             f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
             # return redirect(url_for('uploaded_file', filename=fname))
-            s = "File %s will be validated and your report available at localhost:5000/reports/%d" % (fname, jobid)
-            jobid += 1
-            # hugo(fname)
+            jid = len(ALLJOBS)
+            ALLJOBS.append([fname, time.gmtime()])
+            validate(jid)
+            s = "The id for your validation task is %d.\n\n" % jid
+            s += "When finished, the report will be at localhost:5000/reports/%d" % jid
             return s
         else:
-          return "File not of GML/XML type"
+          return "File not of GML/XML type."
     return '''
     <!doctype html>
     <title>Upload your citygml file</title>
