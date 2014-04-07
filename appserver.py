@@ -76,15 +76,17 @@ def upload_file():
             return s
         else:
           return "File not of GML/XML type."
-    return '''
-    <!doctype html>
-    <title>Upload your citygml file</title>
-    <h1>Upload your citygml file</h1>
-    <form action="" method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    '''
+    f = open('x.html', 'r')
+    return f.read()
+    # return '''
+    # <!doctype html>
+    # <title>Upload your citygml file</title>
+    # <h1>Upload your citygml file</h1>
+    # <form action="" method=post enctype=multipart/form-data>
+    #   <p><input type=file name=file>
+    #      <input type=submit value=Upload>
+    # </form>
+    # '''
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
