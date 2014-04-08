@@ -126,9 +126,12 @@ def validate_polys(fin):
   totalxml.append('</ValidatorContext>')
   
   summary += "Number of invalid solids: %d\n" % invalidsolids
-  summary += "Errors present:\n"
-  for each in exampleerrors:
-    summary += each + " " + str(dErrors[int(each)])
+  if (invalidsolids == 0):
+    summary += "Hourrraaa!\n"
+  else:
+    summary += "Errors present:\n"
+    for each in exampleerrors:
+      summary += each + " " + str(dErrors[int(each)])
   return totalxml, summary
 
   

@@ -5,8 +5,9 @@ import pickle
 import time
 import val3dity
 
-UPLOAD_FOLDER      = '/Users/hugo/www/geovalidation/uploads/'
-REPORTS_FOLDER     = '/Users/hugo/www/geovalidation/reports/'
+ROOT_FOLDER        = '/Users/hugo/www/geovalidation/'
+UPLOAD_FOLDER      = ROOT_FOLDER + 'uploads/'
+REPORTS_FOLDER     = ROOT_FOLDER + 'reports/'
 ALLOWED_EXTENSIONS = set(['gml', 'xml'])
 
 app = Flask(__name__, static_url_path='')
@@ -16,7 +17,9 @@ app.config['REPORTS_FOLDER'] = REPORTS_FOLDER
 try:
     inputjobs = open('alljobs.pkl', 'rb')
     ALLJOBS = pickle.load(inputjobs)
+    print "inside try"
 except IOError:
+    print "ioerror"
     ALLJOBS = []
 
 
@@ -34,12 +37,11 @@ def validate(jobid):
     fout.write('\n'.join(totalxml))
     fout.close()
     job.append(summary)
-
     #-- save to file the updated list with all jobs
-    # job = ALLJOBS[jobid]
-    # job.append(time.gmtime())
-    # output = open('alljobs.pkl', 'wb')
-    # pickle.dump(ALLJOBS, output)
+    outname = ROOT_FOLDER + 'alljobs.pkl'
+    print "pickle", outname
+    output = open(outname, 'wb')
+    pickle.dump(ALLJOBS, output)
 
 # @app.route('/')
 # def index():
