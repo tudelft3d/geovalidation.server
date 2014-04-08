@@ -6,11 +6,12 @@ import time
 import val3dity
 
 UPLOAD_FOLDER      = '/Users/hugo/www/geovalidation/uploads/'
-REPORTS            = '/Users/hugo/www/geovalidation/reports/'
+REPORTS_FOLDER     = '/Users/hugo/www/geovalidation/reports/'
 ALLOWED_EXTENSIONS = set(['gml', 'xml'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['REPORTS_FOLDER'] = REPORTS_FOLDER
 
 try:
     inputjobs = open('alljobs.pkl', 'rb')
@@ -27,7 +28,7 @@ def allowed_file(filename):
 def validate(jobid):
     fname = ALLJOBS[jobid][0]
     totalxml = val3dity.validate(UPLOAD_FOLDER+fname)
-    s = REPORTS + str(jobid) + ".xml"
+    s = REPORTS_FOLDER + str(jobid) + ".xml"
     fout = open(s, 'w')
     fout.write('\n'.join(totalxml))
     fout.close()
@@ -57,7 +58,8 @@ def test1():
 
 @app.route('/reports/<int:jobid>')
 def show_post(jobid):
-    return "Report"
+    report = REPORTS_FOLDER+ '%d.xml' % jobid
+    return send_from_directory(app.config['REPORTS_FOLDER'], '%d.xml' % jobid)
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():

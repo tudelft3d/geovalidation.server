@@ -4,26 +4,59 @@
     <style>
       body {
         font-family: 'Inconsolata', null;
-        /*font-size: 32px;*/
-        background-color: #eeeeee;
+        font-size: 18px;
+        background-color: #f4f4f4;
         font-color: #2df5dd;
-        text-align: center;
         padding-top: 100px;
+        /*width: 600px;*/
+        text-align: center;
       }
-      /*form {*/
-        /*background-color: #e15ee1;*/
-      /*}*/
+      #wrapper{
+        width:600px;
+        margin:0 auto;
+        text-align:left;
+        padding-bottom: 100px;
+      }
+      #footer{
+        margin:0 auto;
+        width:600px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        text-align: center;
+        font-size: 14px;
+      }
     </style>
   </head>
   <body>
-    <title>val3dity: geometric validation of CityGML files</title>
+  <div id="wrapper">
+    <title>val3dity: geometric validation of solids according to ISO19107</title>
     <form action="" method=post enctype=multipart/form-data>
-    <h1>upload your citygml file, we validate it.</h1>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
+    <h2>Geometric validation of solids according to the international standard ISO 19107</h2>
+    <ol>
+      <li><input type=file name=file> Choose your CityGML file containing one or more buildings </li>
+      <li><input type=submit value=Upload> it to our server. We promise to delete it right after having validated it.</li>
+      <li>You will be redirected to a page containing a report. This might take a few minutes, depending on the size of your file. </li>
+      <li>If something doesn&#8217;t run as it should, please contact <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#104;&#46;&#x6c;&#101;&#100;&#x6f;&#x75;&#x78;&#64;&#x74;&#117;&#x64;&#x65;&#108;&#102;&#x74;&#x2e;&#x6e;&#x6c;">&#x6d;&#101;</a>.</li>
+    </ol>
     </form>
 
-    <p>Code from val3dity</p>
+    <hr />
+
+    <p>In the background, two open-source projects are used: <a href="https://github.com/tudelft-gist/val3dity">val3dity</a> is used for the geometric validation, and <a href="https://github.com/tudelft-gist/citygml2poly">citygml2poly</a> is used to parse CityGML files.</p>
+
+    <p>The validation of a solid is performed hierarchically, ie first every surface is validated in 2D (with <a href="http://trac.osgeo.org/geos/">GEOS</a>), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed (for solids having inner shells/cavities).</p>
+
+    <p>Most of the details of the implementation are available in this scientific article:</p>
+
+    <blockquote>
+    <p>Ledoux, Hugo (2013). On the validation of solids represented with the
+    international standards for geographic information. <em>Computer-Aided Civil and Infrastructure Engineering</em>, 28(9):693&#8211;706. <a href="http://homepage.tudelft.nl/23t4p/pdfs/_13cacaie.pdf"> [PDF] </a> <a href="http://dx.doi.org/10.1111/mice.12043"> [DOI] </a></p>
+    </blockquote>
+    </div>
+    <div id="footer">
+      <!-- <p> bla bla bla </p> -->
+      <a href="http://www.tudelft.nl"><img src="tudlogo.png" height="30" alt=""></a>
+    </div>
   </body>
 </html>
 
