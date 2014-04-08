@@ -9,7 +9,7 @@ UPLOAD_FOLDER      = '/Users/hugo/www/geovalidation/uploads/'
 REPORTS_FOLDER     = '/Users/hugo/www/geovalidation/reports/'
 ALLOWED_EXTENSIONS = set(['gml', 'xml'])
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['REPORTS_FOLDER'] = REPORTS_FOLDER
 
@@ -50,16 +50,11 @@ def validate(jobid):
 #     # return app.send_static_file('index.html')
 #     # return send_from_directory('/Users/hugo/Dropbox/temp/flask', 'index.html')
 
+@app.route('/static/<path:filename>')
+def send_foo(filename):
+    return send_from_directory('/Users/hugo/www/geovalidation/static', filename)
 
-@app.route('/test1')
-def test1():
-    s = "your are at: " + os.getcwd()
-    return s
 
-@app.route('/reports/<int:jobid>')
-def show_post(jobid):
-    report = REPORTS_FOLDER+ '%d.xml' % jobid
-    return send_from_directory(app.config['REPORTS_FOLDER'], '%d.xml' % jobid)
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -78,22 +73,19 @@ def upload_file():
             return s
         else:
           return "File not of GML/XML type."
-    f = open('x.html', 'r')
+    f = open('index.html', 'r')
     return f.read()
-    # return '''
-    # <!doctype html>
-    # <title>Upload your citygml file</title>
-    # <h1>Upload your citygml file</h1>
-    # <form action="" method=post enctype=multipart/form-data>
-    #   <p><input type=file name=file>
-    #      <input type=submit value=Upload>
-    # </form>
-    # '''
+
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+
+@app.route('/reports/<int:jobid>')
+def show_post(jobid):
+    report = REPORTS_FOLDER+ '%d.xml' % jobid
+    return send_from_directory(app.config['REPORTS_FOLDER'], '%d.xml' % jobid)
 
 
 if __name__ == '__main__':
