@@ -37,13 +37,12 @@ def validate(fin):
   rootfolder = os.getcwd()
   fin = open(fin)
   construct_polys(fin)
-  totalxml = validate_polys(fin)
+  totalxml, summary = validate_polys(fin)
   remove_tmpolys()
-  return totalxml
+  return totalxml, summary
 
 def construct_polys(fin):
   os.chdir('/Users/hugo/projects/citygml2poly/validate')
-  print "Extracting the solids from the CityGML file"
   if not os.path.exists("tmpolys"):
     os.mkdir("tmpolys")
   else:
@@ -60,8 +59,8 @@ def remove_tmpolys():
 
 
 def validate_polys(fin):
-  print "Validating each solid"
   # validate each building/shell
+  summary = ""
   dFiles = {}
   for f in os.listdir('.'):
     if f[-4:] == 'poly':
@@ -72,7 +71,7 @@ def validate_polys(fin):
       else:
         dFiles[f1].append(f)
   i = 0
-  print "Number of solids in file:", len(dFiles)
+  summary += "Number of solids in file:%d\n" % (len(dFiles))
   invalidsolids = 0
   xmlsolids = []
   exampleerrors = []
@@ -125,16 +124,11 @@ def validate_polys(fin):
   totalxml.append('\t<inputFile>' + (fin.name)[a+1:] + '</inputFile>')
   totalxml.append("\n".join(xmlsolids))
   totalxml.append('</ValidatorContext>')
-  # s = fin.name
-  # s = s[:-4] + '_report.xml'
-  # fout = open(s, 'w')
-  # fout.write('\n'.join(totalxml))
-  # fout.close()
-  print "Invalid solids: ", invalidsolids
-  print "Errors present:"
+  
+  summary += "Number of invalid solids: %d\n" % invalidsolids
+  summary += "Errors present:\n"
   for each in exampleerrors:
-    print each, dErrors[int(each)]
-  # print "Report of the validation:", s
-  return totalxml
+    summary += each + " " + str(dErrors[int(each)])
+  return totalxml, summary
 
   
