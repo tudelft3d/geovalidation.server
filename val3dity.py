@@ -131,7 +131,7 @@ def validate_polys(fin):
   else:
     summary += "Errors present:\n"
     for each in exampleerrors:
-      summary += each + " " + str(dErrors[int(each)])
+      summary += each + " " + str(dErrors[int(each)]) +"\n"
   return totalxml, summary
 
   
