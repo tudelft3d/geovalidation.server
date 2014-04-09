@@ -5,8 +5,13 @@ import glob
 import subprocess
 from lxml import etree
 from StringIO import StringIO
+import sqlite3
 
 val3dityexe =  '/Users/hugo/projects/val3dity/val3dity'
+
+ROOT_FOLDER        = '/Users/hugo/www/geovalidation/'
+UPLOAD_FOLDER      = ROOT_FOLDER + 'uploads/'
+REPORTS_FOLDER     = ROOT_FOLDER + 'reports/'
 
 dErrors = {
   100: 'REPEATED_POINTS',
@@ -32,9 +37,42 @@ dErrors = {
   430: 'INTERIOR_OF_SHELL_NOT_CONNECTED', 
 }
 
+def main():
+  os.chdir(UPLOAD_FOLDER)
+  conn = sqlite3.connect('../alljobs.db')
+  c = conn.cursor()
+  files = os.listdir('.')
+  print "files:", files
+  for fname in files:
+    c.execute("SELECT rowid FROM jobs where fname = '%s'" % fname)
+    jobid = c.fetchone()[0]
+    # print jobid
+    totalxml, summary = validate(UPLOAD_FOLDER+fname)
+    # print summary
+    s = REPORTS_FOLDER + str(jobid) + ".xml"
+    fout = open(s, 'w')
+    fout.write('\n'.join(totalxml))
+    fout.close()
+
+    os.remove(UPLOAD_FOLDER+fname)
+    c.execute("UPDATE jobs set report='%s' where rowid=%d" % (summary, jobid))
+    conn.commit()
+
+
+
+  # job = ALLJOBS[jobid]
+  # fname = job[0]
+  # totalxml, summary = val3dity.validate(UPLOAD_FOLDER+fname)
+  # job.append(summary)
+  # #-- save to file the updated list with all jobs
+  # outname = ROOT_FOLDER + 'alljobs.pkl'
+  # print "pickle", outname
+  # output = open(outname, 'wb')
+  # pickle.dump(ALLJOBS, output)
+
 
 def validate(fin):
-  rootfolder = os.getcwd()
+  # rootfolder = os.getcwd("..")
   fin = open(fin)
   construct_polys(fin)
   totalxml, summary = validate_polys(fin)
@@ -107,6 +145,7 @@ def validate_polys(fin):
         else:
           i = tmp + i + 1
       o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
+      xmlsolids.append(o)
     else: #-- no error detected, WARNING if MultiSurface!
       if multisurface == True:
         # print 'WARNING: MultiSurfce is actually a valid solid'
@@ -117,8 +156,8 @@ def validate_polys(fin):
         s.append("\t\t</ValidatorMessage>\n")
         o = "\n".join(s)
         o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
+        xmlsolids.append(o)
     # o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
-    xmlsolids.append(o)
 
   totalxml = []
   totalxml.append('<ValidatorContext>')
@@ -136,4 +175,5 @@ def validate_polys(fin):
       summary += each + " " + str(dErrors[int(each)]) +"\n"
   return totalxml, summary
 
-  
+if __name__ == '__main__':
+    main()

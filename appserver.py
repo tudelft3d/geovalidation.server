@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 import os
 import pickle
 import time
-import val3dity
+import sqlite3
 
 ROOT_FOLDER        = '/Users/hugo/www/geovalidation/'
 UPLOAD_FOLDER      = ROOT_FOLDER + 'uploads/'
@@ -15,11 +15,16 @@ app = Flask(__name__, static_url_path='')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['REPORTS_FOLDER'] = REPORTS_FOLDER
 
-try:
-    inputjobs = open('alljobs.pkl', 'rb')
-    ALLJOBS = pickle.load(inputjobs)
-except IOError:
-    ALLJOBS = []
+# try:
+#     inputjobs = open('alljobs.pkl', 'rb')
+#     ALLJOBS = pickle.load(inputjobs)
+# except IOError:
+#     ALLJOBS = []
+
+conn = sqlite3.connect('alljobs.db', check_same_thread = False)
+c = conn.cursor()
+print "sqlite connected"
+
 
 wwwheader = """
 <html>
@@ -88,26 +93,11 @@ wwwindex = """
 # return app.send_static_file('index.html')
 # return send_from_directory('/Users/hugo/Dropbox/temp/flask', 'index.html')
 # return send_from_directory(app.config['REPORTS_FOLDER'], '%d.xml' % jobid)
-
+# return redirect(url_for('uploaded_file', filename=fname))
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-
-def validate(jobid):
-    job = ALLJOBS[jobid]
-    fname = job[0]
-    totalxml, summary = val3dity.validate(UPLOAD_FOLDER+fname)
-    s = REPORTS_FOLDER + str(jobid) + ".xml"
-    fout = open(s, 'w')
-    fout.write('\n'.join(totalxml))
-    fout.close()
-    job.append(summary)
-    #-- save to file the updated list with all jobs
-    outname = ROOT_FOLDER + 'alljobs.pkl'
-    print "pickle", outname
-    output = open(outname, 'wb')
-    pickle.dump(ALLJOBS, output)
 
 @app.route('/hugo')
 def hugo():
@@ -121,16 +111,19 @@ def send_foo(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
-    global jobid
+    # global jobid
     if request.method == 'POST':
         f = request.files['file']
         if f and allowed_file(f.filename):
             fname = secure_filename(f.filename)
             f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-            # return redirect(url_for('uploaded_file', filename=fname))
-            jid = len(ALLJOBS)
-            ALLJOBS.append([fname, time.gmtime()])
-            validate(jid)
+            c.execute("INSERT INTO jobs VALUES ('%s', %f, '%s')" % (fname, time.time(), '-'))
+            conn.commit()
+            c.execute("SELECT rowid FROM jobs where fname='%s'" % fname)
+            jid = c.fetchone()[0]
+            # jid = len(ALLJOBS)
+            # ALLJOBS.append([fname, time.gmtime()])
+            # validate(jid)
             s = "<h2>done.</h2>"
             s += "<p>The id for your validation task is %d.</p>" % jid
             s += "<p>The validation report will soon be available <a href='/reports/%d'>there</a>; it might take a few minutes, depending on the size of the file.</p>" % jid
