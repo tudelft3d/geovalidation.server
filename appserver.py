@@ -161,8 +161,15 @@ def show_post(jobid):
       summary = job[2].split('\n')
       print summary
       s = '<h2>Report for file %s</h2>' % job[0]
-      for l in summary:
-        s += '<p>%s</p>' % l
+      s += '<p>%s</p>' % summary[0]
+      s += '<p>%s</p>' % summary[1]
+      if summary[2] == 'Hourrraaa!':
+        s += '<p>%s</p>' % summary[2]
+      else:
+        s += '<p>%s</p><ol>' % summary[2]
+        for er in summary[3:]:
+          s += '<il>%s</il>' % er
+      s += "</ol>"
       s += "<p><a href='/reports/download/%d'>Download the report</a></p>" % jobid
       return wwwheader + s + wwwfooter
     # report = REPORTS_FOLDER+ '%d.xml' % jobid
