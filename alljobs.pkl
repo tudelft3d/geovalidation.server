@@ -153,4 +153,42 @@ tp55
 Rp56
 aS'Number of solids in file:111\nNumber of invalid solids: 22\nErrors present:\n210 NON_PLANAR_SURFACE\n303 FACE_ORIENTATION_INCORRECT_EDGE_USAGE\n'
 p57
+aa(lp58
+S'LOD2_4424_5482_solid.gml'
+p59
+ag3
+((I2014
+I4
+I9
+I9
+I53
+I35
+I2
+I99
+I0
+tp60
+(dp61
+tp62
+Rp63
+aS'Number of solids in file:111\nNumber of invalid solids: 22\nErrors present:\n210 NON_PLANAR_SURFACE\n303 FACE_ORIENTATION_INCORRECT_EDGE_USAGE\n'
+p64
+aa(lp65
+S'LOD1_642_5482_1_BY.gml'
+p66
+ag3
+((I2014
+I4
+I9
+I9
+I54
+I7
+I2
+I99
+I0
+tp67
+(dp68
+tp69
+Rp70
+aS'Number of solids in file:52\nNumber of invalid solids: 0\nHourrraaa!\n'
+p71
 aa.

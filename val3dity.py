@@ -106,6 +106,7 @@ def validate_polys(fin):
           i = -1
         else:
           i = tmp + i + 1
+      o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
     else: #-- no error detected, WARNING if MultiSurface!
       if multisurface == True:
         # print 'WARNING: MultiSurfce is actually a valid solid'
@@ -115,7 +116,8 @@ def validate_polys(fin):
         s.append("\t\t\t<explanation>MultiSurfaces form a valid Solid</explanation>")
         s.append("\t\t</ValidatorMessage>\n")
         o = "\n".join(s)
-    o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
+        o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
+    # o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
     xmlsolids.append(o)
 
   totalxml = []
