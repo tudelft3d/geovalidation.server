@@ -191,4 +191,42 @@ tp69
 Rp70
 aS'Number of solids in file:52\nNumber of invalid solids: 0\nHourrraaa!\n'
 p71
+aa(lp72
+S'LOD2_4424_5482_solid_report.xml'
+p73
+ag3
+((I2014
+I4
+I9
+I13
+I30
+I3
+I2
+I99
+I0
+tp74
+(dp75
+tp76
+Rp77
+aS'Number of solids in file:0\nNumber of invalid solids: 0\nHourrraaa!\n'
+p78
+aa(lp79
+S'LOD1_641_5482_1_BY.xml'
+p80
+ag3
+((I2014
+I4
+I9
+I13
+I41
+I1
+I2
+I99
+I0
+tp81
+(dp82
+tp83
+Rp84
+aS'Number of solids in file:53\nNumber of invalid solids: 1\nErrors present:\n302 DANGLING_FACES\n'
+p85
 aa.

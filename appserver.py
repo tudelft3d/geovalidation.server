@@ -29,21 +29,20 @@ wwwheader = """
       body {
         font-family: 'Inconsolata', null;
         font-size: 18px;
-        background-color: #f4f4f4;
+        background-color: #fafafa;
         font-color: #2df5dd;
         padding-top: 50px;
-        /*width: 600px;*/
         text-align: center;
       }
       #wrapper{
-        width:600px;
-        margin:0 auto;
-        text-align:left;
+        width: 700px;
+        margin: 0 auto;
+        text-align: left;
         /*padding-bottom: 50px;*/
       }
       #footer{
-        margin:0 auto;
-        width:600px;
+        margin: 0 auto;
+        width: 700px;
         padding-top: 20px;
         padding-bottom: 5px;
         text-align: center;
@@ -70,9 +69,9 @@ wwwindex = """
   <form action="" method=post enctype=multipart/form-data>
   <h2>Geometric validation of solids according to the international standard ISO 19107</h2>
   <ol>
-    <li><input type=file name=file> Choose your CityGML file containing one or more buildings </li>
+    <li>Choose your CityGML file containing one or more buildings. <input type=file name=file></li>
     <li><input type=submit value=Upload> it to our server. We promise to delete it right after having validated it.</li>
-    <li>You will be redirected to a page containing a report. This might take a few minutes, depending on the size of your file. </li>
+    <li>You will be redirected to a page containing a report.</li>
     <li>If something doesn&#8217;t run as it should, please contact <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#104;&#46;&#x6c;&#101;&#100;&#x6f;&#x75;&#x78;&#64;&#x74;&#117;&#x64;&#x65;&#108;&#102;&#x74;&#x2e;&#x6e;&#x6c;">&#x6d;&#101;</a>.</li>
   </ol>
   </form>
@@ -85,8 +84,10 @@ wwwindex = """
   international standards for geographic information. <em>Computer-Aided Civil and Infrastructure Engineering</em>, 28(9):693&#8211;706. <a href="http://homepage.tudelft.nl/23t4p/pdfs/_13cacaie.pdf"> [PDF] </a> <a href="http://dx.doi.org/10.1111/mice.12043"> [DOI] </a></p>
   </blockquote>
 """
+
 # return app.send_static_file('index.html')
 # return send_from_directory('/Users/hugo/Dropbox/temp/flask', 'index.html')
+# return send_from_directory(app.config['REPORTS_FOLDER'], '%d.xml' % jobid)
 
 
 def allowed_file(filename):
@@ -132,7 +133,7 @@ def upload_file():
             validate(jid)
             s = "<h2>done.</h2>"
             s += "<p>The id for your validation task is %d.</p>" % jid
-            s += "<p>The validation report will be available <a href='/reports/%d'>there</a> soon; it might take a few minutes, be patient.</p>" % jid
+            s += "<p>The validation report will soon be available <a href='/reports/%d'>there</a>; it might take a few minutes, depending on the size of the file.</p>" % jid
             return wwwheader + s + wwwfooter
         else:
           return wwwheader + "<h2>ERROR</h2><p>File not of GML/XML type</p>" + wwwfooter
@@ -169,11 +170,8 @@ def show_post(jobid):
         for er in summary[3:]:
           s += '<il>%s</il>' % er
       s += "</ol>"
-      s += "<p><a href='/reports/download/%d'>Download the report</a></p>" % jobid
+      s += "<p><a href='/reports/download/%d'>report%d.xml</a></p>" % (jobid, jobid)
       return wwwheader + s + wwwfooter
-    # report = REPORTS_FOLDER+ '%d.xml' % jobid
-    # return send_from_directory(app.config['REPORTS_FOLDER'], '%d.xml' % jobid)
-
 
 if __name__ == '__main__':
     app.run(debug=True) # TODO: no debug in release mode!
