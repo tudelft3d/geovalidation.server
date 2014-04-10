@@ -41,34 +41,30 @@ def main():
   os.chdir(UPLOAD_FOLDER)
   conn = sqlite3.connect('../alljobs.db')
   c = conn.cursor()
+
+  # c.execute("DELETE from jobs")
+  # conn.commit()
+  # conn.close()
+  # sys.exit()
+
+
   files = os.listdir('.')
-  print "files:", files
+  print "Validating files:", files
   for fname in files:
-    c.execute("SELECT rowid FROM jobs where fname = '%s'" % fname)
-    jobid = c.fetchone()[0]
-    # print jobid
+    c.execute("SELECT rowid, fname, timestamp FROM jobs where fname = '%s' ORDER BY timestamp DESC" % fname)
+    re = c.fetchone()
+    print re
+    jobid = re[0]
     totalxml, summary = validate(UPLOAD_FOLDER+fname)
-    # print summary
-    s = REPORTS_FOLDER + str(jobid) + ".xml"
+    s = REPORTS_FOLDER + "report" + str(jobid) + ".xml"
     fout = open(s, 'w')
     fout.write('\n'.join(totalxml))
     fout.close()
-
-    os.remove(UPLOAD_FOLDER+fname)
     c.execute("UPDATE jobs set report='%s' where rowid=%d" % (summary, jobid))
     conn.commit()
-
-
-
-  # job = ALLJOBS[jobid]
-  # fname = job[0]
-  # totalxml, summary = val3dity.validate(UPLOAD_FOLDER+fname)
-  # job.append(summary)
-  # #-- save to file the updated list with all jobs
-  # outname = ROOT_FOLDER + 'alljobs.pkl'
-  # print "pickle", outname
-  # output = open(outname, 'wb')
-  # pickle.dump(ALLJOBS, output)
+  #-- remove all the files once validated
+  for fname in files:
+    os.remove(UPLOAD_FOLDER+fname)
 
 
 def validate(fin):
