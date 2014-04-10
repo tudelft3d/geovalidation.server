@@ -15,15 +15,9 @@ app = Flask(__name__, static_url_path='')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['REPORTS_FOLDER'] = REPORTS_FOLDER
 
-# try:
-#     inputjobs = open('alljobs.pkl', 'rb')
-#     ALLJOBS = pickle.load(inputjobs)
-# except IOError:
-#     ALLJOBS = []
 
 conn = sqlite3.connect('alljobs.db', check_same_thread = False)
 c = conn.cursor()
-print "sqlite connected"
 
 
 wwwheader = """
@@ -63,7 +57,9 @@ wwwfooter = """
     </div>
     <div id="footer">
       <hr/>
-      <a href="http://www.tudelft.nl"><img src="/static/tudlogo.png" height="30" alt=""></a>
+      <a href="/"><img src="/static/val3ditylogo.png" height="35" alt=""></a> 
+      <img src="/static/at.png" height="35" alt="">
+      <a href="http://www.tudelft.nl"><img src="/static/tudlogo.png" height="35" alt=""></a>
     </div>
   </body>
 </html>
@@ -102,10 +98,10 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-@app.route('/hugo')
-def hugo():
-  r = wwwheader + "<h2>Potatoes</h2>" + wwwfooter
-  return r
+# @app.route('/hugo')
+# def hugo():
+#   r = wwwheader + "<h2>Potatoes</h2>" + wwwfooter
+#   return r
 
 @app.route('/static/<path:filename>')
 def send_foo(filename):
