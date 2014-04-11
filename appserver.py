@@ -65,6 +65,45 @@ wwwfooter = """
 </html>
 """
 
+wwwerrors = """
+  <h2 id="errorreported">Error reported</h2>
+  <h3 id="ringlevel">Ring level</h3>
+    <ul>
+    <li>100: REPEATED_POINTS</li>
+    <li>110: RING_NOT_CLOSED</li>
+    <li>120: RING_SELF_INTERSECT</li>
+    </ul>
+  <h3 id="surfacelevel">Surface level (one polygon embedded in 3D)</h3>
+    <ul>
+    <li>200: SELF_INTERSECTION</li>
+    <li>210: NON_PLANAR_SURFACE</li>
+    <li>220: INTERIOR_DISCONNECTED</li>
+    <li>230: HOLE_OUTSIDE</li>
+    <li>240: HOLES_ARE_NESTED</li>
+    <li>250: ORIENTATION_RINGS_SAME</li>
+    </ul>
+  <h3 id="shelllevel">Shell level (one envelop formed by several surfaces)</h3>
+    <ul>
+    <li>300: NOT_VALID_2_MANIFOLD
+    <ul>
+    <li>301: SURFACE_NOT_CLOSED</li>
+    <li>302: DANGLING_FACES</li>
+    <li>303: FACE_ORIENTATION_INCORRECT_EDGE_USAGE</li>
+    <li>304: FREE_FACES</li>
+    <li>305: SURFACE_SELF_INTERSECTS</li>
+    <li>306: VERTICES_NOT_USED</li>
+    </ul></li>
+    <li>310: SURFACE_NORMALS_WRONG_ORIENTATION</li>
+    </ul>
+  <h3 id="solidlevel">Solid level (1 exterior shell + 0..n exterior shells)</h3>
+    <ul>
+    <li>400: SHELLS_FACE_ADJACENT</li>
+    <li>410: SHELL_INTERIOR_INTERSECT</li>
+    <li>420: INNER_SHELL_OUTSIDE_OUTER</li>
+    <li>430: INTERIOR_OF_SHELL_NOT_CONNECTED</li>
+  </ul>
+"""
+
 wwwindex = """
   <title>val3dity: geometric validation of solids according to ISO19107</title>
   <h2>Geometric validation of solids according to the international standard ISO 19107</h2>
@@ -134,6 +173,10 @@ def upload_file():
 # def uploaded_file(filename):
 #     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+@app.route('/errors')
+def errors():
+    return wwwheader + wwwerrors + wwwfooter
+
 
 @app.route('/reports/download/<int:jobid>')
 def download_report(jobid):
@@ -157,7 +200,7 @@ def show_post(jobid):
       if summary[2] == 'Hourrraaa!':
         s += '<p>%s</p>' % summary[2]
       else:
-        s += '<p>%s</p><ol>' % summary[2]
+        s += "<p>%s (<a href='/errors'>explanation of the errors</a>)</p><ol>" % summary[2]
         for er in summary[3:]:
           s += '<il>%s</il>' % er
       s += "</ol>"
