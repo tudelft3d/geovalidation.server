@@ -121,6 +121,7 @@ def validate_polys(fin):
     
     # validate with val3dity
     str1 = val3dityexe + " -withids -xml " +  " ".join(dFiles[solidname])
+    print str1
     op = subprocess.Popen(str1.split(' '),
                           stdout=subprocess.PIPE, 
                           stderr=subprocess.PIPE)
