@@ -27,24 +27,35 @@ wwwheader = """
     <style>
       body {
         font-family: 'Inconsolata', null;
-        font-size: 18px;
         background-color: #fafafa;
         font-color: #2df5dd;
         padding-top: 50px;
-        text-align: center;
+        text-align: left;
+      }
+      h1 {
+        font-size: 32px;
+        padding-top: 50px;
+        text-align: left;
+      }
+      h2 {
+        font-size: 24px;
+      }
+      p,ul {
+        font-family: 'Inconsolata', null;
+        font-size: 20px;
+        background-color: #fafafa;
+        font-color: #2df5dd;
+        text-align: left; 
       }
       #wrapper{
         width: 700px;
         margin: 0 auto;
-        text-align: left;
-        /*padding-bottom: 50px;*/
       }
       #footer{
         margin: 0 auto;
         width: 700px;
         padding-top: 20px;
-        padding-bottom: 5px;
-        text-align: center;
+        text-align: right;
         font-size: 14px;
       }
     </style>
@@ -54,13 +65,14 @@ wwwheader = """
 """
 
 wwwfooter = """
-    </div>
-    <div id="footer">
-      <hr/>
-      <a href="/"><img src="/static/val3ditylogo.png" height="35" alt=""></a> 
-      <img src="/static/at.png" height="35" alt="">
-      <a href="http://www.tudelft.nl"><img src="/static/tudlogo.png" height="35" alt=""></a>
-    </div>
+  </div>
+  <div id="footer">
+    <hr/>
+    <a href="/">home</a> 
+    <a href="/about">about</a> 
+    <a href="/faq">faq</a> 
+    <a href="/contact">contact</a> 
+  </div>
   </body>
 </html>
 """
@@ -106,26 +118,14 @@ wwwerrors = """
 
 wwwindex = """
   <title>val3dity: geometric validation of solids according to ISO19107</title>
-  <h2>Geometric validation of solids according to the international standard ISO 19107</h2>
-  <ol>
-    <li>Choose your CityGML file containing one or more buildings. </li>
-    <li>Upload it to our server. We promise to delete it right after having validated it.</li>
-    <li>You will be redirected to a page containing a report.</li>
-    <li>If something doesn&#8217;t run as it should, please contact <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#104;&#46;&#x6c;&#101;&#100;&#x6f;&#x75;&#x78;&#64;&#x74;&#117;&#x64;&#x65;&#108;&#102;&#x74;&#x2e;&#x6e;&#x6c;">&#x6d;&#101;</a>.</li>
-  </ol>
-  <hr/>
-  <form action="" method=post enctype=multipart/form-data>
-    <input type=file name=file><br>
-    <input type=submit value=Upload>
-  </form>
-  <hr/>
-  <p>In the background, two open-source projects are used: <a href="https://github.com/tudelft-gist/val3dity">val3dity</a> is used for the geometric validation, and <a href="https://github.com/tudelft-gist/citygml2poly">citygml2poly</a> is used to parse CityGML files.</p>
-  <p>The validation of a solid is performed hierarchically, ie first every surface is validated in 2D (with <a href="http://trac.osgeo.org/geos/">GEOS</a>), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed (for solids having inner shells/cavities).</p>
-  <p>Most of the details of the implementation are available in this scientific article:</p>
-  <blockquote>
-  <p>Ledoux, Hugo (2013). On the validation of solids represented with the
-  international standards for geographic information. <em>Computer-Aided Civil and Infrastructure Engineering</em>, 28(9):693&#8211;706. <a href="http://homepage.tudelft.nl/23t4p/pdfs/_13cacaie.pdf"> [PDF] </a> <a href="http://dx.doi.org/10.1111/mice.12043"> [DOI] </a></p>
-  </blockquote>
+    <h1><font color="#00A6D6">val3dity</font><br>geometric validation of GML solids</h1>
+    <form action="" method=post enctype=multipart/form-data>
+      <ol>
+        <li><input type=file name=file></li>
+        <li><input type=submit value="upload + validate"></li>
+        <li>you'll get a report detailing the errors, if any.</li>
+      </ol>
+    </form>
 """
 
 # return app.send_static_file('index.html')
@@ -177,6 +177,19 @@ def upload_file():
 def errors():
     return wwwheader + wwwerrors + wwwfooter
 
+@app.route('/about')
+def about():
+    s = """
+    <h2>about</h2>
+    <p>In the background, two open-source projects are used: <a href="https://github.com/tudelft-gist/val3dity">val3dity</a> is used for the geometric validation, and <a href="https://github.com/tudelft-gist/citygml2poly">citygml2poly</a> is used to parse CityGML files.</p>
+    <p>The validation of a solid is performed hierarchically, ie first every surface is validated in 2D (with <a href="http://trac.osgeo.org/geos/">GEOS</a>), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed (for solids having inner shells/cavities).</p>
+    <p>Most of the details of the implementation are available in this scientific article:</p>
+    <blockquote>
+    <p>Ledoux, Hugo (2013). On the validation of solids represented with the
+    international standards for geographic information. <em>Computer-Aided Civil and Infrastructure Engineering</em>, 28(9):693&#8211;706. <a href="http://homepage.tudelft.nl/23t4p/pdfs/_13cacaie.pdf"> [PDF] </a> <a href="http://dx.doi.org/10.1111/mice.12043"> [DOI] </a></p>
+    </blockquote>
+    """
+    return wwwheader + s + wwwfooter
 
 @app.route('/reports/download/<int:jobid>')
 def download_report(jobid):
@@ -189,7 +202,7 @@ def show_post(jobid):
     c.execute("SELECT fname, report FROM jobs where rowid='%d'" % jobid)
     report = c.fetchone()
     if (report == None) or (report[1] == '-'):
-      s = "<h2>Error: no such report or the process is not finished. Be patient.</h2>"
+      s = "<h3>Error: no such report or the process is not finished.<br><br> Be patient.</h3>"
       return wwwheader + s + wwwfooter
     else:
       summary = report[1].split('\n')
@@ -200,7 +213,7 @@ def show_post(jobid):
       if summary[2] == 'Hourrraaa!':
         s += '<p>%s</p>' % summary[2]
       else:
-        s += "<p>%s (<a href='/errors'>explanation of the errors</a>)</p><ol>" % summary[2]
+        s += "<p>%s (<a href='/errors'>overview of the possible errors</a>)</p><ol>" % summary[2]
         for er in summary[3:]:
           s += '<il>%s</il>' % er
       s += "</ol>"
