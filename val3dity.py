@@ -7,8 +7,8 @@ from lxml import etree
 from StringIO import StringIO
 import sqlite3
 
-VAL3DITYEXE =  '/Users/hugo/projects/val3dity/val3dity'
-
+VAL3DITY_FOLDER    = '/Users/hugo/projects/val3dity'
+TMPOLYS_FOLDER     = '/Users/hugo/temp/tmpolys'
 ROOT_FOLDER        = '/Users/hugo/www/geovalidation/'
 UPLOAD_FOLDER      = ROOT_FOLDER + 'uploads/'
 REPORTS_FOLDER     = ROOT_FOLDER + 'reports/'
@@ -48,22 +48,25 @@ def main():
   # conn.close()
   # sys.exit()
 
-
   files = os.listdir('.')
   print "Validating files:", files
-  for fname in files:
-    c.execute("SELECT rowid, fname, timestamp FROM jobs where fname = '%s' ORDER BY timestamp DESC" % fname)
-    re = c.fetchone()
-    print re
-    jobid = re[0]
-    totalxml, summary = validate(UPLOAD_FOLDER+fname)
-    s = REPORTS_FOLDER + "report" + str(jobid) + ".xml"
-    fout = open(s, 'w')
-    fout.write('\n'.join(totalxml))
-    fout.close()
-    c.execute("UPDATE jobs set report='%s' where rowid=%d" % (summary, jobid))
-    conn.commit()
-    
+  try:
+      for fname in files:
+          c.execute("SELECT rowid, fname, timestamp FROM jobs where fname = '%s' ORDER BY timestamp DESC" % fname)
+          re = c.fetchone()
+          print re
+          jobid = re[0]
+          totalxml, summary = validate(UPLOAD_FOLDER+fname)
+          print "validation finished."
+          # remove_tmpolys()
+          s = REPORTS_FOLDER + "report" + str(jobid) + ".xml"
+          fout = open(s, 'w')
+          fout.write('\n'.join(totalxml))
+          fout.close()
+          c.execute("UPDATE jobs set report='%s' where rowid=%d" % (summary, jobid))
+          conn.commit()
+  except:
+      conn.close()
   conn.close()
   #-- remove all the files once validated
   for fname in files:
@@ -71,18 +74,21 @@ def main():
 
 
 def validate(fin):
-  # rootfolder = os.getcwd("..")
   fin = open(fin)
   construct_polys(fin)
   totalxml, summary = validate_polys(fin)
-  remove_tmpolys()
   return totalxml, summary
 
 def construct_polys(fin):
   print "Extracting the solids from the CityGML file"
-  os.system("python /Users/hugo/projects/val3dity/ressources/python/gml2poly/gml2poly.py %s" % (fin.name))
-  os.chdir("/Users/hugo/temp/tmpolys")
-  print "done.\n"
+  if not os.path.exists(TMPOLYS_FOLDER):
+      os.mkdir(TMPOLYS_FOLDER)
+  else:
+      shutil.rmtree(TMPOLYS_FOLDER)
+      os.mkdir(TMPOLYS_FOLDER)
+  s = "python %s/ressources/python/gml2poly/gml2poly.py %s %s" % (VAL3DITY_FOLDER, fin.name, TMPOLYS_FOLDER)
+  os.system(s)
+  print "POLYs created.\n"
 
 def remove_tmpolys():
   os.chdir("..")
@@ -90,9 +96,9 @@ def remove_tmpolys():
 
 
 def validate_polys(fin):
-  # validate each building/shell
   summary = ""
   dFiles = {}
+  os.chdir(TMPOLYS_FOLDER)
   for f in os.listdir('.'):
     if f[-4:] == 'poly':
       i = (f.split('.poly')[0]).rfind('.')
@@ -117,7 +123,7 @@ def validate_polys(fin):
     t.close()
     
     # validate with val3dity
-    str1 = VAL3DITYEXE + " -xml " +  " ".join(dFiles[solidname])
+    str1 = VAL3DITY_FOLDER + "/val3dity -xml " +  " ".join(dFiles[solidname])
     print str1
     op = subprocess.Popen(str1.split(' '),
                           stdout=subprocess.PIPE, 
