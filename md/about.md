@@ -1,13 +1,11 @@
 
 ## about
 
-The validator checks whether the solids stored in a GML file are *geometrically* valid according to the international standard [ISO 19107:2003](http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012). Any GML files, or one of the formats built over it (such as CityGML), can be used as input. The validator simply scans the file looking for the <gml:Solid> tags and validates these. It assumes that the input XML is valid according to the XSD of GML; if not then we can't guarantee the results. 
+The validator, which uses the open-source project [val3dity](https://github.com/tudelft-gist/val3dity) in the background, checks whether the solids stored in a GML file are *geometrically* valid according to the international standard [ISO 19107:2003](http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012). Any GML files, or one of the formats built upon it (such as CityGML), can be used as input. The validator simply scans the file looking for the <gml:Solid> tags and validates these (all the rest is ignored). It assumes that the input XML is valid according to the XSD of GML.
 
 ![](/static/steps.png)
 
-The validation of a solid is performed hierarchically, ie first every surface (a polygon embedded in 3D) is validated in 2D (with [GEOS](http://trac.osgeo.org/geos/)), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. For an overview of all the checks, [click here](/errors).
-
-In the background, the open-source project [val3dity](https://github.com/tudelft-gist/val3dity) is used.
+The validation of a solid is performed hierarchically, ie first every surface (a polygon embedded in 3D) is validated in 2D (with [GEOS](http://trac.osgeo.org/geos/)), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. This means that a surface of your solid is not a valid 2D polygon (its projection), then the validator will report that but will *not* try to further validate (to avoid "cascading" errors). For an overview of all the checks, [click here](/errors).
 
 Most of the details of the implementation are available in this scientific article:
 

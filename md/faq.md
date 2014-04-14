@@ -6,11 +6,13 @@
 
 We delete it right after having validated it. We promise. The report is however available to everyone.
 
+---
 
 ### I'm sure that my solid is okay, I've triple-checked, and yet the validator says that something is wrong.
 
 It's possible that there are bugs in [val3dity](https://github.com/tudelft-gist/val3dity). Please [contact us](/contact) and report the issue.
 
+---
 
 ### the validation report says that there is no solids in my file, but I can see the buildings with my viewer!
 
