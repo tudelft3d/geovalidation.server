@@ -38,11 +38,14 @@ wwwheader = """
         text-align: left;
       }
       h2 {
+        font-size: 28px;
+      }      
+      h3 {
         font-size: 24px;
       }
       p,ul {
         font-family: 'Inconsolata', null;
-        font-size: 20px;
+        font-size: 18px;
         background-color: #fafafa;
         font-color: #2df5dd;
         text-align: left; 
@@ -122,6 +125,7 @@ wwwindex = """
     <form action="" method=post enctype=multipart/form-data>
       <ol>
         <li><input type=file name=file></li>
+        <li>snapping tolerance for vertices: <input type="text" name="snap_tolerance" value="1e-3" maxlength="10" align="right"></li>
         <li><input type=submit value="upload + validate"></li>
         <li>you'll get a report detailing the errors, if any.</li>
       </ol>
@@ -137,10 +141,18 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-# @app.route('/hugo')
-# def hugo():
-#   r = wwwheader + "<h2>Potatoes</h2>" + wwwfooter
-#   return r
+def verify_snap_tolerance(t):
+    t = t.replace(',', '.')
+    d = float(1e-3)
+    try:
+      re = float(t)
+      if (re >= 0.0):
+        return re
+      return d
+    except:
+      return d
+
+
 
 @app.route('/static/<path:filename>')
 def send_foo(filename):
@@ -155,7 +167,8 @@ def upload_file():
         if f and allowed_file(f.filename):
             fname = secure_filename(f.filename)
             f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-            c.execute("INSERT INTO jobs VALUES ('%s', %f, '%s')" % (fname, time.time(), '-'))
+            snap_tolerance = verify_snap_tolerance(request.form['snap_tolerance'])
+            c.execute("INSERT INTO jobs VALUES ('%s', %f, '%s', %f)" % (fname, time.time(), '-', snap_tolerance))
             conn.commit()
             c.execute("SELECT rowid, timestamp FROM jobs where fname='%s' ORDER BY timestamp DESC" % fname)
             jid = c.fetchone()[0]
@@ -179,17 +192,19 @@ def errors():
 
 @app.route('/about')
 def about():
-    s = """
-    <h2>about</h2>
-    <p>In the background, two open-source projects are used: <a href="https://github.com/tudelft-gist/val3dity">val3dity</a> is used for the geometric validation, and <a href="https://github.com/tudelft-gist/citygml2poly">citygml2poly</a> is used to parse CityGML files.</p>
-    <p>The validation of a solid is performed hierarchically, ie first every surface is validated in 2D (with <a href="http://trac.osgeo.org/geos/">GEOS</a>), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed (for solids having inner shells/cavities).</p>
-    <p>Most of the details of the implementation are available in this scientific article:</p>
-    <blockquote>
-    <p>Ledoux, Hugo (2013). On the validation of solids represented with the
-    international standards for geographic information. <em>Computer-Aided Civil and Infrastructure Engineering</em>, 28(9):693&#8211;706. <a href="http://homepage.tudelft.nl/23t4p/pdfs/_13cacaie.pdf"> [PDF] </a> <a href="http://dx.doi.org/10.1111/mice.12043"> [DOI] </a></p>
-    </blockquote>
-    """
-    return wwwheader + s + wwwfooter
+    i = open('about.html')
+    return wwwheader + i.read() + wwwfooter
+
+@app.route('/contact')
+def contact():
+    i = open('contact.html')
+    return wwwheader + i.read() + wwwfooter
+
+
+@app.route('/faq')
+def faq():
+    i = open('faq.html')
+    return wwwheader + i.read() + wwwfooter
 
 @app.route('/reports/download/<int:jobid>')
 def download_report(jobid):

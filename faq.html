@@ -1,0 +1,19 @@
+<h2>faq</h2>
+
+<h3>what do you do with my uploaded file?</h3>
+
+<p>We delete it right after having validated it. We promise. The report is however available to everyone.</p>
+
+<h3>I&#8217;m sure that my solid is okay, I&#8217;ve triple-checked, and yet the validator says that something is wrong.</h3>
+
+<p>It&#8217;s possible that there are bugs in <a href="https://github.com/tudelft-gist/val3dity">val3dity</a>. Please <a href="/contact">contact us</a> and report the issue.</p>
+
+<h3>the validation report says that there is no solids in my file, but I can see the buildings with my viewer!</h3>
+
+<p>There are many (too many?) ways to model a volume/polyhedron in GML (eg a building in CityGML), but usually practitioners do it with either <gml:Solid> or <gml:MultiSurface>. See the same simple volumetric objects, first modelled with a <gml:Solid> and then with <gml:MultiSurface>:</p>
+
+<script src="https://gist.github.com/hugoledoux/10551725.js"></script>
+
+<script src="https://gist.github.com/hugoledoux/10551979.js"></script>
+
+<p>The validator only checks the former. The reason is simple: if an object is modelled with <gml:MultiSurface> and the set of surfaces is not watertight, then it would be wrong to report that the object is not valid&#8230; However, if a building is watertight, then in our opinion it is good practice to model it with <gml:Solid>.</p>

@@ -1,0 +1,16 @@
+<h2>about</h2>
+
+<p>The validator checks whether the solids stored in a GML file are <em>geometrically</em> valid according to the international standard <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO 19107:2003</a>. Any GML files, or one of the formats built over it (such as CityGML), can be used as input. The validator simply scans the file looking for the <gml:Solid> tags and validates these. It assumes that the input XML is valid according to the XSD of GML; if not then we can&#8217;t guarantee the results. </p>
+
+<p><img src="/static/steps.png" alt="" /></p>
+
+<p>The validation of a solid is performed hierarchically, ie first every surface (a polygon embedded in 3D) is validated in 2D (with <a href="http://trac.osgeo.org/geos/">GEOS</a>), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. For an overview of all the checks, <a href="/errors">click here</a>.</p>
+
+<p>In the background, the open-source project <a href="https://github.com/tudelft-gist/val3dity">val3dity</a> is used.</p>
+
+<p>Most of the details of the implementation are available in this scientific article:</p>
+
+<blockquote>
+  <p>Ledoux, Hugo (2013). On the validation of solids represented with the
+  international standards for geographic information. <em>Computer-Aided Civil and Infrastructure Engineering</em>, 28(9):693-706. <a href="http://homepage.tudelft.nl/23t4p/pdfs/_13cacaie.pdf"> [PDF] </a> <a href="http://dx.doi.org/10.1111/mice.12043"> [DOI] </a></p>
+</blockquote>
