@@ -7,7 +7,7 @@ from lxml import etree
 from StringIO import StringIO
 import sqlite3
 
-val3dityexe =  '/Users/hugo/projects/val3dity/val3dity'
+VAL3DITYEXE =  '/Users/hugo/projects/val3dity/val3dity'
 
 ROOT_FOLDER        = '/Users/hugo/www/geovalidation/'
 UPLOAD_FOLDER      = ROOT_FOLDER + 'uploads/'
@@ -28,14 +28,15 @@ dErrors = {
   302: 'DANGLING_FACES',                         
   303: 'FACE_ORIENTATION_INCORRECT_EDGE_USAGE',  
   304: 'FREE_FACES',                             
-  305: 'SURFACE_SELF_INTERSECTS',                
-  310: 'VERTICES_NOT_USED',                      
-  320: 'SURFACE_NORMALS_WRONG_ORIENTATION',      
+  305: 'SURFACE_SELF_INTERSECTS',  
+  306: 'VERTICES_NOT_USED',              
+  310: 'SURFACE_NORMALS_WRONG_ORIENTATION',      
   400: 'SHELLS_FACE_ADJACENT',                   
   410: 'SHELL_INTERIOR_INTERSECT',               
   420: 'INNER_SHELL_OUTSIDE_OUTER',              
   430: 'INTERIOR_OF_SHELL_NOT_CONNECTED', 
 }
+
 
 def main():
   os.chdir(UPLOAD_FOLDER)
@@ -62,6 +63,8 @@ def main():
     fout.close()
     c.execute("UPDATE jobs set report='%s' where rowid=%d" % (summary, jobid))
     conn.commit()
+    
+  conn.close()
   #-- remove all the files once validated
   for fname in files:
     os.remove(UPLOAD_FOLDER+fname)
@@ -76,15 +79,9 @@ def validate(fin):
   return totalxml, summary
 
 def construct_polys(fin):
-  os.chdir('/Users/hugo/projects/citygml2poly/validate')
-  if not os.path.exists("tmpolys"):
-    os.mkdir("tmpolys")
-  else:
-    shutil.rmtree("tmpolys")
-    os.mkdir("tmpolys")
-  os.chdir("..")
-  os.system("java -classpath ./citygml4j-2.0ea-java6/lib/citygml4j.jar:. citygml2poly %s ./validate/tmpolys" % (fin.name))
-  os.chdir("./validate/tmpolys")
+  print "Extracting the solids from the CityGML file"
+  os.system("python /Users/hugo/projects/val3dity/ressources/python/gml2poly/gml2poly.py %s" % (fin.name))
+  os.chdir("/Users/hugo/temp/tmpolys")
   print "done.\n"
 
 def remove_tmpolys():
@@ -120,7 +117,7 @@ def validate_polys(fin):
     t.close()
     
     # validate with val3dity
-    str1 = val3dityexe + " -withids -xml " +  " ".join(dFiles[solidname])
+    str1 = VAL3DITYEXE + " -xml " +  " ".join(dFiles[solidname])
     print str1
     op = subprocess.Popen(str1.split(' '),
                           stdout=subprocess.PIPE, 
