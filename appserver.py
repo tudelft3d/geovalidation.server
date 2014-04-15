@@ -225,8 +225,9 @@ def show_post(jobid):
       s = '<h2>Report for file %s</h2>' % report[0]
       s += '<p>%s</p>' % summary[0]
       s += '<p>%s</p>' % summary[1]
-      if summary[2] == 'Hourrraaa!':
-        s += '<p>%s</p>' % summary[2]
+      if (summary[2] == 'Hourrraaa!'):
+        if (summary[0] != 'Number of solids in file: 0'):
+          s += '<img src="/static/welldone.png" width="120" alt="">'
       else:
         s += "<p>%s (<a href='/errors'>overview of the possible errors</a>)</p><ol>" % summary[2]
         for er in summary[3:]:

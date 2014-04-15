@@ -108,7 +108,7 @@ def validate_polys(fin):
       else:
         dFiles[f1].append(f)
   i = 0
-  summary += "Number of solids in file:%d\n" % (len(dFiles))
+  summary += "Number of solids in file: %d\n" % (len(dFiles))
   invalidsolids = 0
   xmlsolids = []
   exampleerrors = []
