@@ -8,7 +8,7 @@ fout.write(html)
 
 f = open('faq.md')
 html = markdown2.markdown(f.read(), extras=['toc', 'smarty-pants'])
-print html
+# print html
 fout = open('../faq.html', 'w')
 fout.write(html)
 

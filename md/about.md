@@ -5,7 +5,7 @@ The validator, which uses the open-source project [val3dity](https://github.com/
 
 ![](/static/steps.png)
 
-The validation of a solid is performed hierarchically, ie first every surface (a polygon embedded in 3D) is validated in 2D (with [GEOS](http://trac.osgeo.org/geos/)), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. This means that a surface of your solid is not a valid 2D polygon (its projection), then the validator will report that but will *not* try to further validate (to avoid "cascading" errors). For an overview of all the checks, [click here](/errors).
+The validation of a solid is performed hierarchically, ie first every surface (a polygon embedded in 3D) is validated in 2D (with [GEOS](http://trac.osgeo.org/geos/)), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. This means that if a surface of your solid is not a valid 2D polygon (its projection), then the validator will report that error but will *not* try to further validate the solid (to avoid "cascading" errors). For an overview of all the checks, [click here](/errors).
 
 Most of the details of the implementation are available in this scientific article:
 
