@@ -121,7 +121,7 @@ wwwerrors = """
 
 wwwindex = """
   <title>val3dity: geometric validation of solids according to ISO19107</title>
-    <h1><font color="#00A6D6">val3dity</font><br>geometric validation of GML solids</h1>
+    <h1><img src="/static/val3dity.png" width=250 alt=""/><br>geometric validation of GML solids</h1>
     <form action="" method=post enctype=multipart/form-data>
       <ol>
         <li><input type=file name=file></li>
@@ -131,6 +131,7 @@ wwwindex = """
       </ol>
     </form>
 """
+
 
 # return app.send_static_file('index.html')
 # return send_from_directory('/Users/hugo/Dropbox/temp/flask', 'index.html')
