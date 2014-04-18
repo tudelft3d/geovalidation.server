@@ -1,7 +1,6 @@
 
 ## faq
 
-
 ### what do you do with my uploaded file?
 
 We delete it right after having validated it. We promise. The report is however available to everyone.
