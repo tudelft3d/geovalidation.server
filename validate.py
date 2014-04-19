@@ -5,7 +5,6 @@ import glob
 import subprocess
 from lxml import etree
 from StringIO import StringIO
-import sqlite3
 
 VAL3DITY_FOLDER    = '/Users/hugo/projects/val3dity'
 TMPOLYS_FOLDER     = '/Users/hugo/temp/tmpolys'
@@ -39,38 +38,34 @@ dErrors = {
 
 
 def main():
-  os.chdir(UPLOAD_FOLDER)
-  conn = sqlite3.connect('../alljobs.db')
-  c = conn.cursor()
-
-  # c.execute("DELETE from jobs")
-  # conn.commit()
-  # conn.close()
-  # sys.exit()
-
-  files = os.listdir('.')
-  print "Validating files:", files
-  try:
-      for fname in files:
-          c.execute("SELECT rowid, fname, timestamp FROM jobs where fname = '%s' ORDER BY timestamp DESC" % fname)
-          re = c.fetchone()
-          print re
-          jobid = re[0]
-          totalxml, summary = validate(UPLOAD_FOLDER+fname)
-          print "validation finished."
-          # remove_tmpolys()
-          s = REPORTS_FOLDER + "report" + str(jobid) + ".xml"
-          fout = open(s, 'w')
-          fout.write('\n'.join(totalxml))
-          fout.close()
-          c.execute("UPDATE jobs set report='%s' where rowid=%d" % (summary, jobid))
-          conn.commit()
-  except:
-      conn.close()
-  conn.close()
-  #-- remove all the files once validated
-  for fname in files:
-    os.remove(UPLOAD_FOLDER+fname)
+    os.chdir(UPLOAD_FOLDER)
+    jobs = glob.glob('*.txt')
+    print jobs
+    files = []
+    for job in jobs:
+        os.chdir(UPLOAD_FOLDER)
+        details = open(job, 'r')
+        jobid = job[:-4]
+        fname = details.readline().rstrip('\n')
+        files.append(fname)
+        snap = details.readline().rstrip('\n')
+        t = details.readline().rstrip('\n')
+        totalxml, summary = validate(UPLOAD_FOLDER+fname)
+        print "validation finished."
+        s = "%s%s.xml" % (REPORTS_FOLDER, jobid)        
+        fout = open(s, 'w')
+        fout.write('\n'.join(totalxml))
+        fout.close()
+        s = "%s%s.txt" % (REPORTS_FOLDER, jobid)        
+        fout = open(s, 'w')
+        fout.write(summary)
+        fout.close()
+    #-- remove all the files once validated
+    for job in jobs:
+        os.remove(UPLOAD_FOLDER+job)
+    for fname in files:
+        if os.path.exists(UPLOAD_FOLDER+fname):
+            os.remove(UPLOAD_FOLDER+fname)
 
 
 def validate(fin):

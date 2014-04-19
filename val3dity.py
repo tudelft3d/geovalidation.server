@@ -1,9 +1,8 @@
 from flask import Flask, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 import os
-import pickle
+import uuid
 import time
-import sqlite3
 
 ROOT_FOLDER        = '/Users/hugo/www/geovalidation/'
 UPLOAD_FOLDER      = ROOT_FOLDER + 'uploads/'
@@ -15,9 +14,6 @@ app = Flask(__name__, static_url_path='')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['REPORTS_FOLDER'] = REPORTS_FOLDER
 
-
-conn = sqlite3.connect('alljobs.db', check_same_thread = False)
-c = conn.cursor()
 
 
 wwwheader = """
@@ -154,6 +150,10 @@ def verify_snap_tolerance(t):
       return d
 
 
+def get_job_id():
+    return str(uuid.uuid4()).split('-')[0]
+
+
 
 @app.route('/static/<path:filename>')
 def send_foo(filename):
@@ -169,13 +169,15 @@ def upload_file():
             fname = secure_filename(f.filename)
             f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
             snap_tolerance = verify_snap_tolerance(request.form['snap_tolerance'])
-            c.execute("INSERT INTO jobs VALUES ('%s', %f, '%s', %f)" % (fname, time.time(), '-', snap_tolerance))
-            conn.commit()
-            c.execute("SELECT rowid, timestamp FROM jobs where fname='%s' ORDER BY timestamp DESC" % fname)
-            jid = c.fetchone()[0]
+            jid = get_job_id()
+            fjob = open("%s%s.txt" % (UPLOAD_FOLDER, jid), 'w')
+            fjob.write("%s\n" % fname)
+            fjob.write("%s\n" % snap_tolerance)
+            fjob.write("%s\n" % time.asctime())
+            fjob.close()
             s = "<h2>done.</h2>"
-            s += "<p>The id for your validation task is %d.</p>" % jid
-            s += "<p>The validation report will soon be available <a href='/reports/%d'>there</a>; it might take a few minutes, depending on the size of the file.</p>" % jid
+            s += "<p>The id for your validation task is %s.</p>" % jid
+            s += "<p>The validation report will soon be available <a href='/reports/%s'>there</a>; it might take a few minutes, depending on the size of the file.</p>" % jid
             return wwwheader + s + wwwfooter
         else:
           return wwwheader + "<h2>ERROR</h2><p>File not of GML/XML type</p>" + wwwfooter
@@ -207,35 +209,40 @@ def faq():
     i = open('faq.html')
     return wwwheader + i.read() + wwwfooter
 
-@app.route('/reports/download/<int:jobid>')
+@app.route('/reports/download/<jobid>')
 def download_report(jobid):
     # report = REPORTS_FOLDER + 'report%d.xml' % jobid
-    return send_from_directory(app.config['REPORTS_FOLDER'], 'report%d.xml' % jobid)
+    return send_from_directory(app.config['REPORTS_FOLDER'], '%s.xml' % jobid)
 
 
-@app.route('/reports/<int:jobid>')
+@app.route('/reports/<jobid>')
 def show_post(jobid):
-    c.execute("SELECT fname, report FROM jobs where rowid='%d'" % jobid)
-    report = c.fetchone()
-    if (report == None) or (report[1] == '-'):
-      s = "<h3>Error: no such report or the process is not finished.<br><br> Be patient.</h3>"
-      return wwwheader + s + wwwfooter
+    # os.chdir(REPORTS_FOLDER)
+    fs = "%s%s.txt" % (REPORTS_FOLDER, jobid)
+    fr = "%s%s.xml" % (REPORTS_FOLDER, jobid)
+    if not os.path.exists(fs):
+        s = "<h3>Error: no such report or the process is not finished.<br><br> Be patient.</h3>"
+        return wwwheader + s + wwwfooter
     else:
-      summary = report[1].split('\n')
-      print summary
-      s = '<h2>Report for file %s</h2>' % report[0]
-      s += '<p>%s</p>' % summary[0]
-      s += '<p>%s</p>' % summary[1]
-      if (summary[2] == 'Hourrraaa!'):
-        if (summary[0] != 'Number of solids in file: 0'):
-          s += '<img src="/static/welldone.png" width="120" alt="">'
-      else:
-        s += "<p>%s (<a href='/errors'>overview of the possible errors</a>)</p><ol>" % summary[2]
+        summary = open(fs, "r").read().split('\n')
+        report = open(fr, "r")
+        print summary
+        report.readline()
+        tmp = report.readline()
+        fname = (tmp.split(">")[1]).split("<")[0]
+        s = '<h2>Report for file %s</h2>' % fname
+        s += '<p>%s</p>' % summary[0]
+        s += '<p>%s</p>' % summary[1]
+        if (summary[2] == 'Hourrraaa!'):
+            if (summary[0] != 'Number of solids in file: 0'):
+                s += '<img src="/static/welldone.png" width="120" alt="">'
+        else:
+            s += "<p>%s (<a href='/errors'>overview of the possible errors</a>)</p><ol>" % summary[2]
         for er in summary[3:]:
           s += '<il>%s</il>' % er
-      s += "</ol>"
-      s += "<p><a href='/reports/download/%d'>report%d.xml</a></p>" % (jobid, jobid)
-      return wwwheader + s + wwwfooter
+        s += "</ol>"
+        s += "<p><a href='/reports/download/%s'>%s.xml</a></p>" % (jobid, jobid)
+        return wwwheader + s + wwwfooter
 
 if __name__ == '__main__':
     app.run(debug=True) # TODO: no debug in release mode!
