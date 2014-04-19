@@ -221,7 +221,7 @@ def show_post(jobid):
     fs = "%s%s.txt" % (REPORTS_FOLDER, jobid)
     fr = "%s%s.xml" % (REPORTS_FOLDER, jobid)
     if not os.path.exists(fs):
-        s = "<h3>Error: no such report or the process is not finished.<br><br> Be patient.</h3>"
+        s = "<h3>Error: no such report or the process is not finished.<br><br>Refresh this page. And be patient</h3>"
         return wwwheader + s + wwwfooter
     else:
         summary = open(fs, "r").read().split('\n')

@@ -108,15 +108,6 @@ def validate_polys(fin):
   xmlsolids = []
   exampleerrors = []
   for solidname in dFiles:
-    # check if solid or multisurface in first file
-    t = open(dFiles[solidname][0])
-    t.readline()
-    if t.readline().split()[1] == '0':
-      multisurface = True
-    else:
-      multisurface = False
-    t.close()
-    
     # validate with val3dity
     str1 = VAL3DITY_FOLDER + "/val3dity -xml " +  " ".join(dFiles[solidname])
     print str1
@@ -125,8 +116,8 @@ def validate_polys(fin):
                           stderr=subprocess.PIPE)
     R = op.poll()
     if R:
-       res = op.communicate()
-       raise ValueError(res[1])
+      res = op.communicate()
+      raise ValueError(res[1])
     o =  op.communicate()[0]
     if o.find('ERROR') != -1:
       invalidsolids += 1
@@ -141,19 +132,7 @@ def validate_polys(fin):
           i = tmp + i + 1
       o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
       xmlsolids.append(o)
-    else: #-- no error detected, WARNING if MultiSurface!
-      if multisurface == True:
-        # print 'WARNING: MultiSurfce is actually a valid solid'
-        s = []
-        s.append("\t\t<ValidatorMessage>")
-        s.append("\t\t\t<type>WARNING</type>")
-        s.append("\t\t\t<explanation>MultiSurfaces form a valid Solid</explanation>")
-        s.append("\t\t</ValidatorMessage>\n")
-        o = "\n".join(s)
-        o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
-        xmlsolids.append(o)
-    # o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
-
+    
   totalxml = []
   totalxml.append('<ValidatorContext>')
   a = (fin.name).rfind('/')
@@ -167,7 +146,7 @@ def validate_polys(fin):
   else:
     summary += "Errors present:\n"
     for each in exampleerrors:
-      summary += each + " " + str(dErrors[int(each)]) +"\n"
+      summary += each + " " + str(dErrors[int(each)]) + "\n"
   return totalxml, summary
 
 if __name__ == '__main__':
