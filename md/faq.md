@@ -7,6 +7,14 @@ We delete it right after having validated it. We promise. The report is however 
 
 ---
 
+### I don't understand the report I get.
+
+<script src="https://gist.github.com/hugoledoux/11082609.js"></script>
+
+The report lists only the solids that are *not* valid, and gives one or more [errors](/errors) for each. If your solids have *gml:id* then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 0). If a surface is reported invalid, then the id of the surface is also based on the order of the surfaces in one *gml:Shell*. For instance, in the example above the face 8th surface listed in the first shell of the 26th solid is not planar. 
+
+---
+
 ### I'm sure that my solid is okay, I've triple-checked, and yet the validator says that something is wrong.
 
 It's possible that there are bugs in [val3dity](https://github.com/tudelft-gist/val3dity). Please [contact us](/contact) and report the issue.

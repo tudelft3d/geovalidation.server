@@ -6,6 +6,14 @@
 
 <hr />
 
+<h3 id="i-dont-understand-the-report-i-get">I don&#8217;t understand the report I get.</h3>
+
+<script src="https://gist.github.com/hugoledoux/11082609.js"></script>
+
+<p>The report lists only the solids that are <em>not</em> valid, and gives one or more <a href="/errors">errors</a> for each. If your solids have <em>gml:id</em> then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 0). If a surface is reported invalid, then the id of the surface is also based on the order of the surfaces in one <em>gml:Shell</em>. For instance, in the example above the face 8th surface listed in the first shell of the 26th solid is not planar. </p>
+
+<hr />
+
 <h3 id="im-sure-that-my-solid-is-okay-ive-triple-checked-and-yet-the-validator-says-that-something-is-wrong">I&#8217;m sure that my solid is okay, I&#8217;ve triple-checked, and yet the validator says that something is wrong.</h3>
 
 <p>It&#8217;s possible that there are bugs in <a href="https://github.com/tudelft-gist/val3dity">val3dity</a>. Please <a href="/contact">contact us</a> and report the issue.</p>
