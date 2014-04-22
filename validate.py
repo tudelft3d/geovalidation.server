@@ -49,8 +49,8 @@ def main():
         fname = details.readline().rstrip('\n')
         files.append(fname)
         snap = details.readline().rstrip('\n')
-        t = details.readline().rstrip('\n')
-        totalxml, summary = validate(UPLOAD_FOLDER+fname)
+        time = details.readline().rstrip('\n')
+        totalxml, summary = validate(UPLOAD_FOLDER+fname, snap, time)
         print "validation finished."
         s = "%s%s.xml" % (REPORTS_FOLDER, jobid)        
         fout = open(s, 'w')
@@ -68,20 +68,20 @@ def main():
             os.remove(UPLOAD_FOLDER+fname)
 
 
-def validate(fin):
+def validate(fin, snap, time):
   fin = open(fin)
-  construct_polys(fin)
-  totalxml, summary = validate_polys(fin)
+  construct_polys(fin, snap)
+  totalxml, summary = validate_polys(fin, snap, time)
   return totalxml, summary
 
-def construct_polys(fin):
+def construct_polys(fin, snap):
   print "Extracting the solids from the CityGML file"
   if not os.path.exists(TMPOLYS_FOLDER):
       os.mkdir(TMPOLYS_FOLDER)
   else:
       shutil.rmtree(TMPOLYS_FOLDER)
       os.mkdir(TMPOLYS_FOLDER)
-  s = "python %s/ressources/python/gml2poly/gml2poly.py %s %s" % (VAL3DITY_FOLDER, fin.name, TMPOLYS_FOLDER)
+  s = "python %s/ressources/python/gml2poly/gml2poly.py %s %s --snap_tolerance %s" % (VAL3DITY_FOLDER, fin.name, TMPOLYS_FOLDER, snap)
   os.system(s)
   print "POLYs created.\n"
 
@@ -90,7 +90,7 @@ def remove_tmpolys():
   shutil.rmtree("tmpolys")
 
 
-def validate_polys(fin):
+def validate_polys(fin, snap, time):
   summary = ""
   dFiles = {}
   os.chdir(TMPOLYS_FOLDER)
@@ -134,11 +134,13 @@ def validate_polys(fin):
       xmlsolids.append(o)
     
   totalxml = []
-  totalxml.append('<ValidatorContext>')
+  totalxml.append('<val3dity>')
   a = (fin.name).rfind('/')
   totalxml.append('\t<inputFile>' + (fin.name)[a+1:] + '</inputFile>')
+  totalxml.append('\t<snaptolerance>' + snap + '</snaptolerance>')
+  totalxml.append('\t<time>' + time + '</time>')
   totalxml.append("\n".join(xmlsolids))
-  totalxml.append('</ValidatorContext>')
+  totalxml.append('</val3dity>')
   
   summary += "Number of invalid solids: %d\n" % invalidsolids
   if (invalidsolids == 0):
