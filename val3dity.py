@@ -231,19 +231,21 @@ def show_post(jobid):
         tmp = report.readline()
         fname = (tmp.split(">")[1]).split("<")[0]
         s = '<h2>Report for file %s</h2>' % fname
-        s += '<p>%s</p>' % summary[0]
-        s += '<p>%s</p>' % summary[1]
-        if (summary[2] == 'Hourrraaa!'):
-            if (summary[0] != 'Number of solids in file: 0'):
-                s += '<img src="/static/welldone.png" width="120" alt="">'
+        if len(summary) == 1:
+          s += '<p><FONT COLOR="#fa1b33">%s</FONT></p>' % summary[0]
         else:
-            s += "<p>%s (<a href='/errors'>overview of the possible errors</a>)</p><ul>" % summary[2]
-        for er in summary[3:]:
-          if (er != ''):
-            s += '<li>%s</li>' % er
-        s += "</ul>"
+          s += '<p>%s</p>' % summary[0]
+          s += '<p>%s</p>' % summary[1]
+          if (summary[2] == 'Hourrraaa!'):
+              if (summary[0] != 'Number of solids in file: 0'):
+                  s += '<img src="/static/welldone.png" width="120" alt="">'
+          else:
+              s += "<p>%s (<a href='/errors'>overview of the possible errors</a>)</p><ul>" % summary[2]
+          for er in summary[3:]:
+            if (er != ''):
+              s += '<li>%s</li>' % er
+          s += "</ul>"
         s += "<p><a href='/reports/download/%s'>%s.xml</a></p>" % (jobid, jobid)
-        print s
         return wwwheader + s + wwwfooter
 
 if __name__ == '__main__':

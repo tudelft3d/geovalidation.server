@@ -70,9 +70,19 @@ def main():
 
 def validate(fin, snap, time):
   fin = open(fin)
-  construct_polys(fin, snap)
-  totalxml, summary = validate_polys(fin, snap, time)
-  return totalxml, summary
+  if (construct_polys(fin, snap) == 1):
+    totalxml, summary = validate_polys(fin, snap, time)
+    return totalxml, summary
+  else:
+    totalxml = []
+    totalxml.append('<val3dity>')
+    a = (fin.name).rfind('/')
+    totalxml.append('\t<inputFile>' + (fin.name)[a+1:] + '</inputFile>')
+    totalxml.append('\t<snaptolerance>' + snap + '</snaptolerance>')
+    totalxml.append('\t<time>' + time + '</time>')
+    totalxml.append("ERROR: Problems with parsing the XML. Cannot validate.")
+    totalxml.append('</val3dity>')
+    return totalxml, "ERROR: Problems with parsing the XML. Cannot validate."
 
 def construct_polys(fin, snap):
   print "Extracting the solids from the CityGML file"
@@ -83,7 +93,10 @@ def construct_polys(fin, snap):
       os.mkdir(TMPOLYS_FOLDER)
   s = "python %s/ressources/python/gml2poly/gml2poly.py %s %s --snap_tolerance %s" % (VAL3DITY_FOLDER, fin.name, TMPOLYS_FOLDER, snap)
   os.system(s)
-  print "POLYs created.\n"
+  if len(os.listdir(TMPOLYS_FOLDER)) > 0:
+    return 1
+  else:
+    return 0
 
 def remove_tmpolys():
   os.chdir("..")
