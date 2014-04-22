@@ -221,8 +221,9 @@ def show_post(jobid):
     fs = "%s%s.txt" % (REPORTS_FOLDER, jobid)
     fr = "%s%s.xml" % (REPORTS_FOLDER, jobid)
     if not os.path.exists(fs):
-        s = "<h3>Error: no such report or the process is not finished.<br><br>Refresh this page. And be patient</h3>"
-        return wwwheader + s + wwwfooter
+        s = "<h3>Error: no such report or the process is not finished.<br><br>Be patient</h3>"
+        header = wwwheader[:7] + "<meta  http-equiv='refresh'  content='5'>" + wwwheader[7:]
+        return header + s + wwwfooter
     else:
         summary = open(fs, "r").read().split('\n')
         report = open(fr, "r")
@@ -246,8 +247,7 @@ def show_post(jobid):
               s += '<li>%s</li>' % er
           s += "</ul>"
         s += "<p><a href='/reports/download/%s'>%s.xml</a></p>" % (jobid, jobid)
-        header = wwwheader[:7] + "<meta  http-equiv='refresh'  content='5'>" + wwwheader[7:]
-        return header + s + wwwfooter
+        return wwwheader + s + wwwfooter
 
 if __name__ == '__main__':
     app.run(debug=True) # TODO: no debug in release mode!
