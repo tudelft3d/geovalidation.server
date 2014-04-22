@@ -237,11 +237,13 @@ def show_post(jobid):
             if (summary[0] != 'Number of solids in file: 0'):
                 s += '<img src="/static/welldone.png" width="120" alt="">'
         else:
-            s += "<p>%s (<a href='/errors'>overview of the possible errors</a>)</p><ol>" % summary[2]
+            s += "<p>%s (<a href='/errors'>overview of the possible errors</a>)</p><ul>" % summary[2]
         for er in summary[3:]:
-          s += '<il>%s</il>' % er
-        s += "</ol>"
+          if (er != ''):
+            s += '<li>%s</li>' % er
+        s += "</ul>"
         s += "<p><a href='/reports/download/%s'>%s.xml</a></p>" % (jobid, jobid)
+        print s
         return wwwheader + s + wwwfooter
 
 if __name__ == '__main__':
