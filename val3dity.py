@@ -15,7 +15,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['REPORTS_FOLDER'] = REPORTS_FOLDER
 
 
-
 wwwheader = """
 <html>
   <head>
@@ -62,6 +61,7 @@ wwwheader = """
   <body>
   <div id="wrapper">
 """
+
 
 wwwfooter = """
   </div>
@@ -246,7 +246,8 @@ def show_post(jobid):
               s += '<li>%s</li>' % er
           s += "</ul>"
         s += "<p><a href='/reports/download/%s'>%s.xml</a></p>" % (jobid, jobid)
-        return wwwheader + s + wwwfooter
+        header = wwwheader[:7] + "<meta  http-equiv='refresh'  content='5'>" + wwwheader[7:]
+        return header + s + wwwfooter
 
 if __name__ == '__main__':
     app.run(debug=True) # TODO: no debug in release mode!
