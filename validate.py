@@ -93,10 +93,11 @@ def construct_polys(fin, snap):
       os.mkdir(TMPOLYS_FOLDER)
   s = "python %s/ressources/python/gml2poly/gml2poly.py %s %s --snap_tolerance %s" % (VAL3DITY_FOLDER, fin.name, TMPOLYS_FOLDER, snap)
   os.system(s)
-  if len(os.listdir(TMPOLYS_FOLDER)) > 0:
-    return 1
-  else:
+  polys = os.listdir(TMPOLYS_FOLDER)
+  if len(polys) == 1 and polys[0] == 'error': 
     return 0
+  else:
+    return 1
 
 def remove_tmpolys():
   os.chdir("..")
