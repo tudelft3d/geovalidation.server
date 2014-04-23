@@ -1,6 +1,10 @@
 
 ## FAQ
 
+<!--TOC-->
+
+---
+
 ### What do you do with my uploaded file?
 
 We delete it right after having validated it, we promise. The report is however available to everyone (if they know its ID).
@@ -11,7 +15,21 @@ We delete it right after having validated it, we promise. The report is however 
 
 <script src="https://gist.github.com/hugoledoux/11082609.js"></script>
 
-The report lists only the solids that are *not* valid, and gives one or more [errors](/errors) for each. If your solids have *gml:id* then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 0). If a surface is reported invalid, then the id of the surface is also based on the order of the surfaces in one *gml:Shell*. For instance, in the example above the face 8th surface listed in the first shell of the 26th solid is not planar. 
+The report lists only the solids that are *not* valid, and gives one or more [errors](/errors) for each. If your solids have *gml:id* then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 0). If a surface is reported invalid, then the id of the surface is also based on the order of the surfaces in one *gml:Shell*. For instance, in the example above the 15th surface listed in the first shell of the 26th solid is not planar. 
+
+---
+
+### What is the snap tolerance I need to setup when I upload a file?
+
+Geometries modelled in GML store amazingly very little topological relationships. A cube is for instance represented with 6 surfaces, all stored separately. This means that a single vertex (where 3 surfaces "meet") is stored independently 3 times (its coordinates xyz). It is possible that these 3 vertices are not exactly at the same location (eg (0.01, 0.5, 1.0) and (0.01002, 0.5002, 1.0007)), and that would create problems when validating since there would be holes in the cube. The snap tolerance basically gives a threshold that says: "if 2 points are closer then X, then we assume that they are the same". It's setup by default to me 1mm. 
+
+---
+
+### I don't see all the errors in my solid.
+
+It's normal: a solid is validated hierarchically, ie first every surface (a polygon embedded in 3D) is validated in 2D, then every shell is validated, and finally the interactions between the shells are analysed. If at one stage there are errors then we don't continue the validation to avoid "cascading errors". So if you get the error "210 NON_PLANAR_SURFACE", then fix it re-run the validator.
+
+![](/static/steps.png)
 
 ---
 
