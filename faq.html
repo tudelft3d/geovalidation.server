@@ -1,0 +1,31 @@
+<h2 id="faq">FAQ</h2>
+
+<h3 id="what-do-you-do-with-my-uploaded-file">What do you do with my uploaded file?</h3>
+
+<p>We delete it right after having validated it, we promise. The report is however available to everyone (if they know its ID).</p>
+
+<hr />
+
+<h3 id="i-dont-understand-the-report-i-get">I don&#8217;t understand the report I get.</h3>
+
+<script src="https://gist.github.com/hugoledoux/11082609.js"></script>
+
+<p>The report lists only the solids that are <em>not</em> valid, and gives one or more <a href="/errors">errors</a> for each. If your solids have <em>gml:id</em> then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 0). If a surface is reported invalid, then the id of the surface is also based on the order of the surfaces in one <em>gml:Shell</em>. For instance, in the example above the face 8th surface listed in the first shell of the 26th solid is not planar. </p>
+
+<hr />
+
+<h3 id="im-sure-that-my-solid-is-okay-ive-double-checked-and-yet-the-validator-says-that-something-is-wrong">I&#8217;m sure that my solid is okay, I&#8217;ve double-checked, and yet the validator says that something is wrong.</h3>
+
+<p>It&#8217;s possible that there are bugs in <a href="https://github.com/tudelft-gist/val3dity">val3dity</a>. Please <a href="https://github.com/tudelft-gist/val3dity/issues">report the issue</a>.</p>
+
+<hr />
+
+<h3 id="the-validation-report-says-that-there-is-no-solids-in-my-file-but-i-can-see-the-buildings-with-my-viewer">The validation report says that there is no solids in my file, but I can see the buildings with my viewer!</h3>
+
+<p>There are many (or more precisely: <a href="http://erouault.blogspot.nl/2014/04/gml-madness.html">too many</a>) ways to model a volume/polyhedron in GML (eg a building in CityGML), but usually practitioners do it with either <em>gml:Solid</em> or <em>gml:MultiSurface</em>. See the same simple volumetric objects, first modelled with a <em>gml:Solid</em> and then with <em>gml:MultiSurface</em>:</p>
+
+<script src="https://gist.github.com/hugoledoux/10551725.js"></script>
+
+<script src="https://gist.github.com/hugoledoux/10551979.js"></script>
+
+<p>Our validator only checks the former. The reason is simple: if an object is modelled with <em>gml:MultiSurface</em> and the set of surfaces is not watertight, then it would be wrong to report that the object is not valid&#8230; However, if a building is watertight, then in our opinion it is good practice to model it with <em>gml:Solid</em>.</p>
