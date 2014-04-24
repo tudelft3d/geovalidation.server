@@ -34,7 +34,7 @@
 
 <h3 id="i-dont-see-all-the-errors-in-my-solid">I don&#8217;t see all the errors in my solid.</h3>
 
-<p>It&#8217;s normal: as shown in the figure below, a solid is validated <em>hierarchically</em>, ie first every surface (a polygon embedded in 3D) is validated in 2D, then every shell is validated, and finally the interactions between the shells are analysed. If at one stage there are errors then we don&#8217;t continue the validation to avoid &#8220;cascading errors&#8221;. So if you get the error &#8220;210 NON<em>PLANAR</em>SURFACE&#8221;, then fix it re-run the validator. That does mean that you might have to upload your file and get it validated several times; if that becomes too tedious we strongly suggest you to download the <a href="https://github.com/tudelft-gist/val3dity">code</a>, compile it and run the app locally (it&#8217;s open-source and free to use).</p>
+<p>It&#8217;s normal: as shown in the figure below, a solid is validated <em>hierarchically</em>, ie first every surface (a polygon embedded in 3D) is validated in 2D, then every shell is validated, and finally the interactions between the shells are analysed. If at one stage there are errors then we don&#8217;t continue the validation to avoid &#8220;cascading errors&#8221;. So if you get the error &#8220;210 NON<em>PLANAR</em>SURFACE&#8221;, then fix it re-run the validator. That does mean that you might have to upload your file and get it validated several times; if that becomes too tedious we strongly suggest you to download the <a href="https://github.com/tudelft-gist/val3dity">code</a>, compile it and run val3dity locally (it&#8217;s open-source and free to use).</p>
 
 <p><img src="/static/steps.png" alt="" /></p>
 
@@ -60,4 +60,4 @@
 
 <h3 id="the-server-says-my-file-is-too-big-whats-the-maximum">The server says my file is too big, what&#8217;s the maximum?</h3>
 
-<p>50MB. If you need more, <a href="/contact">get in touch</a> or </p>
+<p>50MB. If you need more, <a href="/contact">get in touch</a> or download the <a href="https://github.com/tudelft-gist/val3dity">code</a>, compile it and run val3dity locally.</p>

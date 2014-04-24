@@ -27,7 +27,7 @@ Geometries modelled in GML store amazingly very little topological relationships
 
 ### I don't see all the errors in my solid.
 
-It's normal: as shown in the figure below, a solid is validated *hierarchically*, ie first every surface (a polygon embedded in 3D) is validated in 2D, then every shell is validated, and finally the interactions between the shells are analysed. If at one stage there are errors then we don't continue the validation to avoid "cascading errors". So if you get the error "210 NON_PLANAR_SURFACE", then fix it re-run the validator. That does mean that you might have to upload your file and get it validated several times; if that becomes too tedious we strongly suggest you to download the [code](https://github.com/tudelft-gist/val3dity), compile it and run the app locally (it's open-source and free to use).
+It's normal: as shown in the figure below, a solid is validated *hierarchically*, ie first every surface (a polygon embedded in 3D) is validated in 2D, then every shell is validated, and finally the interactions between the shells are analysed. If at one stage there are errors then we don't continue the validation to avoid "cascading errors". So if you get the error "210 NON_PLANAR_SURFACE", then fix it re-run the validator. That does mean that you might have to upload your file and get it validated several times; if that becomes too tedious we strongly suggest you to download the [code](https://github.com/tudelft-gist/val3dity), compile it and run val3dity locally (it's open-source and free to use).
 
 ![](/static/steps.png)
 
@@ -53,7 +53,7 @@ Our validator only checks the former. The reason is simple: if an object is mode
 
 ### The server says my file is too big, what's the maximum?
 
-50MB. If you need more, [get in touch](/contact) or 
+50MB. If you need more, [get in touch](/contact) or download the [code](https://github.com/tudelft-gist/val3dity), compile it and run val3dity locally.
 
 
 
