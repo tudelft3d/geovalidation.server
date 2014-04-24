@@ -6,7 +6,7 @@
     <li><a href="#what-is-the-snap-tolerance-i-need-to-setup-when-i-upload-a-file">What is the snap tolerance I need to setup when I upload a file?</a></li>
     <li><a href="#i-dont-see-all-the-errors-in-my-solid">I don&#8217;t see all the errors in my solid.</a></li>
     <li><a href="#im-sure-that-my-solid-is-okay-ive-double-checked-and-yet-the-validator-says-that-something-is-wrong">I&#8217;m sure that my solid is okay, I&#8217;ve double-checked, and yet the validator says that something is wrong.</a></li>
-    <li><a href="#the-validation-report-says-that-there-is-no-solids-in-my-file-but-i-can-see-the-buildings-with-my-viewer">The validation report says that there is no solids in my file, but I can see the buildings with my viewer!</a></li>
+    <li><a href="#the-validation-report-says-that-there-are-no-solids-in-my-file-but-i-can-see-the-buildings-with-my-viewer">The validation report says that there are no solids in my file, but I can see the buildings with my viewer!</a></li>
     <li><a href="#the-server-says-my-file-is-too-big-whats-the-maximum">The server says my file is too big, what&#8217;s the maximum?</a></li>
   </ul>
 
@@ -22,19 +22,19 @@
 
 <script src="https://gist.github.com/hugoledoux/11082609.js"></script>
 
-<p>The report lists only the solids that are <em>not</em> valid, and gives one or more <a href="/errors">errors</a> for each. If your solids have <em>gml:id</em> then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 0). If a surface is reported invalid, then the id of the surface is also based on the order of the surfaces in one <em>gml:Shell</em>. For instance, in the example above the 15th surface listed in the first shell of the 26th solid is not planar. </p>
+<p>The report lists only the solids that are <em>not</em> valid, and gives one or more <a href="/errors">errors</a> for each. If your solids have <strong>gml:id</strong> then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 0). If a surface is reported invalid, then the id of the surface is also based on the order of the surfaces in one <strong>gml:Shell</strong>. For instance, in the example above the 15th surface listed in the first shell of the 26th solid is not planar. </p>
 
 <hr />
 
 <h3 id="what-is-the-snap-tolerance-i-need-to-setup-when-i-upload-a-file">What is the snap tolerance I need to setup when I upload a file?</h3>
 
-<p>Geometries modelled in GML store amazingly very little topological relationships. A cube is for instance represented with 6 surfaces, all stored separately. This means that a single vertex (where 3 surfaces &#8220;meet") is stored independently 3 times (its coordinates xyz). It is possible that these 3 vertices are not exactly at the same location (eg (0.01, 0.5, 1.0) and (0.01002, 0.5002, 1.0007)), and that would create problems when validating since there would be holes in the cube. The snap tolerance basically gives a threshold that says: &#8220;if 2 points are closer then X, then we assume that they are the same&#8221;. It&#8217;s setup by default to me 1mm. </p>
+<p>Geometries modelled in GML store amazingly very little topological relationships. A cube is for instance represented with 6 surfaces, all stored independently. This means that the coordinates xyz of a single vertex (where 3 surfaces &#8220;meet") is stored 3 times. It is possible that these 3 vertices are not exactly at the same location (eg (0.01, 0.5, 1.0), (0.011, 0.49999, 1.00004) and (0.01002, 0.5002, 1.0007)), and that would create problems when validating since there would for example be holes in the cube. The snap tolerance basically gives a threshold that says: &#8220;if 2 points are closer then <em>X</em>, then we assume that they are the same&#8221;. It&#8217;s setup by default to be 1mm. </p>
 
 <hr />
 
 <h3 id="i-dont-see-all-the-errors-in-my-solid">I don&#8217;t see all the errors in my solid.</h3>
 
-<p>It&#8217;s normal: as shown in the figure below, a solid is validated <em>hierarchically</em>, ie first every surface (a polygon embedded in 3D) is validated in 2D, then every shell is validated, and finally the interactions between the shells are analysed. If at one stage there are errors then we don&#8217;t continue the validation to avoid &#8220;cascading errors&#8221;. So if you get the error &#8220;210 NON<em>PLANAR</em>SURFACE&#8221;, then fix it re-run the validator. That does mean that you might have to upload your file and get it validated several times; if that becomes too tedious we strongly suggest you to download the <a href="https://github.com/tudelft-gist/val3dity">code</a>, compile it and run val3dity locally (it&#8217;s open-source and free to use).</p>
+<p>It&#8217;s normal: as shown in the figure below, a solid is validated <em>hierarchically</em>, ie first every surface (a polygon embedded in 3D) is validated in 2D (by projecting it to a plane), then every shell is validated, and finally the interactions between the shells are analysed to verify whether the solid is valid. If at one stage there are errors, then the validation stops to avoid &#8220;cascading errors&#8221;. So if you get the error &#8220;210 NON_PLANAR_SURFACE&#8221;, then fix it and re-run the validator again. That does mean that you might have to upload your file and get it validated several times&#8212;if that becomes too tedious we strongly suggest you to download the <a href="https://github.com/tudelft-gist/val3dity">code</a>, compile it and run it locally (it&#8217;s open-source and free to use).</p>
 
 <p><img src="/static/steps.png" alt="" /></p>
 
@@ -46,15 +46,15 @@
 
 <hr />
 
-<h3 id="the-validation-report-says-that-there-is-no-solids-in-my-file-but-i-can-see-the-buildings-with-my-viewer">The validation report says that there is no solids in my file, but I can see the buildings with my viewer!</h3>
+<h3 id="the-validation-report-says-that-there-are-no-solids-in-my-file-but-i-can-see-the-buildings-with-my-viewer">The validation report says that there are no solids in my file, but I can see the buildings with my viewer!</h3>
 
-<p>There are many (or more precisely: <a href="http://erouault.blogspot.nl/2014/04/gml-madness.html">too many</a>) ways to model a volume/polyhedron in GML (eg a building in CityGML), but usually practitioners do it with either <em>gml:Solid</em> or <em>gml:MultiSurface</em>. See the same simple volumetric objects, first modelled with a <em>gml:Solid</em> and then with <em>gml:MultiSurface</em>:</p>
+<p>There are many (or more precisely: <a href="http://erouault.blogspot.nl/2014/04/gml-madness.html">too many</a>) ways to model a volume/polyhedron in GML (eg a building in CityGML), but usually practitioners do it with either <strong>gml:Solid</strong> or <strong>gml:MultiSurface</strong>. See the same simple volumetric objects, first modelled with a <strong>gml:Solid</strong> and then with <strong>gml:MultiSurface</strong>:</p>
 
 <script src="https://gist.github.com/hugoledoux/10551725.js"></script>
 
 <script src="https://gist.github.com/hugoledoux/10551979.js"></script>
 
-<p>Our validator only checks the former. The reason is simple: if an object is modelled with <em>gml:MultiSurface</em> and the set of surfaces is not watertight, then it would be wrong to report that the object is not valid&#8230; However, if a building is watertight, then in our opinion it is good practice to model it with <em>gml:Solid</em>.</p>
+<p>Our validator only checks the former. The reason is simple: if an object is modelled with <strong>gml:MultiSurface</strong> and the set of surfaces is not watertight, then it would be wrong to report that the object is not valid&#8230; However, if a building is watertight, then in our opinion it is good practice to model it with <strong>gml:Solid</strong>.</p>
 
 <hr />
 
