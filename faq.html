@@ -7,6 +7,7 @@
     <li><a href="#i-dont-see-all-the-errors-in-my-solid">I don&#8217;t see all the errors in my solid.</a></li>
     <li><a href="#im-sure-that-my-solid-is-okay-ive-double-checked-and-yet-the-validator-says-that-something-is-wrong">I&#8217;m sure that my solid is okay, I&#8217;ve double-checked, and yet the validator says that something is wrong.</a></li>
     <li><a href="#the-validation-report-says-that-there-is-no-solids-in-my-file-but-i-can-see-the-buildings-with-my-viewer">The validation report says that there is no solids in my file, but I can see the buildings with my viewer!</a></li>
+    <li><a href="#the-server-says-my-file-is-too-big-whats-the-maximum">The server says my file is too big, what&#8217;s the maximum?</a></li>
   </ul>
 
 <hr />
@@ -33,7 +34,7 @@
 
 <h3 id="i-dont-see-all-the-errors-in-my-solid">I don&#8217;t see all the errors in my solid.</h3>
 
-<p>It&#8217;s normal: a solid is validated hierarchically, ie first every surface (a polygon embedded in 3D) is validated in 2D, then every shell is validated, and finally the interactions between the shells are analysed. If at one stage there are errors then we don&#8217;t continue the validation to avoid &#8220;cascading errors&#8221;. So if you get the error &#8220;210 NON<em>PLANAR</em>SURFACE&#8221;, then fix it re-run the validator.</p>
+<p>It&#8217;s normal: as shown in the figure below, a solid is validated <em>hierarchically</em>, ie first every surface (a polygon embedded in 3D) is validated in 2D, then every shell is validated, and finally the interactions between the shells are analysed. If at one stage there are errors then we don&#8217;t continue the validation to avoid &#8220;cascading errors&#8221;. So if you get the error &#8220;210 NON<em>PLANAR</em>SURFACE&#8221;, then fix it re-run the validator. That does mean that you might have to upload your file and get it validated several times; if that becomes too tedious we strongly suggest you to download the <a href="https://github.com/tudelft-gist/val3dity">code</a>, compile it and run the app locally (it&#8217;s open-source and free to use).</p>
 
 <p><img src="/static/steps.png" alt="" /></p>
 
@@ -54,3 +55,9 @@
 <script src="https://gist.github.com/hugoledoux/10551979.js"></script>
 
 <p>Our validator only checks the former. The reason is simple: if an object is modelled with <em>gml:MultiSurface</em> and the set of surfaces is not watertight, then it would be wrong to report that the object is not valid&#8230; However, if a building is watertight, then in our opinion it is good practice to model it with <em>gml:Solid</em>.</p>
+
+<hr />
+
+<h3 id="the-server-says-my-file-is-too-big-whats-the-maximum">The server says my file is too big, what&#8217;s the maximum?</h3>
+
+<p>50MB. If you need more, <a href="/contact">get in touch</a> or </p>
