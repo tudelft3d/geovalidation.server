@@ -1,3 +1,7 @@
+
+{% extends "layout.html" %}
+{% block body %}
+<title>val3dity: geometric validation of solids according to ISO19107</title>  
 <h2 id="faq">FAQ</h2>
 
 <ul>
@@ -23,7 +27,7 @@
 
 <script src="https://gist.github.com/hugoledoux/11082609.js"></script>
 
-<p>The report lists only the solids that are <em>not</em> valid, and gives one or more <a href="/errors">errors</a> for each. If your solids have <strong>gml:id</strong> then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 1). If a surface is reported invalid, then the ID of the surface is also based on the order of the surfaces in one <strong>gml:Shell</strong>; -1 means that it&#8217;s not relevant. Some examples, referring to the example below. The 25th solid in the file is invalid because the 14th surface of its first shell is non-planar; the 41st solid is invalid because all the normals of its third shell are the wrong orientation (-1 means that the error is for no specific surface); the 666th solid has 2 shells that are face adjacent, one of them being the 2nd one (its 3rd surface is touching another one). All the other solids in the file are valid.</p>
+<p>The report lists only the solids that are <em>not</em> valid, and gives one or more <a href="/errors">errors</a> for each. If your solids have <strong>gml:id</strong> then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 1). If a surface is reported invalid, then the ID of the surface is also based on the order of the surfaces in one <strong>gml:Shell</strong>; -1 means that it&#8217;s not relevant. Some examples, referring to the example above. The 25th solid in the file is invalid because the 14th surface of its first shell is non-planar; the 41st solid is invalid because all the normals of its third shell are the wrong orientation (-1 means that the error is for no specific surface); the 666th solid has 2 shells that are face adjacent, one of them being the 2nd one (its 3rd surface is touching another one). All the other solids in the file are valid.</p>
 
 <hr />
 
@@ -37,7 +41,7 @@
 
 <p>It&#8217;s normal: as shown in the figure below, a solid is validated <em>hierarchically</em>, ie first every surface (a polygon embedded in 3D) is validated in 2D (by projecting it to a plane), then every shell is validated, and finally the interactions between the shells are analysed to verify whether the solid is valid. If at one stage there are errors, then the validation stops to avoid &#8220;cascading errors&#8221;. So if you get the error &#8220;210 NON_PLANAR_SURFACE&#8221;, then fix it and re-run the validator again. That does mean that you might have to upload your file and get it validated several times&#8212;if that becomes too tedious we strongly suggest you to download the <a href="https://github.com/tudelft-gist/val3dity">code</a>, compile it and run it locally (it&#8217;s open-source and free to use).</p>
 
-<p><img src="/static/steps.png" alt="" /></p>
+<p><img src="/img/steps.png" alt="" /></p>
 
 <hr />
 
@@ -68,3 +72,5 @@
 <h3 id="in-the-report-the-id-for-the-shells-and-surfaces-are-they-0-based-or-1-based">In the report, the ID for the shells and surfaces, are they 0-based or 1-based?</h3>
 
 <p>1-based.</p>
+
+{% endblock %}
