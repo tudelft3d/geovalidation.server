@@ -15,31 +15,31 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['REPORTS_FOLDER'] = REPORTS_FOLDER
 
 
-# @app.route("/")
-# def index():
-#     return render_template("index.html")
-
-@app.route('/errors')
-def errors():
-    return render_template("errors.html")
-
-@app.route('/about')
-def about():
-    return render_template("about.html")
-
-@app.route('/contact')
-def contact():
-    return render_template("contact.html")
-    
-@app.route('/faq')
-def faq():
-    return render_template("faq.html")
-
-
 # return app.send_static_file('index.html')
 # return send_from_directory('/Users/hugo/Dropbox/temp/flask', 'index.html')
 # return send_from_directory(app.config['REPORTS_FOLDER'], '%d.xml' % jobid)
 # return redirect(url_for('uploaded_file', filename=fname))
+
+@app.route('/val3dity/errors')
+def errors():
+    return render_template("errors.html")
+
+@app.route('/val3dity/about')
+def about():
+    return render_template("about.html")
+
+@app.route('/val3dity/contact')
+def contact():
+    return render_template("contact.html")
+    
+@app.route('/val3dity/faq')
+def faq():
+    return render_template("faq.html")
+
+@app.route('/')
+def root():
+    # return render_template("info.html")
+    return redirect('/val3dity')
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
@@ -62,12 +62,12 @@ def get_job_id():
 
 
 
-# @app.route('/static/<path:filename>')
+# @app.route('/val3dity/static/<path:filename>')
 # def send_foo(filename):
 #     return send_from_directory(STATIC_FOLDER, filename)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/val3dity', methods=['GET', 'POST'])
 def upload_file():
     # global jobid
     if request.method == 'POST':
@@ -88,12 +88,12 @@ def upload_file():
     return render_template("index.html")
 
 
-@app.route('/reports/download/<jobid>')
+@app.route('/val3dity/reports/download/<jobid>')
 def download_report(jobid):
     return send_from_directory(app.config['REPORTS_FOLDER'], '%s.xml' % jobid)
 
 
-@app.route('/reports/<jobid>')
+@app.route('/val3dity/reports/<jobid>')
 def show_post(jobid):
     fs = "%s%s.txt" % (REPORTS_FOLDER, jobid)
     fr = "%s%s.xml" % (REPORTS_FOLDER, jobid)
