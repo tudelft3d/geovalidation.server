@@ -15,7 +15,7 @@ We delete it right after having validated it, we promise. The report is however 
 
 <script src="https://gist.github.com/hugoledoux/11082609.js"></script>
 
-The report lists only the solids that are *not* valid, and gives one or more [errors](/errors) for each. If your solids have __gml:id__ then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 1). If a surface is reported invalid, then the ID of the surface is also based on the order of the surfaces in one __gml:Shell__; -1 means that it's not relevant. Some examples, referring to the example above. The 25th solid in the file is invalid because the 14th surface of its first shell is non-planar; the 41st solid is invalid because all the normals of its third shell are the wrong orientation (-1 means that the error is for no specific surface); the 666th solid has 2 shells that are face adjacent, one of them being the 2nd one (its 3rd surface is touching another one). All the other solids in the file are valid.
+The report lists only the solids that are *not* valid, and gives one or more [errors](/val3dity/errors) for each. If your solids have __gml:id__ then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 1). If a surface is reported invalid, then the ID of the surface is also based on the order of the surfaces in one __gml:Shell__; -1 means that it's not relevant. Some examples, referring to the example above. The 25th solid in the file is invalid because the 14th surface of its first shell is non-planar; the 41st solid is invalid because all the normals of its third shell are the wrong orientation (-1 means that the error is for no specific surface); the 666th solid has 2 shells that are face adjacent, one of them being the 2nd one (its 3rd surface is touching another one). All the other solids in the file are valid.
 
 ---
 
@@ -53,7 +53,7 @@ Our validator only checks the former. The reason is simple: if an object is mode
 
 ### The server says my file is too big, what's the maximum?
 
-50MB. If you need more, [get in touch](/contact) or download the [code](https://github.com/tudelft-gist/val3dity), compile it and run val3dity locally.
+50MB. If you need more, [get in touch](/val3dity/contact) or download the [code](https://github.com/tudelft-gist/val3dity), compile it and run val3dity locally.
 
 ---
 

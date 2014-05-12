@@ -1,3 +1,4 @@
+
 {% extends "val3dity/layout.html" %}
 {% block body %}
 <title>val3dity: geometric validation of solids according to ISO19107</title>  
@@ -7,7 +8,7 @@
 
 <p><img src="/img/steps.png" alt="" /></p>
 
-<p>The validation of a solid is performed hierarchically, ie first every surface (a polygon embedded in 3D) is validated in 2D (with <a href="http://trac.osgeo.org/geos/">GEOS</a>), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. This means that if a surface of your solid is not a valid 2D polygon (its projection), then the validator will report that error but will <em>not</em> try to further validate the solid (to avoid &#8220;cascading&#8221; errors). For an overview of all the possible errors, <a href="/errors">click here</a>.</p>
+<p>The validation of a solid is performed hierarchically, ie first every surface (a polygon embedded in 3D) is validated in 2D (with <a href="http://trac.osgeo.org/geos/">GEOS</a>), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. This means that if a surface of your solid is not a valid 2D polygon (its projection), then the validator will report that error but will <em>not</em> try to further validate the solid (to avoid &#8220;cascading&#8221; errors). For an overview of all the possible errors, <a href="/val3dity/errors">click here</a>.</p>
 
 <p>Most of the details of the implementation are available in this scientific article:</p>
 
