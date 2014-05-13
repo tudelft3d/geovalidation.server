@@ -1,6 +1,6 @@
 
 ## contact
 
-If you encounter errors or bugs, please contact [us](mailto:h.ledoux@tudelft.nl) or report it on the [issue page](https://github.com/tudelft-gist/val3dity/issues).
+If you encounter errors or bugs, please contact [us](mailto:h.ledoux@tudelft.nl) directly or report it on the [issue page](https://github.com/tudelft-gist/val3dity/issues).
 
-[![](/img/tudlogo.png)](http://www.tudelft.nl)
+<!-- [![](/img/tudlogo.png)](http://www.tudelft.nl) -->
