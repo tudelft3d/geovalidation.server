@@ -4,7 +4,13 @@ import os
 import uuid
 import time
 
-ROOT_FOLDER        = '/Users/hugo/www/geovalidation/'
+LOCAL = True
+
+if LOCAL == True:
+  ROOT_FOLDER        = '/Users/hugo/www/geovalidation/'
+else:
+  ROOT_FOLDER        = '/var/www/geovalidation/'
+
 UPLOAD_FOLDER      = ROOT_FOLDER + 'uploads/'
 TMP_FOLDER         = ROOT_FOLDER + 'tmp/'
 REPORTS_FOLDER     = ROOT_FOLDER + 'reports/'
@@ -79,7 +85,10 @@ def addgmlids():
             n = os.path.join(app.config['TMP_FOLDER'], fname)
             f.save(n)
             n2 = n[:-4] + ".id.xml"
-            os.system("python /Users/hugo/projects/val3dity/ressources/python/addgmlids.py %s %s" % (n, n2))
+            if LOCAL == True:
+              os.system("python /Users/hugo/projects/val3dity/ressources/python/addgmlids.py %s %s" % (n, n2))
+            else:
+              os.system("python /home/hledoux/projects/val3dity/ressources/python/addgmlids.py %s %s" % (n, n2))
             # print '%s.id.xml' % fname[:-4]
             return send_from_directory(app.config['TMP_FOLDER'], '%s.id.xml' % fname[:-4])
         else:
@@ -153,7 +162,11 @@ def show_post(jobid):
  
 
 if __name__ == '__main__':
+  if LOCAL == True:
     app.run(debug=True) # TODO: no debug in release mode!
+  else:
+    app.run() 
+
 
 
 

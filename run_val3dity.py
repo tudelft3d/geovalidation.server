@@ -6,9 +6,17 @@ import subprocess
 from lxml import etree
 from StringIO import StringIO
 
-VAL3DITY_FOLDER    = '/Users/hugo/projects/val3dity'
-TMPOLYS_FOLDER     = '/Users/hugo/temp/tmpolys'
-ROOT_FOLDER        = '/Users/hugo/www/geovalidation/'
+LOCAL = True
+
+if LOCAL == True:
+  VAL3DITY_FOLDER    = '/Users/hugo/projects/val3dity'
+  TMPOLYS_FOLDER     = '/Users/hugo/temp/tmpolys'
+  ROOT_FOLDER        = '/Users/hugo/www/geovalidation/'
+else:
+  VAL3DITY_FOLDER    = '/home/hledoux/projects/val3dity'
+  TMPOLYS_FOLDER     = '/home/hledoux/temp/tmpolys'
+  ROOT_FOLDER        = '/var/www/geovalidation/'
+
 UPLOAD_FOLDER      = ROOT_FOLDER + 'uploads/'
 REPORTS_FOLDER     = ROOT_FOLDER + 'reports/'
 
