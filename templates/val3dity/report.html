@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "val3dity/layout.html" %}
 {% block body %}
  <title>val3dity: geometric validation of solids according to ISO19107</title>
   <h2>Report for the file {{ filename }}</h2>
@@ -10,7 +10,7 @@
     {% if welldone %}
       <img src="/img/welldone.png" width="120" alt="">
     {% else %}
-      <p>Errors present: (<a href='/errors'>overview of the possible errors</a>)</p>
+      <p>Errors present: (<a href='/val3dity/errors'>overview of the possible errors</a>)</p>
       <ul>
       {% for error in errors %}
         <li>{{ error }}</li>
@@ -18,5 +18,5 @@
       </ul>
     {% endif %}  
   {% endif %}  
-  <p><a href='/reports/download/{{ jid }}'>{{ jid }}.xml</a></p>
+  <p><a href='/val3dity/reports/download/{{ jid }}'>{{ jid }}.xml</a></p>
 {% endblock %}
