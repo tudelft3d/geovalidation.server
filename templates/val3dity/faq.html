@@ -13,6 +13,7 @@
     <li><a href="#the-validation-report-says-that-there-are-no-solids-in-my-file-but-i-can-see-the-buildings-with-my-viewer">The validation report says that there are no solids in my file, but I can see the buildings with my viewer!</a></li>
     <li><a href="#the-server-says-my-file-is-too-big-whats-the-maximum">The server says my file is too big, what&#8217;s the maximum?</a></li>
     <li><a href="#in-the-report-the-id-for-the-shells-and-surfaces-are-they-0-based-or-1-based">In the report, the ID for the shells and surfaces, are they 0-based or 1-based?</a></li>
+    <li><a href="#i-dont-have-ids-for-my-__gmlsolid__-and-this-is-annoying">I don&#8217;t have IDs for my <strong>gml:Solid</strong>, and this is annoying.</a></li>
   </ul>
 
 <hr />
@@ -27,7 +28,7 @@
 
 <script src="https://gist.github.com/hugoledoux/11082609.js"></script>
 
-<p>The report lists only the solids that are <em>not</em> valid, and gives one or more <a href="/val3dity/errors">errors</a> for each. If your solids have <strong>gml:id</strong> then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 1). We offer a <a href="/val3dity/addgmlids">small service</a> that add <strong>gml:id</strong> to the <strong>gml:Solid</strong> of your file. If a surface is reported invalid, then the ID of the surface is also based on the order of the surfaces in one <strong>gml:Shell</strong>; -1 means that it&#8217;s not relevant. Some examples, referring to the example above. The 25th solid in the file is invalid because the 14th surface of its first shell is non-planar; the 41st solid is invalid because all the normals of its third shell are the wrong orientation (-1 means that the error is for no specific surface); the 666th solid has 2 shells that are face adjacent, one of them being the 2nd one (its 3rd surface is touching another one). All the other solids in the file are valid.</p>
+<p>The report lists only the solids that are <em>not</em> valid, and gives one or more <a href="/val3dity/errors">errors</a> for each. If your solids have <strong>gml:id</strong> then these are used to report the errors, if not then the number means the order of the solids in the file (the first one being 1). We offer a <a href="/val3dity/addgmlids">small service</a> that adds a <strong>gml:id</strong> to all the <strong>gml:Solid</strong> in your file. If a surface is reported invalid, then the ID of the surface is also based on the order of the surfaces in one <strong>gml:Shell</strong>; -1 means that it&#8217;s not relevant. Some examples, referring to the example above. The 25th solid in the file is invalid because the 14th surface of its first shell is non-planar; the 41st solid is invalid because all the normals of its third shell are the wrong orientation (-1 means that the error is for no specific surface); the 666th solid has 2 shells that are face adjacent, one of them being the 2nd one (its 3rd surface is touching another one). All the other solids in the file are valid.</p>
 
 <hr />
 
@@ -72,5 +73,9 @@
 <h3 id="in-the-report-the-id-for-the-shells-and-surfaces-are-they-0-based-or-1-based">In the report, the ID for the shells and surfaces, are they 0-based or 1-based?</h3>
 
 <p>1-based.</p>
+
+<h3 id="i-dont-have-ids-for-my-__gmlsolid__-and-this-is-annoying">I don&#8217;t have IDs for my <strong>gml:Solid</strong>, and this is annoying.</h3>
+
+<p>We offer a <a href="/val3dity/addgmlids">small service</a> that adds a <strong>gml:id</strong> to all the <strong>gml:Solid</strong> in your file.</p>
 
 {% endblock %}
