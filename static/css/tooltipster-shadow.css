@@ -1,0 +1,12 @@
+.tooltipster-shadow {
+	border-radius: 5px;
+	background: #393939;
+	box-shadow: -3px 3px 0px #F5A623;
+	color: #fafafa;
+}
+.tooltipster-shadow .tooltipster-content {
+  font-family: 'Inconsolata', null;
+	font-size: 14px;
+	line-height: 16px;
+	padding: 8px 10px;
+}
