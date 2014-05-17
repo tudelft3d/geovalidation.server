@@ -11,7 +11,7 @@ We delete it right after having validated it, we promise. The report is however 
 
 ---
 
-### I don't understand the report I get.
+### How should I interpret the report?
 
 <script src="https://gist.github.com/hugoledoux/11082609.js"></script>
 
