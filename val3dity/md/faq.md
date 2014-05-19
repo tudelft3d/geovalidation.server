@@ -9,7 +9,7 @@
 
 ### What do you do with my uploaded file?
 
-We delete it right after having validated it, we promise. The report is however available to everyone (if they know its ID).
+We delete it right after having validated it, we promise. The report is however available to anyone who knows its ID.
 
 ---
 
@@ -35,7 +35,7 @@ It's normal: as shown in the figure below, a solid is validated *hierarchically*
 
 ---
 
-### I'm sure that my solid is okay, I've double-checked, and yet the validator says that something is wrong.
+### I'm sure my solid is valid, but the validator says that something is wrong.
 
 It's possible that there are bugs in [val3dity](https://github.com/tudelft-gist/val3dity). Please [report the issue](https://github.com/tudelft-gist/val3dity/issues).
 
@@ -55,15 +55,15 @@ Our validator only checks the former. The reason is simple: if an object is mode
 
 ### The server says my file is too big, what's the maximum?
 
-50MB. If you need more, [get in touch](/val3dity/contact) or download the [code](https://github.com/tudelft-gist/val3dity), compile it and run val3dity locally.
+50MB. If you need more, [get in touch](/val3dity/contact) or download the [code](https://github.com/tudelft-gist/val3dity), compile it and run it locally.
 
 ---
 
-### In the report, the ID for the shells and surfaces, are they 0-based or 1-based?
+### The IDs for the shells and surfaces in the report, are they 0-based or 1-based?
 
 1-based.
 
-### I don't have IDs for my __gml:Solid__, and this is annoying.
+### I don't have IDs for my __gml:Solid__.
 
 We offer a <a href="{{  url_for("addgmlids")  }}">small service</a> that adds a __gml:id__ to all the __gml:Solid__ in your file
 
