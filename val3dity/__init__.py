@@ -100,19 +100,22 @@ def index():
     # global jobid
     if request.method == 'POST':
         f = request.files['file']
-        if f and allowed_file(f.filename):
-            fname = secure_filename(f.filename)
-            f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-            snap_tolerance = verify_snap_tolerance(request.form['snap_tolerance'])
-            jid = get_job_id()
-            fjob = open("%s%s.txt" % (UPLOAD_FOLDER, jid), 'w')
-            fjob.write("%s\n" % fname)
-            fjob.write("%s\n" % snap_tolerance)
-            fjob.write("%s\n" % time.asctime())
-            fjob.close()
-            return render_template("uploaded.html", id=jid)
+        if f:
+            if  allowed_file(f.filename):
+              fname = secure_filename(f.filename)
+              f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+              snap_tolerance = verify_snap_tolerance(request.form['snap_tolerance'])
+              jid = get_job_id()
+              fjob = open("%s%s.txt" % (UPLOAD_FOLDER, jid), 'w')
+              fjob.write("%s\n" % fname)
+              fjob.write("%s\n" % snap_tolerance)
+              fjob.write("%s\n" % time.asctime())
+              fjob.close()
+              return render_template("index.html", jobid=jid)
+            else:
+              return render_template("index.html", problem='Uploaded file if not of a GML file.')
         else:
-            return render_template("status.html", success=False, info1='File not of GML/XML type.')
+            return render_template("index.html", problem='No file selected.')
     return render_template("index.html")
 
 

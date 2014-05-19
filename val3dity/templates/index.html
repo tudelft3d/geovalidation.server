@@ -37,4 +37,18 @@
   </form>
   </div>
 
+{% if jobid %}
+  <div class="alert alert-success">
+    <p>File successfully uploaded.</p>
+    <p>The ID for your validation task is {{ jobid }}.</p>
+    <p>The validation report will soon be available <a href="{{ url_for('index') }}reports/{{ jobid }}">there</a>; it might take a few minutes, depending on the size of the file.</p>
+  </div>
+{% endif %}
+
+{% if problem %}
+  <div class="alert alert-danger">
+    <p>{{ problem }}</p>
+  </div>
+{% endif %}
+
 {% endblock %}
