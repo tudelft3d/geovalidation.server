@@ -91,7 +91,7 @@ def addgmlids():
             # print '%s.id.xml' % fname[:-4]
             return send_from_directory(app.config['TMP_FOLDER'], '%s.id.xml' % fname[:-4])
         else:
-            return render_template("info.html", title='error', info1='File not of GML/XML type.')
+            return render_template("status.html", success=False, info1='File not of GML/XML type.')
     return render_template("addgmlids.html")
 
 
@@ -112,7 +112,7 @@ def index():
             fjob.close()
             return render_template("uploaded.html", id=jid)
         else:
-            return render_template("info.html", title='error', info1='File not of GML/XML type.')
+            return render_template("status.html", success=False, info1='File not of GML/XML type.')
     return render_template("index.html")
 
 
@@ -126,7 +126,7 @@ def reports(jobid):
     fs = "%s%s.txt" % (REPORTS_FOLDER, jobid)
     fr = "%s%s.xml" % (REPORTS_FOLDER, jobid)
     if not os.path.exists(fs):
-        return render_template("info.html", title='error', info1='No such report or the process is not finished.', info2='Be patient.', refresh=True)
+        return render_template("status.html", success=False, info1='No such report or the process is not finished.', info2='Be patient.', refresh=True)
     else:
         summary = open(fs, "r").read().split('\n')
         report = open(fr, "r")
@@ -138,6 +138,7 @@ def reports(jobid):
             return render_template("report.html", 
                                   problems='%s'%summary[0],
                                   filename=fname,
+                                  welldone=False,
                                   jid=jobid
                                   )
         else:

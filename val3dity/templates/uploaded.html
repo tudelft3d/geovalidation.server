@@ -1,10 +1,9 @@
-
 {% extends "layout.html" %}
 {% block body %}
 
-<p>The ID for your validation task is {{ id }}</p>
-<p>The validation report will soon be available <a href="{{ url_for('index') }}reports/{{ id }}" >there</a>; it might take a few minutes, depending on the size of the file.</p>
-
+<div class="alert alert-success">
+  <p>The ID for your validation task is {{ id }}</p>
+  <p>The validation report will soon be available <a href="{{ url_for('index') }}reports/{{ id }}">there</a>; it might take a few minutes, depending on the size of the file.</p>
+</div>
 
 {% endblock %}
-
