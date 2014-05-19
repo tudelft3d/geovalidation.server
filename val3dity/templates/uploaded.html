@@ -1,8 +1,10 @@
 
 {% extends "layout.html" %}
 {% block body %}
-<title>val3dity: geometric validation of solids according to ISO19107</title>  
-<h2>done.</h2>
+
 <p>The ID for your validation task is {{ id }}</p>
-<p>The validation report will soon be available <a href='/reports/{{ id }}'>there</a>; it might take a few minutes, depending on the size of the file.</p>
+<p>The validation report will soon be available <a href="{{ url_for('index') }}reports/{{ id }}" >there</a>; it might take a few minutes, depending on the size of the file.</p>
+
+
 {% endblock %}
+

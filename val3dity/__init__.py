@@ -117,12 +117,12 @@ def index():
 
 
 @app.route('/reports/download/<jobid>')
-def download_report(jobid):
+def reports_download(jobid):
     return send_from_directory(app.config['REPORTS_FOLDER'], '%s.xml' % jobid)
 
 
 @app.route('/reports/<jobid>')
-def show_post(jobid):
+def reports(jobid):
     fs = "%s%s.txt" % (REPORTS_FOLDER, jobid)
     fr = "%s%s.xml" % (REPORTS_FOLDER, jobid)
     if not os.path.exists(fs):

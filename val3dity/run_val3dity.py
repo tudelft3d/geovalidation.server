@@ -11,7 +11,7 @@ LOCAL = True
 if LOCAL == True:
   VAL3DITY_FOLDER    = '/Users/hugo/projects/val3dity'
   TMPOLYS_FOLDER     = '/Users/hugo/temp/tmpolys'
-  ROOT_FOLDER        = '/Users/hugo/www/geovalidation/'
+  ROOT_FOLDER        = '/Users/hugo/www/geovalidation/val3dity/'
 else:
   VAL3DITY_FOLDER    = '/home/hledoux/projects/val3dity'
   TMPOLYS_FOLDER     = '/home/hledoux/temp/tmpolys'
