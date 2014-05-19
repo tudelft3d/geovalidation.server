@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <h3>Upload your GML file and get one back with a gml:id for each gml:Solid</h3>
+  <form action="" method=post enctype=multipart/form-data>
+      <input type=file name=file><br>
+      <input type=submit value="upload">
+  </form>
+
+{% endblock %}

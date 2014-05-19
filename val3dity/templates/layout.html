@@ -11,7 +11,7 @@
     <title>val3dity: geometric validation of GML solids</title>
     
     <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tooltipster.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tooltipster-shadow.css') }}">
@@ -36,10 +36,10 @@
   </div>
   <div id="footer">
     <hr/>
-    <a href="/val3dity">home</a> 
-    <a href="/val3dity/about">about</a> 
-    <a href="/val3dity/faq">faq</a> 
-    <a href="/val3dity/contact">contact</a> 
+    <a href="{{ url_for('index') }}">home</a> 
+    <a href="{{ url_for('about') }}">about</a> 
+    <a href="{{ url_for('faq') }}">faq</a> 
+    <a href="{{ url_for('contact') }}">contact</a> 
   </div>
 </body>
 </html>

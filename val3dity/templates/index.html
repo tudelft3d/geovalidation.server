@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <h1><img src="{{ url_for('static', filename='img/val3dity.png') }}" width=250 alt=""/><br>geometric validation of GML solids</h1>
+    <form action="" method=post enctype=multipart/form-data>
+      <ol>
+        <li><input type=file name=file></li>
+        <li>snapping tolerance for vertices: <input type="text" name="snap_tolerance" value="1e-3" maxlength="5"><i class="fa fa-question-circle tooltip" title="if 2 input points are closer then this value, then we assume they are the same"></i></li>
+        <li><input type=submit value="upload + validate"></li>
+        <li>you'll get a report detailing the errors, if any.</li>
+      </ol>
+    </form>
+
+{% endblock %}

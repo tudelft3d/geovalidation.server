@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <h1>Report for the file {{ filename }}</h1>
+  {% if problems %}
+    <p><FONT COLOR="#fa1b33">{{ problems }}</FONT></p>
+  {% else %}
+    <p>{{ summary0 }}</p>
+    <p>{{ summary1 }}</p>
+    {% if welldone %}
+      <img src="{{ url_for('static', filename='img/welldone.png') }}" width="120" alt="">
+    {% else %}
+      <p>Errors present: (<a href='/errors'>overview of the possible errors</a>)</p>
+      <ul>
+      {% for error in errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}  
+  {% endif %}  
+  <p>Download the report: <a href="{{ url_for('index') }}reports/download/{{ jid }}">{{ jid }}.xml</a> (<a href="{{ url_for('index') }}faq#how-should-i-interpret-the-report">how to interpret it?</a>)</p>
+{% endblock %}
