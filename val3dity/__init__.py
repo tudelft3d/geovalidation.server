@@ -1,26 +1,14 @@
 
 from flask import Flask
-
-LOCAL = True
-
-if LOCAL == True:
-  ROOT_FOLDER        = '/Users/hugo/www/geovalidation/val3dity/'
-else:
-  ROOT_FOLDER        = '/var/www/geovalidation/'
-
-UPLOAD_FOLDER       = ROOT_FOLDER + 'uploads/'
-REPORTS_FOLDER      = ROOT_FOLDER + 'reports/'
-PROBLEMFILES_FOLDER = ROOT_FOLDER + 'problemfiles/'
-TMP_FOLDER          = ROOT_FOLDER + 'tmp/'
-STATIC_FOLDER       = ROOT_FOLDER + 'static/'
-
-ALLOWED_EXTENSIONS = set(['gml', 'xml'])
+from settings import *
 
 app = Flask(__name__, static_url_path='')
 app.config['UPLOAD_FOLDER']       = UPLOAD_FOLDER
 app.config['REPORTS_FOLDER']      = REPORTS_FOLDER
 app.config['PROBLEMFILES_FOLDER'] = PROBLEMFILES_FOLDER
 app.config['TMP_FOLDER']          = TMP_FOLDER
+
+ALLOWED_EXTENSIONS = set(['gml', 'xml'])
 
 from val3dity import app
 from flask import render_template, request, redirect, url_for, send_from_directory
@@ -30,14 +18,7 @@ import uuid
 import time
 
 # return app.send_static_file('index.html')
-# return send_from_directory('/Users/hugo/Dropbox/temp/flask', 'index.html')
-# return send_from_directory(app.config['REPORTS_FOLDER'], '%d.xml' % jobid)
 # return redirect(url_for('uploaded_file', filename=fname))
-
-# @app.route('/static/<path:filename>')
-# def send_foo(filename):
-#     return send_from_directory(STATIC_FOLDER, filename)
-
 
 @app.route('/errors')
 def errors():
@@ -86,11 +67,7 @@ def addgmlids():
             n = os.path.join(app.config['TMP_FOLDER'], fname)
             f.save(n)
             n2 = n[:-4] + ".id.xml"
-            if LOCAL == True:
-              os.system("python /Users/hugo/projects/val3dity/ressources/python/addgmlids.py %s %s" % (n, n2))
-            else:
-              os.system("python /home/hledoux/projects/val3dity/ressources/python/addgmlids.py %s %s" % (n, n2))
-            # print '%s.id.xml' % fname[:-4]
+            os.system("%s %s %s" % (ADDGMLIDS, n, n2))
             return send_from_directory(app.config['TMP_FOLDER'], '%s.id.xml' % fname[:-4])
         else:
             return render_template("status.html", success=False, info1='File not of GML/XML type.')

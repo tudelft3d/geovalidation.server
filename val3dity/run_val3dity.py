@@ -5,20 +5,8 @@ import glob
 import subprocess
 from lxml import etree
 from StringIO import StringIO
+from settings import *
 
-LOCAL = True
-
-if LOCAL == True:
-  VAL3DITY_FOLDER    = '/Users/hugo/projects/val3dity'
-  TMPOLYS_FOLDER     = '/Users/hugo/temp/tmpolys'
-  ROOT_FOLDER        = '/Users/hugo/www/geovalidation/val3dity/'
-else:
-  VAL3DITY_FOLDER    = '/home/hledoux/projects/val3dity'
-  TMPOLYS_FOLDER     = '/home/hledoux/temp/tmpolys'
-  ROOT_FOLDER        = '/var/www/geovalidation/'
-
-UPLOAD_FOLDER      = ROOT_FOLDER + 'uploads/'
-REPORTS_FOLDER     = ROOT_FOLDER + 'reports/'
 
 dErrors = {
   100: 'REPEATED_POINTS',
@@ -99,7 +87,7 @@ def construct_polys(fin, snap):
   else:
       shutil.rmtree(TMPOLYS_FOLDER)
       os.mkdir(TMPOLYS_FOLDER)
-  s = "python %s/ressources/python/gml2poly/gml2poly.py %s %s --snap_tolerance %s" % (VAL3DITY_FOLDER, fin.name, TMPOLYS_FOLDER, snap)
+  s = "%s %s %s --snap_tolerance %s" % (GML2POLY_EXE, fin.name, TMPOLYS_FOLDER, snap)
   os.system(s)
   polys = os.listdir(TMPOLYS_FOLDER)
   if len(polys) == 1 and polys[0] == 'error': 
