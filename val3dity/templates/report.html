@@ -7,10 +7,11 @@
 
 {% if welldone %}
   <div class="panel panel-success">
+    <div class="panel-heading">Summary: all the solids are valid</div>
 {% else %}
   <div class="panel panel-danger">
+    <div class="panel-heading">Summary: not all solids are valid</div>
 {% endif %}
-    <div class="panel-heading">Summary</div>
       <div class="panel-body">
       {% if problems %}
         <p><FONT COLOR="#fa1b33">{{ problems }}</FONT></p>
@@ -32,6 +33,7 @@
   </div>  
 
   <div class="well">  
-    <p>Download the report: <a href="{{ url_for('index') }}reports/download/{{ jid }}">{{ jid }}.xml</a> (<a href="{{ url_for('index') }}faq#how-should-i-interpret-the-report">how to interpret it?</a>)</p>
+    <p>Download the report detailing the errors: <a href="{{ url_for('index') }}reports/download/{{ jid }}">{{ jid }}.xml</a></p>
+    <p>(<a href="{{ url_for('index') }}faq#how-should-i-interpret-the-report">how to interpret the report?</a>)</p>
   </div>
 {% endblock %}

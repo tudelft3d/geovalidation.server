@@ -8,17 +8,19 @@ if LOCAL == True:
 else:
   ROOT_FOLDER        = '/var/www/geovalidation/'
 
-UPLOAD_FOLDER      = ROOT_FOLDER + 'uploads/'
-TMP_FOLDER         = ROOT_FOLDER + 'tmp/'
-REPORTS_FOLDER     = ROOT_FOLDER + 'reports/'
-STATIC_FOLDER      = ROOT_FOLDER + 'static/'
+UPLOAD_FOLDER       = ROOT_FOLDER + 'uploads/'
+REPORTS_FOLDER      = ROOT_FOLDER + 'reports/'
+PROBLEMFILES_FOLDER = ROOT_FOLDER + 'problemfiles/'
+TMP_FOLDER          = ROOT_FOLDER + 'tmp/'
+STATIC_FOLDER       = ROOT_FOLDER + 'static/'
 
 ALLOWED_EXTENSIONS = set(['gml', 'xml'])
 
 app = Flask(__name__, static_url_path='')
-app.config['UPLOAD_FOLDER']  = UPLOAD_FOLDER
-app.config['REPORTS_FOLDER'] = REPORTS_FOLDER
-app.config['TMP_FOLDER']     = TMP_FOLDER
+app.config['UPLOAD_FOLDER']       = UPLOAD_FOLDER
+app.config['REPORTS_FOLDER']      = REPORTS_FOLDER
+app.config['PROBLEMFILES_FOLDER'] = PROBLEMFILES_FOLDER
+app.config['TMP_FOLDER']          = TMP_FOLDER
 
 from val3dity import app
 from flask import render_template, request, redirect, url_for, send_from_directory
@@ -95,6 +97,19 @@ def addgmlids():
     return render_template("addgmlids.html")
 
 
+@app.route('/_problemfiles', methods=['GET', 'POST'])
+def problemfiles():
+    if request.method == 'POST':
+        f = request.files['file']
+        if f and allowed_file(f.filename):
+            fname = secure_filename(f.filename)
+            print fname
+            n = os.path.join(app.config['PROBLEMFILES_FOLDER'], fname)
+            print n
+            f.save(n)
+            return render_template("problemfiles.html", done=True)
+    return render_template("problemfiles.html")
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # global jobid
@@ -113,7 +128,7 @@ def index():
               fjob.close()
               return render_template("index.html", jobid=jid)
             else:
-              return render_template("index.html", problem='Uploaded file if not of a GML file.')
+              return render_template("index.html", problem='Uploaded file is not of a GML file.')
         else:
             return render_template("index.html", problem='No file selected.')
     return render_template("index.html")
