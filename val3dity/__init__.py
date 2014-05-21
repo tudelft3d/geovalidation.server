@@ -67,7 +67,7 @@ def addgmlids():
             n = os.path.join(app.config['TMP_FOLDER'], fname)
             f.save(n)
             n2 = n[:-4] + ".id.xml"
-            os.system("%s %s %s" % (ADDGMLIDS, n, n2))
+            os.system("%s %s %s" % (ADDGMLIDS_EXE, n, n2))
             return send_from_directory(app.config['TMP_FOLDER'], '%s.id.xml' % fname[:-4])
         else:
             return render_template("status.html", success=False, info1='File not of GML/XML type.')
