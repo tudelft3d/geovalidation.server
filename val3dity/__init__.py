@@ -70,7 +70,7 @@ def addgmlids():
             os.system("%s %s %s" % (ADDGMLIDS_EXE, n, n2))
             return send_from_directory(app.config['TMP_FOLDER'], '%s.id.xml' % fname[:-4])
         else:
-            return render_template("status.html", success=False, info1='File not of GML/XML type.')
+            return render_template("status.html", success=False, info1='Uploaded file is not a GML file.')
     return render_template("addgmlids.html")
 
 
@@ -105,7 +105,7 @@ def index():
               fjob.close()
               return render_template("index.html", jobid=jid)
             else:
-              return render_template("index.html", problem='Uploaded file is not of a GML file.')
+              return render_template("index.html", problem='Uploaded file is not a GML file.')
         else:
             return render_template("index.html", problem='No file selected.')
     return render_template("index.html")

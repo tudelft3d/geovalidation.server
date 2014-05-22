@@ -53,6 +53,18 @@ Our validator only checks the former. The reason is simple: if an object is mode
 
 ---
 
+### Can my GML file contain more than one gml:Solid?
+
+Yes, all the solids in the file will be validated, one by one.
+
+---
+
+### Do you validate the topological relationships between the solids?
+
+No we don't. Each solid is validated completely independently from the others.
+
+---
+
 ### The server says my file is too big, what's the maximum?
 
 50MB. If you need more, [get in touch](/val3dity/contact) or download the [code](https://github.com/tudelft-gist/val3dity), compile it and run it locally.
@@ -62,6 +74,8 @@ Our validator only checks the former. The reason is simple: if an object is mode
 ### The IDs for the shells and surfaces in the report, are they 0-based or 1-based?
 
 1-based.
+
+---
 
 ### I don't have IDs for my __gml:Solid__.
 

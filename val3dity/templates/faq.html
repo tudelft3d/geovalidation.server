@@ -12,6 +12,8 @@
   <li><a href="#i-dont-see-all-the-errors-in-my-solid">I don&#8217;t see all the errors in my solid.</a></li>
   <li><a href="#im-sure-my-solid-is-valid-but-the-validator-says-that-something-is-wrong">I&#8217;m sure my solid is valid, but the validator says that something is wrong.</a></li>
   <li><a href="#the-validation-report-says-that-there-are-no-solids-in-my-file-but-i-can-see-the-buildings-with-my-viewer">The validation report says that there are no solids in my file, but I can see the buildings with my viewer!</a></li>
+  <li><a href="#can-my-gml-file-contain-more-than-one-gmlsolid">Can my GML file contain more than one gml:Solid?</a></li>
+  <li><a href="#do-you-validate-the-topological-relationships-between-the-solids">Do you validate the topological relationships between the solids?</a></li>
   <li><a href="#the-server-says-my-file-is-too-big-whats-the-maximum">The server says my file is too big, what&#8217;s the maximum?</a></li>
   <li><a href="#the-ids-for-the-shells-and-surfaces-in-the-report-are-they-0-based-or-1-based">The IDs for the shells and surfaces in the report, are they 0-based or 1-based?</a></li>
   <li><a href="#i-dont-have-ids-for-my-__gmlsolid__">I don&#8217;t have IDs for my <strong>gml:Solid</strong>.</a></li>
@@ -65,6 +67,18 @@
 
 <hr />
 
+<h3 id="can-my-gml-file-contain-more-than-one-gmlsolid">Can my GML file contain more than one gml:Solid?</h3>
+
+<p>Yes, all the solids in the file will be validated, one by one.</p>
+
+<hr />
+
+<h3 id="do-you-validate-the-topological-relationships-between-the-solids">Do you validate the topological relationships between the solids?</h3>
+
+<p>No we don&#8217;t. Each solid is validated completely independently from the others.</p>
+
+<hr />
+
 <h3 id="the-server-says-my-file-is-too-big-whats-the-maximum">The server says my file is too big, what&#8217;s the maximum?</h3>
 
 <p>50MB. If you need more, <a href="/val3dity/contact">get in touch</a> or download the <a href="https://github.com/tudelft-gist/val3dity">code</a>, compile it and run it locally.</p>
@@ -74,6 +88,8 @@
 <h3 id="the-ids-for-the-shells-and-surfaces-in-the-report-are-they-0-based-or-1-based">The IDs for the shells and surfaces in the report, are they 0-based or 1-based?</h3>
 
 <p>1-based.</p>
+
+<hr />
 
 <h3 id="i-dont-have-ids-for-my-__gmlsolid__">I don&#8217;t have IDs for my <strong>gml:Solid</strong>.</h3>
 
