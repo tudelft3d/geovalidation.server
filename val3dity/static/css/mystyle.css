@@ -1,0 +1,15 @@
+body {
+  font-family: 'Inconsolata', null;
+  background-color: #fafafa;
+  font-color: #2df5dd;
+  padding-top: 50px;
+  text-align: left;
+}
+
+p,ul {
+  /*font-family: 'Inconsolata', null;*/
+  font-size: 18px;
+  /*background-color: #fafafa;*/
+  /*font-color: #2df5dd;*/
+  /*text-align: left; */
+}

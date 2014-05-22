@@ -1,24 +1,14 @@
 
 from flask import Flask
-
-LOCAL = True
-
-if LOCAL == True:
-  ROOT_FOLDER        = '/Users/hugo/www/geovalidation/val3dity/'
-else:
-  ROOT_FOLDER        = '/var/www/geovalidation/'
-
-UPLOAD_FOLDER      = ROOT_FOLDER + 'uploads/'
-TMP_FOLDER         = ROOT_FOLDER + 'tmp/'
-REPORTS_FOLDER     = ROOT_FOLDER + 'reports/'
-STATIC_FOLDER      = ROOT_FOLDER + 'static/'
-
-ALLOWED_EXTENSIONS = set(['gml', 'xml'])
+from settings import *
 
 app = Flask(__name__, static_url_path='')
-app.config['UPLOAD_FOLDER']  = UPLOAD_FOLDER
-app.config['REPORTS_FOLDER'] = REPORTS_FOLDER
-app.config['TMP_FOLDER']     = TMP_FOLDER
+app.config['UPLOAD_FOLDER']       = UPLOAD_FOLDER
+app.config['REPORTS_FOLDER']      = REPORTS_FOLDER
+app.config['PROBLEMFILES_FOLDER'] = PROBLEMFILES_FOLDER
+app.config['TMP_FOLDER']          = TMP_FOLDER
+
+ALLOWED_EXTENSIONS = set(['gml', 'xml'])
 
 from val3dity import app
 from flask import render_template, request, redirect, url_for, send_from_directory
@@ -28,14 +18,7 @@ import uuid
 import time
 
 # return app.send_static_file('index.html')
-# return send_from_directory('/Users/hugo/Dropbox/temp/flask', 'index.html')
-# return send_from_directory(app.config['REPORTS_FOLDER'], '%d.xml' % jobid)
 # return redirect(url_for('uploaded_file', filename=fname))
-
-# @app.route('/static/<path:filename>')
-# def send_foo(filename):
-#     return send_from_directory(STATIC_FOLDER, filename)
-
 
 @app.route('/errors')
 def errors():
@@ -84,35 +67,47 @@ def addgmlids():
             n = os.path.join(app.config['TMP_FOLDER'], fname)
             f.save(n)
             n2 = n[:-4] + ".id.xml"
-            if LOCAL == True:
-              os.system("python /Users/hugo/projects/val3dity/ressources/python/addgmlids.py %s %s" % (n, n2))
-            else:
-              os.system("python /home/hledoux/projects/val3dity/ressources/python/addgmlids.py %s %s" % (n, n2))
-            # print '%s.id.xml' % fname[:-4]
+            os.system("%s %s %s" % (ADDGMLIDS_EXE, n, n2))
             return send_from_directory(app.config['TMP_FOLDER'], '%s.id.xml' % fname[:-4])
         else:
-            return render_template("info.html", title='error', info1='File not of GML/XML type.')
+            return render_template("status.html", success=False, info1='File not of GML/XML type.')
     return render_template("addgmlids.html")
 
+
+@app.route('/_problemfiles', methods=['GET', 'POST'])
+def problemfiles():
+    if request.method == 'POST':
+        f = request.files['file']
+        if f and allowed_file(f.filename):
+            fname = secure_filename(f.filename)
+            print fname
+            n = os.path.join(app.config['PROBLEMFILES_FOLDER'], fname)
+            print n
+            f.save(n)
+            return render_template("problemfiles.html", done=True)
+    return render_template("problemfiles.html")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # global jobid
     if request.method == 'POST':
         f = request.files['file']
-        if f and allowed_file(f.filename):
-            fname = secure_filename(f.filename)
-            f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-            snap_tolerance = verify_snap_tolerance(request.form['snap_tolerance'])
-            jid = get_job_id()
-            fjob = open("%s%s.txt" % (UPLOAD_FOLDER, jid), 'w')
-            fjob.write("%s\n" % fname)
-            fjob.write("%s\n" % snap_tolerance)
-            fjob.write("%s\n" % time.asctime())
-            fjob.close()
-            return render_template("uploaded.html", id=jid)
+        if f:
+            if  allowed_file(f.filename):
+              fname = secure_filename(f.filename)
+              f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+              snap_tolerance = verify_snap_tolerance(request.form['snap_tolerance'])
+              jid = get_job_id()
+              fjob = open("%s%s.txt" % (UPLOAD_FOLDER, jid), 'w')
+              fjob.write("%s\n" % fname)
+              fjob.write("%s\n" % snap_tolerance)
+              fjob.write("%s\n" % time.asctime())
+              fjob.close()
+              return render_template("index.html", jobid=jid)
+            else:
+              return render_template("index.html", problem='Uploaded file is not of a GML file.')
         else:
-            return render_template("info.html", title='error', info1='File not of GML/XML type.')
+            return render_template("index.html", problem='No file selected.')
     return render_template("index.html")
 
 
@@ -126,7 +121,7 @@ def reports(jobid):
     fs = "%s%s.txt" % (REPORTS_FOLDER, jobid)
     fr = "%s%s.xml" % (REPORTS_FOLDER, jobid)
     if not os.path.exists(fs):
-        return render_template("info.html", title='error', info1='No such report or the process is not finished.', info2='Be patient.', refresh=True)
+        return render_template("status.html", success=False, info1='No such report or the process is not finished.', info2='Be patient.', refresh=True)
     else:
         summary = open(fs, "r").read().split('\n')
         report = open(fr, "r")
@@ -138,6 +133,7 @@ def reports(jobid):
             return render_template("report.html", 
                                   problems='%s'%summary[0],
                                   filename=fname,
+                                  welldone=False,
                                   jid=jobid
                                   )
         else:

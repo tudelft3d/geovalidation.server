@@ -1,7 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
- <title>val3dity: geometric validation of solids according to ISO19107</title>
-  <h2 id="errorreported">Error reported</h2>
+ 
+  <div class="page-header">
+    <h1 id="errorreported">error reported</h1>
+  </div>
   <h3 id="ringlevel">Ring level</h3>
     <ul>
     <li>100: REPEATED_POINTS</li>
@@ -37,4 +39,5 @@
     <li>420: INNER_SHELL_OUTSIDE_OUTER</li>
     <li>430: INTERIOR_OF_SHELL_NOT_CONNECTED</li>
   </ul>
+
 {% endblock %}

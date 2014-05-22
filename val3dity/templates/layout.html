@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="val3dity: geometric validation of GML solids">
     {% if refresh %}
       <meta  http-equiv="refresh"  content="10">
@@ -11,35 +12,38 @@
     <title>val3dity: geometric validation of GML solids</title>
     
     <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/sticky-footer.css') }}" rel="stylesheet">
+    <!-- Jasny -->
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <link href="{{ url_for('static', filename='css/mystyle.css') }}" rel="stylesheet">
     <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/tooltipster.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/tooltipster-shadow.css') }}">
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.7.0.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.tooltipster.min.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            // $('.tooltip').tooltipster();
-            $('.tooltip').tooltipster({
-              theme: 'tooltipster-shadow'
-            });
-        });
-    </script>
 </head>
-<body>
-  <div id="wrapper">
+  <body>
+    <div class="container">
+
 
   {% block body %} {% endblock %}
 
-  {{ name }}
 
   </div>
   <div id="footer">
-    <hr/>
-    <a href="{{ url_for('index') }}">home</a> 
-    <a href="{{ url_for('about') }}">about</a> 
-    <a href="{{ url_for('faq') }}">faq</a> 
-    <a href="{{ url_for('contact') }}">contact</a> 
+    <div class="container">
+      <p>
+      <a class="text-muted" href="{{ url_for('index') }}">val3dity</a>
+      <a class="text-muted" href="{{ url_for('about') }}">about</a> 
+      <a class="text-muted" href="{{ url_for('faq') }}">faq</a> 
+      <a class="text-muted" href="{{ url_for('contact') }}">contact</a> 
+      </p> 
+    </div>
   </div>
-</body>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/myscript.js') }}"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+  </body>
 </html>

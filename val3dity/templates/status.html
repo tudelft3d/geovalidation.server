@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block body %}
+
+{% if success %}
+  <div class="alert alert-success">
+{% else %}
+  <div class="alert alert-danger">
+{% endif %} 
+
+<p>{{ info1 }}</p>
+<p>{{ info2 }}</p>
+</div>
+
+{% endblock %}
