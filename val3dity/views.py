@@ -1,24 +1,26 @@
-
-from flask import Flask
+from val3dity import app
 from settings import *
 
-app = Flask(__name__, static_url_path='')
-app.config['UPLOAD_FOLDER']       = UPLOAD_FOLDER
-app.config['REPORTS_FOLDER']      = REPORTS_FOLDER
-app.config['PROBLEMFILES_FOLDER'] = PROBLEMFILES_FOLDER
-app.config['TMP_FOLDER']          = TMP_FOLDER
-
-ALLOWED_EXTENSIONS = set(['gml', 'xml'])
-
-from val3dity import app
 from flask import render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 import os
 import uuid
 import time
 
-# return app.send_static_file('index.html')
-# return redirect(url_for('uploaded_file', filename=fname))
+ALLOWED_EXTENSIONS = set(['gml', 'xml'])
+
+
+def verify_tolerance(t, defaultval):
+    t = t.replace(',', '.')
+    d = float(defaultval)
+    try:
+      re = float(t)
+      if (re >= 0.0):
+        return re
+      return d
+    except:
+      return d
+
 
 @app.route('/errors')
 def errors():
@@ -31,6 +33,7 @@ def about():
 @app.route('/contact')
 def contact():
     return render_template("contact.html")
+
     
 @app.route('/faq')
 def faq():
@@ -39,18 +42,6 @@ def faq():
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-
-def verify_snap_tolerance(t):
-    t = t.replace(',', '.')
-    d = float(1e-3)
-    try:
-      re = float(t)
-      if (re >= 0.0):
-        return re
-      return d
-    except:
-      return d
 
 
 def get_job_id():
@@ -93,14 +84,17 @@ def index():
     if request.method == 'POST':
         f = request.files['file']
         if f:
-            if  allowed_file(f.filename):
+            if allowed_file(f.filename):
+              print "here."
               fname = secure_filename(f.filename)
               f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-              snap_tolerance = verify_snap_tolerance(request.form['snap_tolerance'])
+              snap_tolerance = verify_tolerance(request.form['snap_tolerance'], '1e-3')
+              planarity_d2p_tolerance = verify_tolerance(request.form['planarity_d2p_tolerance'], '1e-2')
               jid = get_job_id()
               fjob = open("%s%s.txt" % (UPLOAD_FOLDER, jid), 'w')
               fjob.write("%s\n" % fname)
               fjob.write("%s\n" % snap_tolerance)
+              fjob.write("%s\n" % planarity_d2p_tolerance)
               fjob.write("%s\n" % time.asctime())
               fjob.close()
               return render_template("index.html", jobid=jid)
@@ -155,13 +149,3 @@ def reports(jobid):
                                       errors=summary[3:-1]
                                       )
  
-
-# if __name__ == '__main__':
-#   if LOCAL == True:
-#     app.run(debug=True) # TODO: no debug in release mode!
-#   else:
-#     app.run() 
-
-
-
-
