@@ -81,5 +81,9 @@ No we don't. Each solid is validated completely independently from the others.
 
 We offer a <a href="{{  url_for("addgmlids")  }}">small service</a> that adds a __gml:id__ to all the __gml:Solid__ in your file
 
+---
 
+### Where can I get files containing __gml:Solids__?
+
+On the official [CityGML website](http://www.citygml.org/index.php?id=1539) there are a few files with 3D buildings.
 

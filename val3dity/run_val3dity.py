@@ -45,8 +45,9 @@ def main():
         fname = details.readline().rstrip('\n')
         files.append(fname)
         snap = details.readline().rstrip('\n')
+        planarity = details.readline().rstrip('\n')
         time = details.readline().rstrip('\n')
-        totalxml, summary = validate(UPLOAD_FOLDER+fname, snap, time)
+        totalxml, summary = validate(UPLOAD_FOLDER+fname, snap, planarity, time)
         print "validation finished."
         s = "%s%s.xml" % (REPORTS_FOLDER, jobid)        
         fout = open(s, 'w')
@@ -64,10 +65,10 @@ def main():
             os.remove(UPLOAD_FOLDER+fname)
 
 
-def validate(fin, snap, time):
+def validate(fin, snap, planarity, time):
   fin = open(fin)
   if (construct_polys(fin, snap) == 1):
-    totalxml, summary = validate_polys(fin, snap, time)
+    totalxml, summary = validate_polys(fin, snap, planarity, time)
     return totalxml, summary
   else:
     totalxml = []
@@ -100,7 +101,7 @@ def remove_tmpolys():
   shutil.rmtree("tmpolys")
 
 
-def validate_polys(fin, snap, time):
+def validate_polys(fin, snap, planarity, time):
   summary = ""
   dFiles = {}
   os.chdir(TMPOLYS_FOLDER)
@@ -118,12 +119,15 @@ def validate_polys(fin, snap, time):
   xmlsolids = []
   exampleerrors = []
   for solidname in dFiles:
-    # validate with val3dity
-    str1 = VAL3DITY_FOLDER + "/val3dity -xml " +  " ".join(dFiles[solidname])
-    print str1
-    op = subprocess.Popen(str1.split(' '),
-                          stdout=subprocess.PIPE, 
-                          stderr=subprocess.PIPE)
+    cmd = []
+    cmd.append(VAL3DITY_FOLDER + "val3dity")
+    cmd.append("-xml")
+    cmd.append("-planarity_d2p")
+    cmd.append(str(planarity))
+    for s in dFiles[solidname]:
+      cmd.append(s)
+    op = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                          
     R = op.poll()
     if R:
       res = op.communicate()
@@ -148,6 +152,7 @@ def validate_polys(fin, snap, time):
   a = (fin.name).rfind('/')
   totalxml.append('\t<inputFile>' + (fin.name)[a+1:] + '</inputFile>')
   totalxml.append('\t<snaptolerance>' + snap + '</snaptolerance>')
+  totalxml.append('\t<planaritytolerance>' + planarity + '</planaritytolerance>')
   totalxml.append('\t<time>' + time + '</time>')
   totalxml.append("\n".join(xmlsolids))
   totalxml.append('</val3dity>')
