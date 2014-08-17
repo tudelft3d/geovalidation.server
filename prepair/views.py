@@ -40,17 +40,16 @@ def index():
         print thewkt
         cmd = []
         cmd.append(PREPAIREXE)
-        cmd.append("--wkt ")
-        cmd.append('POLYGON((0 0, 0 10, 10 0, 10 10, 0 0))')
-        print cmd
+        cmd.append("--wkt")
+        cmd.append(r"%s" % thewkt)
+        # cmd.append(r"POLYGON((0 0, 0 10, 10 0, 10 10, 0 0))")
         op = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         R = op.poll()
         if R:
           res = op.communicate()
           raise ValueError(res[1])
         o =  op.communicate()[0]
-        print len(o), o
-        return render_template("index.html", problem=thewkt)
+        return render_template("index.html", success=o)
     return render_template("index.html")
 
 
