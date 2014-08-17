@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <div class="page-header">
+    <h1><img src="{{ url_for('static', filename='img/logo.svg') }}" width=250 alt=""/><br>automatic repair of GIS polygons</h1>
+  </div>
+      
+  <form class="form-horizontal" role="form" action="" method=post enctype=multipart/form-data>
+    <div class="form-group">
+      <textarea name="thewkt" class="form-control" rows="10" placeholder="POLYGON((0 0, 0 10, 10 0, 10 10, 0 0))"></textarea>
+    </div>
+    <div class="form-group">
+      <div class="text-center">
+        <button type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </div>
+  </form>
+
+{% if success %}
+  <div class="alert alert-success">
+    <p>{{ success }}</p>
+  </div>
+{% endif %}
+
+{% if problem %}
+  <div class="alert alert-danger">
+    <p>{{ problem }}</p>
+  </div>
+{% endif %}
+
+{% endblock %}
