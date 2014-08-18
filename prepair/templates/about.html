@@ -5,14 +5,16 @@
     <h1>about</h1>
 </div>
 
-<p>The validator, which uses the open-source project <a href="https://github.com/tudelft-gist/val3dity">val3dity</a> in the background, checks whether the solids stored in a GML file are <em>geometrically</em> valid according to the international standard <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO 19107:2003</a>. Any GML files, or one of the formats built upon it (such as CityGML), can be used as input. The validator simply scans the file looking for the <strong>gml:Solid</strong> tags and validates these (all the rest is ignored). It assumes that the input XML is syntactically valid according to the XSD of GML.</p>
+<p>prepair&#8211;pronounce &#8216;pee-repair&#8217; as in &#8216;polygon repair&#8217;&#8211;permits us to easily repair &#8216;broken&#8217; GIS polygons according to the international standard <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO19107</a> (Geographic information&#8211;Spatial schema). Given one input polygon (or a MultiPolygon), it <em>automatically</em> repairs it and returns back a valid polygon (actually a MultiPolygon since the input can represent more than one polygon&#8211;think of a &#8216;bowtie&#8217; for instance).</p>
 
+<p>It is an <a href="https://github.com/tudelft-gist/prepair">open-source project</a> released under the GPL licence. We offer here a simplified version: only the <a href="http://en.wikipedia.org/wiki/Well-known_text">WKT</a> of a polygon (or MultiPolygon) can be given as input, and it is repaired with an extension of the <a href="https://en.wikipedia.org/wiki/Even-odd_rule">odd-even algorithm</a> to handle GIS polygons containing inner rings and degeneracies. For other options, download the <a href="https://github.com/tudelft-gist/prepair">code</a> and compile it. </p>
 
 <p>Most of the details of the implementation are available in this scientific article:</p>
 
 <blockquote>
-  <p>Ledoux, Hugo (2013). On the validation of solids represented with the
-  international standards for geographic information. <em>Computer-Aided Civil and Infrastructure Engineering</em>, 28(9):693-706. <a href="http://homepage.tudelft.nl/23t4p/pdfs/_13cacaie.pdf"> [PDF] </a> <a href="http://dx.doi.org/10.1111/mice.12043"> [DOI] </a></p>
+  <p>Ledoux, H., Arroyo Ohori, K., and Meijers, M. (2014). A triangulation-based approach to automatically repair GIS polygons. <em>Computers &amp; Geosciences</em> 66:121-131. <a href="http://dx.doi.org/10.1016/j.cageo.2014.01.009"> [DOI] </a> <a href="http://homepage.tudelft.nl/23t4p/pdfs/14cgeo_prepair.pdf"> [PDF] </a></p>
 </blockquote>
+
+<p>If you encounter a bug, please report it on the <a href="https://github.com/tudelft-gist/prepair/issues">issue page</a>. </p>
 
 {% endblock %}

@@ -6,11 +6,15 @@ body {
   text-align: center;
 }
 
+a {
+  font-size: 18px;
+}
 
-p,ul {
+p {
   /*font-family: 'Inconsolata', null;*/
   font-size: 18px;
   line-height: 120%;
+  text-align: left;
   /*background-color: #fafafa;*/
   /*font-color: #2df5dd;*/
   /*text-align: left; */
