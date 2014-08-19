@@ -5,6 +5,11 @@ body {
   padding-top: 50px;
 }
 
+h1 {
+  text-align: center;
+}
+
+
 a {
   font-size: 18px;
 }
