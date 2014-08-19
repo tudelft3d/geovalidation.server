@@ -17,14 +17,14 @@
   </form>
 
 {% if success %}
-  <div class="alert alert-success">
-    <p>{{ success }}</p>
-  </div>
+  <pre>
+    {{ success }}
+  </pre>
 {% endif %}
 
 {% if problem %}
   <div class="alert alert-danger">
-    <p>{{ problem }}</p>
+    {{ problem }}
   </div>
 {% endif %}
 

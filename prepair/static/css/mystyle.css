@@ -3,7 +3,6 @@ body {
   background-color: #c8d3d5;
   color: #08253d;
   padding-top: 50px;
-  text-align: center;
 }
 
 a {
@@ -11,7 +10,6 @@ a {
 }
 
 p {
-  /*font-family: 'Inconsolata', null;*/
   font-size: 18px;
   line-height: 120%;
   text-align: left;
