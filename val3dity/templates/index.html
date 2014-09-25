@@ -2,7 +2,7 @@
 {% block body %}
 
   <div class="page-header">
-    <h1><img src="{{ url_for('static', filename='img/val3dity.png') }}" width=250 alt=""/><br>geometric validation of GML solids</h1>
+    <h2><img src="{{ url_for('static', filename='img/val3dity.png') }}" width=250 alt=""/><br>geometric validation of GML 3D primitives</h2>
   </div>
       
   <div class="well">
@@ -17,6 +17,21 @@
         </div>
       </div>
     </div>  
+
+    <div class="form-group">
+      <label class="col-sm-4 control-label">3D primitives <i class="fa fa-question-circle" data-toggle="tooltip" title="which 3D primitives to validate (can't be both at this moment)" ></i></label>
+      <div class="col-sm-8">
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-default active">
+            <input type="radio" name="primitives" value="solid" checked> gml:Solids
+          </label>
+          <label class="btn btn-default">
+            <input type="radio" name="primitives" value="ms"> gml:MultiSurfaces 
+          </label>
+        </div>
+      </div>
+    </div> 
+
     <div class="form-group">
       <label class="col-sm-4 control-label">Snap tolerance <i class="fa fa-question-circle" data-toggle="tooltip" title="if 2 points are closer then this value then we assume they are the same" ></i></label>
       <div class="col-sm-8">
@@ -29,11 +44,14 @@
         <input name="planarity_d2p_tolerance" type="text" class="form-control" value="0.01">
       </div>
     </div>
+    
+
     <div class="form-group">
       <div class="col-sm-offset-4 col-sm-8">
         <button type="submit" class="btn btn-default">Upload + validate</button>
       </div>
     </div>
+
   </form>
   </div>
 

@@ -85,14 +85,16 @@ def index():
         f = request.files['file']
         if f:
             if allowed_file(f.filename):
-              print "here."
+              # print "here."
               fname = secure_filename(f.filename)
               f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+              primitives = request.form['primitives']
               snap_tolerance = verify_tolerance(request.form['snap_tolerance'], '1e-3')
               planarity_d2p_tolerance = verify_tolerance(request.form['planarity_d2p_tolerance'], '1e-2')
               jid = get_job_id()
               fjob = open("%s%s.txt" % (UPLOAD_FOLDER, jid), 'w')
               fjob.write("%s\n" % fname)
+              fjob.write("%s\n" % primitives)
               fjob.write("%s\n" % snap_tolerance)
               fjob.write("%s\n" % planarity_d2p_tolerance)
               fjob.write("%s\n" % time.asctime())
