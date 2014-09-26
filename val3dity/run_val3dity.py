@@ -161,7 +161,10 @@ def validate_polys(fin, primitives, snap, planarity, time):
   totalxml.append('<val3dity>')
   a = (fin.name).rfind('/')
   totalxml.append('\t<inputFile>' + (fin.name)[a+1:] + '</inputFile>')
-  totalxml.append('\t<primitives>' + primitives + '</primitives>')
+  if (primitives == 'ms'):
+    totalxml.append('\t<primitives>' + 'gml:MultiSurface' + '</primitives>')
+  else:
+    totalxml.append('\t<primitives>' + 'gml:Solid' + '</primitives>')
   totalxml.append('\t<snaptolerance>' + snap + '</snaptolerance>')
   totalxml.append('\t<planaritytolerance>' + planarity + '</planaritytolerance>')
   totalxml.append('\t<time>' + time + '</time>')
