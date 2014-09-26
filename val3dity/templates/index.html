@@ -8,7 +8,7 @@
   <div class="well">
   <form class="form-horizontal" role="form" action="" method=post enctype=multipart/form-data>
     <div class="form-group">
-      <label class="col-sm-4 control-label">Input GML file <i class="fa fa-question-circle" data-toggle="tooltip" title="any GML file containing one or more gml:Solid" ></i></label>
+      <label class="col-sm-4 control-label">Input GML file <i class="fa fa-question-circle" data-toggle="tooltip" title="any GML file containing gml:Solids or gml:MultiSurfaces" ></i></label>
       <div class="col-sm-8">
           <div class="fileinput fileinput-new" data-provides="fileinput">
           <span class="btn btn-default btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" name="file"></span>
@@ -19,7 +19,7 @@
     </div>  
 
     <div class="form-group">
-      <label class="col-sm-4 control-label">3D primitives <i class="fa fa-question-circle" data-toggle="tooltip" title="which 3D primitives to validate?" ></i></label>
+      <label class="col-sm-4 control-label">3D primitives <i class="fa fa-question-circle" data-toggle="tooltip" title="which 3D primitives to validate? can't be both" ></i></label>
       <div class="col-sm-8">
         <div class="btn-group" data-toggle="buttons">
           <label class="btn btn-default active">
