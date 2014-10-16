@@ -127,7 +127,7 @@ def validate_polys(fin, primitives, snap, planarity, time):
     cmd = []
     cmd.append(VAL3DITY_FOLDER + "val3dity")
     if (primitives == 'ms'):
-      cmd.append("-multisurface")
+      cmd.append("-onlysurfaces")
     cmd.append("-xml")
     cmd.append("-planarity_d2p")
     cmd.append(str(planarity))
