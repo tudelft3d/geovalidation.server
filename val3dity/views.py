@@ -133,13 +133,22 @@ def reports(jobid):
                                   jid=jobid
                                   )
         else:
-            if (summary[2] == 'Hourrraaa!'):
+            if ( (summary[0][-2:] != ' 0') and (summary[2] == 'Hourrraaa!') ):
                 return render_template("report.html", 
                                       filename=fname,
                                       jid=jobid,
                                       summary0=summary[0], 
                                       summary1=summary[1],
                                       welldone=True 
+                                      )
+            elif ( (summary[0][-2:] == ' 0') and (summary[2] == 'Hourrraaa!') ):
+                return render_template("report.html", 
+                                      filename=fname,
+                                      jid=jobid,
+                                      summary0=summary[0], 
+                                      summary1=summary[1],
+                                      zeroprimitives=True,
+                                      welldone=False 
                                       )
             else:
                 print summary[3:-1]
