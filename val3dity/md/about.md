@@ -15,4 +15,4 @@ Most of the details of the implementation are available in this scientific artic
 
 > Ledoux, Hugo (2013). On the validation of solids represented with the
 international standards for geographic information. *Computer-Aided Civil and Infrastructure Engineering*, 28(9):693-706. 
-<a href="http://dx.doi.org/10.1111/mice.12043"><i class="fa fa-external-link"></i></a> <a href="http://homepage.tudelft.nl/23t4p/pdfs/_13cacaie.pdf"><i class="fa fa-file-pdf-o"></i></a>
+<a href="http://dx.doi.org/10.1111/mice.12043"><i class="fa fa-external-link"></i></a> <a href="http://3dgeoinfo.bk.tudelft.nl/hledoux/pdfs/_13cacaie.pdf"><i class="fa fa-file-pdf-o"></i></a>
