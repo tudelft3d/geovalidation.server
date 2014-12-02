@@ -7,9 +7,9 @@ The validator, which uses the open-source project [val3dity](https://github.com/
 
 <p><img width='500' src="{{ url_for('static', filename='img/workflow.svg') }}" alt="" /></p>
 
-The validation is performed hierarchically, ie first every polygon (embedded in 3D) is validated (by projecting it to a 2D plane and using [GEOS](http://trac.osgeo.org/geos/)), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. This means that if a polygon of your solid is not valid, then the validator will report that error but will *not* continue the validation (to avoid "cascading" errors). For __gml:MultiSurfaces__, only the validation of the polygons is performed.
+The validation is performed hierarchically, ie first every polygon (embedded in 3D) is validated (by projecting it to a 2D plane and using [GEOS](http://trac.osgeo.org/geos/)), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. This means that if a polygon of your solid is not valid, the validator will report that error but will *not* continue the validation (to avoid "cascading" errors). For __gml:MultiSurfaces__, only the validation of the polygons is performed.
 
-For an overview of all the possible errors, <a href="{{  url_for("errors")  }}">click here</a>.
+These <a href="{{  url_for("errors")  }}">errors</a> can be reported.
 
 Most of the details of the implementation are available in this scientific article:
 

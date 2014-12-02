@@ -9,16 +9,16 @@
 
 <p><img width='500' src="{{ url_for('static', filename='img/workflow.svg') }}" alt="" /></p>
 
-<p>The validation is performed hierarchically, ie first every polygon (embedded in 3D) is validated (by projecting it to a 2D plane and using <a href="http://trac.osgeo.org/geos/">GEOS</a>), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. This means that if a polygon of your solid is not valid, then the validator will report that error but will <em>not</em> continue the validation (to avoid &#8220;cascading&#8221; errors). For <strong>gml:MultiSurfaces</strong>, only the validation of the polygons is performed.</p>
+<p>The validation is performed hierarchically, ie first every polygon (embedded in 3D) is validated (by projecting it to a 2D plane and using <a href="http://trac.osgeo.org/geos/">GEOS</a>), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. This means that if a polygon of your solid is not valid, the validator will report that error but will <em>not</em> continue the validation (to avoid &#8220;cascading&#8221; errors). For <strong>gml:MultiSurfaces</strong>, only the validation of the polygons is performed.</p>
 
-<p>For an overview of all the possible errors, <a href="{{  url_for("errors")  }}">click here</a>.</p>
+<p>These <a href="{{  url_for("errors")  }}">errors</a> can be reported.</p>
 
 <p>Most of the details of the implementation are available in this scientific article:</p>
 
 <blockquote>
   <p>Ledoux, Hugo (2013). On the validation of solids represented with the
   international standards for geographic information. <em>Computer-Aided Civil and Infrastructure Engineering</em>, 28(9):693-706. 
-  <a href="http://dx.doi.org/10.1111/mice.12043"><i class="fa fa-external-link"></i></a> <a href="http://homepage.tudelft.nl/23t4p/pdfs/_13cacaie.pdf"><i class="fa fa-file-pdf-o"></i></a></p>
+  <a href="http://dx.doi.org/10.1111/mice.12043"><i class="fa fa-external-link"></i></a> <a href="http://3dgeoinfo.bk.tudelft.nl/hledoux/pdfs/_13cacaie.pdf"><i class="fa fa-file-pdf-o"></i></a></p>
 </blockquote>
 
 {% endblock %}
