@@ -7,10 +7,15 @@
 
 {% if welldone %}
   <div class="panel panel-success">
-    <div class="panel-heading">Summary: all the solids are valid</div>
+    <div class="panel-heading">Summary: all 3D primitives are valid</div>
 {% else %}
+  {% if zeroprimitives %}
   <div class="panel panel-danger">
-    <div class="panel-heading">Summary: not all solids are valid</div>
+    <div class="panel-heading">Summary: no 3D primitives found in the input file.</div>
+  {% else %}
+  <div class="panel panel-danger">
+    <div class="panel-heading">Summary: not all 3D primitives are valid</div>
+  {% endif %}
 {% endif %}
       <div class="panel-body">
       {% if problems %}

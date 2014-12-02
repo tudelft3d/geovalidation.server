@@ -44,10 +44,11 @@ def main():
         jobid = job[:-4]
         fname = details.readline().rstrip('\n')
         files.append(fname)
+        primitives = details.readline().rstrip('\n')
         snap = details.readline().rstrip('\n')
         planarity = details.readline().rstrip('\n')
         time = details.readline().rstrip('\n')
-        totalxml, summary = validate(UPLOAD_FOLDER+fname, snap, planarity, time)
+        totalxml, summary = validate(UPLOAD_FOLDER+fname, primitives, snap, planarity, time)
         print "validation finished."
         s = "%s%s.xml" % (REPORTS_FOLDER, jobid)        
         fout = open(s, 'w')
@@ -65,10 +66,10 @@ def main():
             os.remove(UPLOAD_FOLDER+fname)
 
 
-def validate(fin, snap, planarity, time):
+def validate(fin, primitives, snap, planarity, time):
   fin = open(fin)
-  if (construct_polys(fin, snap) == 1):
-    totalxml, summary = validate_polys(fin, snap, planarity, time)
+  if (construct_polys(fin, primitives, snap) == 1):
+    totalxml, summary = validate_polys(fin, primitives, snap, planarity, time)
     return totalxml, summary
   else:
     totalxml = []
@@ -81,14 +82,18 @@ def validate(fin, snap, planarity, time):
     totalxml.append('</val3dity>')
     return totalxml, "ERROR: Problems with parsing the XML. Cannot validate."
 
-def construct_polys(fin, snap):
-  print "Extracting the solids from the CityGML file"
+
+def construct_polys(fin, primitives, snap):
+  print "Extracting the 3D primitives from the CityGML file"
   if not os.path.exists(TMPOLYS_FOLDER):
       os.mkdir(TMPOLYS_FOLDER)
   else:
       shutil.rmtree(TMPOLYS_FOLDER)
       os.mkdir(TMPOLYS_FOLDER)
-  s = "%s %s %s --snap_tolerance %s" % (GML2POLY_EXE, fin.name, TMPOLYS_FOLDER, snap)
+  if primitives == 'solid':
+    s = "%s %s %s --snap_tolerance %s" % (GML2POLY_EXE, fin.name, TMPOLYS_FOLDER, snap)
+  else:
+    s = "%s %s %s --multisurface --snap_tolerance %s" % (GML2POLY_EXE, fin.name, TMPOLYS_FOLDER, snap)
   os.system(s)
   polys = os.listdir(TMPOLYS_FOLDER)
   if len(polys) == 1 and polys[0] == 'error': 
@@ -101,7 +106,7 @@ def remove_tmpolys():
   shutil.rmtree("tmpolys")
 
 
-def validate_polys(fin, snap, planarity, time):
+def validate_polys(fin, primitives, snap, planarity, time):
   summary = ""
   dFiles = {}
   os.chdir(TMPOLYS_FOLDER)
@@ -114,13 +119,15 @@ def validate_polys(fin, snap, planarity, time):
       else:
         dFiles[f1].append(f)
   i = 0
-  summary += "Number of solids in file: %d\n" % (len(dFiles))
+  summary += "Number of primitives in file: %d\n" % (len(dFiles))
   invalidsolids = 0
   xmlsolids = []
   exampleerrors = []
   for solidname in dFiles:
     cmd = []
     cmd.append(VAL3DITY_FOLDER + "val3dity")
+    if (primitives == 'ms'):
+      cmd.append("-onlysurfaces")
     cmd.append("-xml")
     cmd.append("-planarity_d2p")
     cmd.append(str(planarity))
@@ -144,20 +151,27 @@ def validate_polys(fin, snap, planarity, time):
           i = -1
         else:
           i = tmp + i + 1
-      o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
+      if primitives == 'solid':
+        o = '\t<Solid>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</Solid>'
+      else:
+        o = '\t<MultiSurface>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</MultiSurface>'
       xmlsolids.append(o)
     
   totalxml = []
   totalxml.append('<val3dity>')
   a = (fin.name).rfind('/')
   totalxml.append('\t<inputFile>' + (fin.name)[a+1:] + '</inputFile>')
+  if (primitives == 'ms'):
+    totalxml.append('\t<primitives>' + 'gml:MultiSurface' + '</primitives>')
+  else:
+    totalxml.append('\t<primitives>' + 'gml:Solid' + '</primitives>')
   totalxml.append('\t<snaptolerance>' + snap + '</snaptolerance>')
   totalxml.append('\t<planaritytolerance>' + planarity + '</planaritytolerance>')
   totalxml.append('\t<time>' + time + '</time>')
   totalxml.append("\n".join(xmlsolids))
   totalxml.append('</val3dity>')
   
-  summary += "Number of invalid solids: %d\n" % invalidsolids
+  summary += "Number of invalid primitives: %d\n" % invalidsolids
   if (invalidsolids == 0):
     summary += "Hourrraaa!\n"
   else:
