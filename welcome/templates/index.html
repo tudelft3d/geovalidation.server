@@ -1,7 +1,17 @@
-<html>
-<head>
-<meta http-equiv="REFRESH" content="0;url=http://geovalidation.bk.tudelft.nl/val3dity">
-</head>
-<body>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block body %}
+
+  <hr>
+  <div class="page-header">
+    <h2><a href="/val3dity"><img src="{{ url_for('static', filename='img/val3dity.png') }}" width=250 alt=""/></a><br>geometric validation of 3D primitives</h2>
+  </div>  
+
+  <div class="page-header">
+    <h2><a href="/prepair"><img src="{{ url_for('static', filename='img/prepair.svg') }}" width=250 alt=""/></a><br>automatic repair of GIS polygons</h2>
+  </div>
+
+  <div class="footer">
+    <a class="text-muted" href="{{ url_for('about') }}"><i class="fa fa-question fa-2x"></i></a>
+  </div>    
+
+{% endblock %}
