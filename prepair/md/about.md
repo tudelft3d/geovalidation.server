@@ -11,6 +11,6 @@ For repairing bigger polygons in *shapefiles* for instance, or for more repairin
 
 Most of the details of the implementation are available in this scientific article:
 
-> Ledoux, H., Arroyo Ohori, K., and Meijers, M. (2014). A triangulation-based approach to automatically repair GIS polygons. *Computers & Geosciences* 66:121-131. <a href="http://dx.doi.org/10.1016/j.cageo.2014.01.009"><i class="fa fa-external-link"></i></a> <a href="http://homepage.tudelft.nl/23t4p/pdfs/14cgeo_prepair.pdf"><i class="fa fa-file-pdf-o"></i></a>
+> Ledoux, H., Arroyo Ohori, K., and Meijers, M. (2014). A triangulation-based approach to automatically repair GIS polygons. *Computers & Geosciences* 66:121-131. <a href="http://dx.doi.org/10.1016/j.cageo.2014.01.009"><i class="fa fa-external-link"></i></a> <a href="http://3dgeoinfo.bk.tudelft.nl/hledoux/pdfs/14cgeo_prepair.pdf"><i class="fa fa-file-pdf-o"></i></a>
 
 If you encounter a bug, please report it on the [issue page](https://github.com/tudelft-gist/prepair/issues). 
