@@ -3,5 +3,6 @@ geovalidation
 
 code for [web server](http://geovalidation.bk.tudelft.nl) hosting val3dity
 
-crontab -e
-* * * * * /usr/local/bin/python /Users/hugo/www/geovalidation/val3dity.py
+1. redis-server
+2. celery -A val3dity.celery worker
+3. python runserver.py

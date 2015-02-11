@@ -1,15 +1,16 @@
 from val3dity import app
+from val3dity import celery
 from settings import *
 
+
 from sqlite3 import dbapi2 as sqlite3
-from flask import render_template, request, g, redirect, url_for, send_from_directory, _app_ctx_stack
+from flask import Flask, render_template, request, flash, redirect, url_for, send_from_directory, _app_ctx_stack
 from werkzeug.utils import secure_filename
 import os
 import uuid
 import time
 
 ALLOWED_EXTENSIONS = set(['gml', 'xml'])
-
 
 
 def verify_tolerance(t, defaultval):
@@ -23,6 +24,10 @@ def verify_tolerance(t, defaultval):
     except:
       return d
 
+@celery.task
+def add(a, b):
+    print "RESULT", a+b
+    return (a+b)
 
 @app.route('/errors')
 def errors():
@@ -129,8 +134,22 @@ def index():
             else:
               return render_template("index.html", problem='Uploaded file is not a GML file.')
         else:
+
             return render_template("index.html", problem='No file selected.')
+    else:
+        re = add.delay(10, 20)
+        print re.id
+        print re.ready()
+        print re.status
+        # print re.wait()
+        waitabit(re.id)
     return render_template("index.html")
+
+
+def waitabit(id):
+    result = celery.AsyncResult(id)
+    time.sleep(2)
+    print "now:", result.ready()
 
 
 @app.route('/reports/download/<jobid>')
