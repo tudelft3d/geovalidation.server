@@ -1,13 +1,15 @@
 from val3dity import app
 from settings import *
 
-from flask import render_template, request, redirect, url_for, send_from_directory
+from sqlite3 import dbapi2 as sqlite3
+from flask import render_template, request, g, redirect, url_for, send_from_directory, _app_ctx_stack
 from werkzeug.utils import secure_filename
 import os
 import uuid
 import time
 
 ALLOWED_EXTENSIONS = set(['gml', 'xml'])
+
 
 
 def verify_tolerance(t, defaultval):
@@ -45,7 +47,8 @@ def allowed_file(filename):
 
 
 def get_job_id():
-    return str(uuid.uuid4()).split('-')[0]
+    return str(uuid.uuid4())
+    # return str(uuid.uuid4()).split('-')[0]
 
 
 @app.route('/addgmlids', methods=['GET', 'POST'])
@@ -78,6 +81,27 @@ def problemfiles():
             return render_template("problemfiles.html", done=True)
     return render_template("problemfiles.html")
 
+
+def get_db():
+    """Opens a new database connection if there is none yet for the
+    current application context.
+    """
+    top = _app_ctx_stack.top
+    if not hasattr(top, 'sqlite_db'):
+        sqlite_db = sqlite3.connect(app.config['DATABASE'])
+        sqlite_db.row_factory = sqlite3.Row
+        top.sqlite_db = sqlite_db
+    return top.sqlite_db
+
+
+@app.teardown_appcontext
+def close_db_connection(exception):
+    """Closes the database again at the end of the request."""
+    top = _app_ctx_stack.top
+    if hasattr(top, 'sqlite_db'):
+        top.sqlite_db.close()
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # global jobid
@@ -86,19 +110,21 @@ def index():
         if f:
             if allowed_file(f.filename):
               # print "here."
+              db = get_db()
               fname = secure_filename(f.filename)
               f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
               primitives = request.form['primitives']
-              snap_tolerance = verify_tolerance(request.form['snap_tolerance'], '1e-3')
-              planarity_d2p_tolerance = verify_tolerance(request.form['planarity_d2p_tolerance'], '1e-2')
+              snaptol = verify_tolerance(request.form['snaptol'], '1e-3')
+              plantol = verify_tolerance(request.form['plantol'], '1e-2')
               jid = get_job_id()
-              fjob = open("%s%s.txt" % (UPLOAD_FOLDER, jid), 'w')
-              fjob.write("%s\n" % fname)
-              fjob.write("%s\n" % primitives)
-              fjob.write("%s\n" % snap_tolerance)
-              fjob.write("%s\n" % planarity_d2p_tolerance)
-              fjob.write("%s\n" % time.asctime())
-              fjob.close()
+              db.execute('insert into tasks values (?, ?, ?, ?, ?, ?)',
+                        [get_job_id(), 
+                        fname, 
+                        request.form['primitives'], 
+                        snaptol, 
+                        plantol, 
+                        time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())])
+              db.commit()
               return render_template("index.html", jobid=jid)
             else:
               return render_template("index.html", problem='Uploaded file is not a GML file.')
