@@ -25,9 +25,10 @@ def verify_tolerance(t, defaultval):
       return d
 
 @celery.task
-def add(a, b):
-    print "RESULT", a+b
-    return (a+b)
+def validate(file, primitives, snaptol, plantol):
+    print "yo celery", file
+    time.sleep(10)
+    return file
 
 @app.route('/errors')
 def errors():
@@ -98,6 +99,11 @@ def get_db():
         top.sqlite_db = sqlite_db
     return top.sqlite_db
 
+def query_db(query, args=(), one=False):
+    cur = get_db().execute(query, args)
+    rv = cur.fetchall()
+    cur.close()
+    return (rv[0] if rv else None) if one else rv
 
 @app.teardown_appcontext
 def close_db_connection(exception):
@@ -109,56 +115,57 @@ def close_db_connection(exception):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # global jobid
     if request.method == 'POST':
         f = request.files['file']
         if f:
             if allowed_file(f.filename):
-              # print "here."
-              db = get_db()
               fname = secure_filename(f.filename)
               f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
               primitives = request.form['primitives']
               snaptol = verify_tolerance(request.form['snaptol'], '1e-3')
               plantol = verify_tolerance(request.form['plantol'], '1e-2')
-              jid = get_job_id()
-              db.execute('insert into tasks values (?, ?, ?, ?, ?, ?)',
-                        [get_job_id(), 
+              uploadtime = time.localtime()
+              celtask = validate.delay(fname, primitives, snaptol, plantol)    
+              jid = celtask.id
+
+              db = get_db()
+              db.execute('insert into tasks (jid, file, primitives, snaptol, plantol, timestamp) values (?, ?, ?, ?, ?, ?)',
+                        [jid, 
                         fname, 
                         request.form['primitives'], 
                         snaptol, 
                         plantol, 
-                        time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())])
+                        time.strftime('%Y-%m-%dT%H:%M:%S', uploadtime)])
               db.commit()
               return render_template("index.html", jobid=jid)
             else:
               return render_template("index.html", problem='Uploaded file is not a GML file.')
         else:
-
             return render_template("index.html", problem='No file selected.')
-    else:
-        re = add.delay(10, 20)
-        print re.id
-        print re.ready()
-        print re.status
-        # print re.wait()
-        waitabit(re.id)
     return render_template("index.html")
 
-
-def waitabit(id):
-    result = celery.AsyncResult(id)
-    time.sleep(2)
-    print "now:", result.ready()
 
 
 @app.route('/reports/download/<jobid>')
 def reports_download(jobid):
     return send_from_directory(app.config['REPORTS_FOLDER'], '%s.xml' % jobid)
 
-
 @app.route('/reports/<jobid>')
 def reports(jobid):
+    celtask = celery.AsyncResult(jobid)
+    if (celtask.ready() == False):
+        print "not ready"
+        return render_template("status.html", success=False, info1='No such report or the process is not finished.', info2='Be patient.', refresh=True)
+    else:
+        print "ready"
+        print celtask.result
+        return render_template("status.html", success=False, info1='it works', info2='ME IS HAPPY', refresh=False)
+        # return render_template("status.html", success=False, info1=celltask.result, info2='ME IS HAPPY', refresh=False)
+
+
+
+@app.route('/reports_2/<jobid>')
+def reports_2(jobid):
     fs = "%s%s.txt" % (REPORTS_FOLDER, jobid)
     fr = "%s%s.xml" % (REPORTS_FOLDER, jobid)
     if not os.path.exists(fs):
