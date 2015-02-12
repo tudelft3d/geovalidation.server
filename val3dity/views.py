@@ -2,6 +2,8 @@ from val3dity import app
 from val3dity import celery
 from settings import *
 
+import runvalidation
+
 
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, render_template, request, flash, redirect, url_for, send_from_directory, _app_ctx_stack
@@ -25,9 +27,13 @@ def verify_tolerance(t, defaultval):
       return d
 
 @celery.task
-def validate(file, primitives, snaptol, plantol):
-    print "yo celery", file
-    time.sleep(10)
+def validate(fname, primitives, snaptol, plantol):
+    totalxml, summary = runvalidation.validate(UPLOAD_FOLDER+fname, primitives, snaptol, plantol)    
+    print summary
+    return True
+    # print "yo celery", file
+    # time.sleep(10)
+
     return file
 
 @app.route('/errors')
@@ -99,11 +105,13 @@ def get_db():
         top.sqlite_db = sqlite_db
     return top.sqlite_db
 
+
 def query_db(query, args=(), one=False):
     cur = get_db().execute(query, args)
     rv = cur.fetchall()
     cur.close()
     return (rv[0] if rv else None) if one else rv
+
 
 @app.teardown_appcontext
 def close_db_connection(exception):
@@ -126,6 +134,7 @@ def index():
               plantol = verify_tolerance(request.form['plantol'], '1e-2')
               uploadtime = time.localtime()
               celtask = validate.delay(fname, primitives, snaptol, plantol)    
+              # celtask = runvalidation.validate.delay(fname, primitives, snaptol, plantol)    
               jid = celtask.id
 
               db = get_db()
@@ -145,23 +154,24 @@ def index():
     return render_template("index.html")
 
 
+@app.route('/reports/<jobid>')
+def reports(jobid):
+    #-- check if job is in the database
+    j = query_db('select * from tasks where jid = ?', [jobid], one=True)
+    if j is None:
+        return render_template("status.html", success=False, info1="Error: this report number doesn't exist.", refresh=False)
+    #-- it exists
+    # print '---', j['timestamp']
+    celtask = celery.AsyncResult(jobid)
+    if (celtask.ready() == False):
+        return render_template("status.html", success=False, info1='Tasks not finished.', info2='Be patient.', refresh=True)
+    # print celtask.result
+    return render_template("status.html", success=False, info1='done, finished.', info2='great', refresh=False)
+
 
 @app.route('/reports/download/<jobid>')
 def reports_download(jobid):
     return send_from_directory(app.config['REPORTS_FOLDER'], '%s.xml' % jobid)
-
-@app.route('/reports/<jobid>')
-def reports(jobid):
-    celtask = celery.AsyncResult(jobid)
-    if (celtask.ready() == False):
-        print "not ready"
-        return render_template("status.html", success=False, info1='No such report or the process is not finished.', info2='Be patient.', refresh=True)
-    else:
-        print "ready"
-        print celtask.result
-        return render_template("status.html", success=False, info1='it works', info2='ME IS HAPPY', refresh=False)
-        # return render_template("status.html", success=False, info1=celltask.result, info2='ME IS HAPPY', refresh=False)
-
 
 
 @app.route('/reports_2/<jobid>')

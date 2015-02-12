@@ -1,3 +1,5 @@
+from val3dity import celery
+
 import os
 import sys
 import shutil
@@ -39,7 +41,7 @@ dErrors = {
 }
 
 
-
+@celery.task
 def validate(fin, primitives, snap, planarity):
   fin = open(fin)
   if (construct_polys(fin, primitives, snap) == 1):
@@ -58,6 +60,7 @@ def validate(fin, primitives, snap, planarity):
 
 def construct_polys(fin, primitives, snap):
   print "Extracting the 3D primitives from the CityGML file"
+  print fin.name
   if not os.path.exists(TMPOLYS_FOLDER):
       os.mkdir(TMPOLYS_FOLDER)
   else:
@@ -138,8 +141,8 @@ def validate_polys(fin, primitives, snap, planarity):
     totalxml.append('\t<primitives>' + 'gml:MultiSurface' + '</primitives>')
   else:
     totalxml.append('\t<primitives>' + 'gml:Solid' + '</primitives>')
-  totalxml.append('\t<snaptolerance>' + snap + '</snaptolerance>')
-  totalxml.append('\t<planaritytolerance>' + planarity + '</planaritytolerance>')
+  totalxml.append('\t<snaptolerance>' + str(snap) + '</snaptolerance>')
+  totalxml.append('\t<planaritytolerance>' + str(planarity) + '</planaritytolerance>')
   totalxml.append("\n".join(xmlsolids))
   totalxml.append('</val3dity>')
   
