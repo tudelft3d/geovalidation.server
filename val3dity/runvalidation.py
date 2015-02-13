@@ -1,5 +1,3 @@
-from val3dity import celery
-
 import os
 import sys
 import shutil
@@ -10,52 +8,34 @@ from StringIO import StringIO
 from settings import *
 
 
-dErrors = {
-  101: 'TOO_FEW_POINTS',
-  102: 'CONSECUTIVE_POINTS_SAME',
-  103: 'RING_NOT_CLOSED',
-  104: 'RING_SELF_INTERSECTION',
-  105: 'RING_COLLAPSED',
-  201: 'INTERSECTION_RINGS',
-  202: 'DUPLICATED_RINGS',
-  203: 'NON_PLANAR_POLYGON_DISTANCE_PLANE',
-  204: 'NON_PLANAR_POLYGON_NORMALS_DEVIATION',
-  205: 'POLYGON_INTERIOR_DISCONNECTED',
-  206: 'HOLE_OUTSIDE',
-  207: 'INNER_RINGS_NESTED',
-  208: 'ORIENTATION_RINGS_SAME',
-  300: 'NOT_VALID_2_MANIFOLD',
-  301: 'TOO_FEW_POLYGONS',
-  302: 'SHELL_NOT_CLOSED',
-  303: 'NON_MANIFOLD_VERTEX',
-  304: 'NON_MANIFOLD_EDGE',
-  305: 'MULTIPLE_CONNECTED_COMPONENTS',
-  306: 'SHELL_SELF_INTERSECTION',
-  307: 'POLYGON_WRONG_ORIENTATION',
-  308: 'ALL_POLYGONS_WRONG_ORIENTATION',
-  309: 'VERTICES_NOT_USED',
-  401: 'SHELLS_FACE_ADJACENT',
-  402: 'INTERSECTION_SHELLS',
-  403: 'INNER_SHELL_OUTSIDE_OUTER',
-  404: 'SOLID_INTERIOR_DISCONNECTED',
-}
-
-
-@celery.task
-def validate(fin, primitives, snap, planarity):
+def validate(fin, primitives, snaptol, plantol, uploadtime):
   fin = open(fin)
-  if (construct_polys(fin, primitives, snap) == 1):
-    totalxml, summary = validate_polys(fin, primitives, snap, planarity)
-    return totalxml, summary
+  if (construct_polys(fin, primitives, snaptol) == 1):
+    totalxml, dSummary = validate_polys(fin, primitives, snaptol, plantol, uploadtime)
   else: #-- something went wrong, XML probably invalid
     totalxml = []
     totalxml.append('<val3dity>')
     a = (fin.name).rfind('/')
     totalxml.append('\t<inputFile>' + (fin.name)[a+1:] + '</inputFile>')
-    totalxml.append('\t<snaptolerance>' + snap + '</snaptolerance>')
+    if (primitives == 'ms'):
+      totalxml.append('\t<primitives>' + 'gml:MultiSurface' + '</primitives>')
+    else:
+      totalxml.append('\t<primitives>' + 'gml:Solid' + '</primitives>')
+    totalxml.append('\t<snaptolerance>' + snaptol + '</snaptolerance>')
+    totalxml.append('\t<planaritytolerance>' + plantol + '</planaritytolerance>')
+    totalxml.append('\t<time>' + uploadtime + '</time>')
     totalxml.append("ERROR: Problems with parsing the XML. Cannot validate.")
     totalxml.append('</val3dity>')
-    return totalxml, "ERROR: Problems with parsing the XML. Cannot validate."
+    dSummary = {}
+    dSummary['inprimitives'] = 0
+    dSummary['invalid'] = 0
+    dSummary['errors'] = 901
+
+  print "--"*15
+  print dSummary
+  print "--"*15
+  return totalxml, dSummary
+
 
 
 def construct_polys(fin, primitives, snap):
@@ -77,13 +57,14 @@ def construct_polys(fin, primitives, snap):
   else:
     return 1
 
+
 def remove_tmpolys():
   os.chdir("..")
   shutil.rmtree("tmpolys")
 
 
-def validate_polys(fin, primitives, snap, planarity):
-  summary = ""
+def validate_polys(fin, primitives, snap, planarity, uploadtime):
+  dSummary = {}
   dFiles = {}
   os.chdir(TMPOLYS_FOLDER)
   for f in os.listdir('.'):
@@ -95,10 +76,10 @@ def validate_polys(fin, primitives, snap, planarity):
       else:
         dFiles[f1].append(f)
   i = 0
-  summary += "Number of primitives in file: %d\n" % (len(dFiles))
+  dSummary['inprimitives'] = len(dFiles)
   invalidsolids = 0
   xmlsolids = []
-  exampleerrors = []
+  errorspresent = []
   for solidname in dFiles:
     cmd = []
     cmd.append(VAL3DITY_FOLDER + "val3dity")
@@ -120,8 +101,8 @@ def validate_polys(fin, primitives, snap, planarity):
       invalidsolids += 1
       i = o.find('<errorCode>')
       while (i != -1):
-        if exampleerrors.count(o[i+11:i+14]) == 0:
-          exampleerrors.append(o[i+11:i+14])
+        if errorspresent.count(o[i+11:i+14]) == 0:
+          errorspresent.append(o[i+11:i+14])
         tmp = o[i+1:].find('<errorCode>')
         if tmp == -1:
           i = -1
@@ -143,17 +124,13 @@ def validate_polys(fin, primitives, snap, planarity):
     totalxml.append('\t<primitives>' + 'gml:Solid' + '</primitives>')
   totalxml.append('\t<snaptolerance>' + str(snap) + '</snaptolerance>')
   totalxml.append('\t<planaritytolerance>' + str(planarity) + '</planaritytolerance>')
+  totalxml.append('\t<time>' + uploadtime + '</time>')
   totalxml.append("\n".join(xmlsolids))
   totalxml.append('</val3dity>')
   
-  summary += "Number of invalid primitives: %d\n" % invalidsolids
-  if (invalidsolids == 0):
-    summary += "Hourrraaa!\n"
-  else:
-    summary += "Errors present:\n"
-    for each in exampleerrors:
-      summary += each + " " + str(dErrors[int(each)]) + "\n"
-  return totalxml, summary
+  dSummary['invalid'] = invalidsolids
+  dSummary['errors'] = "-".join(errorspresent)
+  return totalxml, dSummary
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+  validate(sys.argv[1], "solid", "0.001", "0.001", "2015-02-13")
