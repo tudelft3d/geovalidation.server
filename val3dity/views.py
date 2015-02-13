@@ -195,15 +195,54 @@ def index():
 def reports(jobid):
     #-- check if job is in the database
     j = query_db('select * from tasks where jid = ?', [jobid], one=True)
+
     if j is None:
-        return render_template("status.html", success=False, info1="Error: this report number doesn't exist.", refresh=False)
+        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
     #-- it exists
-    # print '---', j['timestamp']
     celtask = celery.AsyncResult(jobid)
     if (celtask.ready() == False):
-        return render_template("status.html", success=False, info1='Tasks not finished.', info2='Be patient.', refresh=True)
+        return render_template("status.html", notask=False, info='Validation in progress... be patient', refresh=True)
     # print celtask.result
-    return render_template("status.html", success=True, info1='done, finished.', info2='great', refresh=False)
+    # return render_template("status.html", success=True, info1='done, finished.', info2='great', refresh=False)
+    # print '---', j['timestamp']
+    fname = j['file']
+    if (j['noprimitives'] == 0):
+        print "---1"
+        return render_template("report.html", 
+                              filename=fname,
+                              jid=jobid,
+                              noprimitives=0, 
+                              noinvalid=0,
+                              zeroprimitives=True,
+                              welldone=False 
+                              )
+    if (j['noprimitives'] > 0) and (j['noinvalid'] == 0):
+        return render_template("report.html", 
+                               filename=fname, 
+                               jid=jobid, 
+                               noprimitives=j['noprimitives'], 
+                               noinvalid=0, 
+                               zeroprimitives=False, 
+                               welldone=True) 
+    else:
+        s = j['errors'].split('-')
+        lserrors = [] 
+        for e in s:
+            description = dErrors[int(e)]
+            s = e + " -- " + description
+            print s
+            lserrors.append(s)
+        print lserrors
+
+        return render_template("report.html", 
+                              filename=fname,
+                              jid=jobid,
+                              noprimitives=j['noprimitives'], 
+                              noinvalid=j['noinvalid'],
+                              zeroprimitives=False,
+                              errors=lserrors,
+                              welldone=False 
+                              )
 
 
 @app.route('/reports/download/<jobid>')

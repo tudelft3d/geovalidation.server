@@ -18,11 +18,8 @@
   {% endif %}
 {% endif %}
       <div class="panel-body">
-      {% if problems %}
-        <p><FONT COLOR="#fa1b33">{{ problems }}</FONT></p>
-      {% else %}
-        <p>{{ summary0 }}</p>
-        <p>{{ summary1 }}</p>
+        <p>Number of primitives in file: {{ noprimitives }}</p>
+        <p>Number of invalid primitives: {{ noinvalid }}</p>
         {% if welldone %}
           <img src="{{ url_for('static', filename='img/welldone.png') }}" width="120" alt="">
         {% else %}
@@ -33,7 +30,6 @@
           {% endfor %}
           </ul>
         {% endif %}  
-      {% endif %}
     </div>
   </div>  
 
