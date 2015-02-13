@@ -14,6 +14,47 @@ import time
 
 ALLOWED_EXTENSIONS = set(['gml', 'xml'])
 
+dErrors = {
+  101: 'TOO_FEW_POINTS',
+  102: 'CONSECUTIVE_POINTS_SAME',
+  103: 'RING_NOT_CLOSED',
+  104: 'RING_SELF_INTERSECTION',
+  105: 'RING_COLLAPSED',
+  201: 'INTERSECTION_RINGS',
+  202: 'DUPLICATED_RINGS',
+  203: 'NON_PLANAR_POLYGON_DISTANCE_PLANE',
+  204: 'NON_PLANAR_POLYGON_NORMALS_DEVIATION',
+  205: 'POLYGON_INTERIOR_DISCONNECTED',
+  206: 'HOLE_OUTSIDE',
+  207: 'INNER_RINGS_NESTED',
+  208: 'ORIENTATION_RINGS_SAME',
+  300: 'NOT_VALID_2_MANIFOLD',
+  301: 'TOO_FEW_POLYGONS',
+  302: 'SHELL_NOT_CLOSED',
+  303: 'NON_MANIFOLD_VERTEX',
+  304: 'NON_MANIFOLD_EDGE',
+  305: 'MULTIPLE_CONNECTED_COMPONENTS',
+  306: 'SHELL_SELF_INTERSECTION',
+  307: 'POLYGON_WRONG_ORIENTATION',
+  308: 'ALL_POLYGONS_WRONG_ORIENTATION',
+  309: 'VERTICES_NOT_USED',
+  401: 'SHELLS_FACE_ADJACENT',
+  402: 'INTERSECTION_SHELLS',
+  403: 'INNER_SHELL_OUTSIDE_OUTER',
+  404: 'SOLID_INTERIOR_DISCONNECTED',
+  901: 'INVALID_INPUT_FILE',
+  999: 'UNKNOWN_ERROR',
+}
+
+
+@celery.task
+def validate(fname, primitives, snaptol, plantol):
+    totalxml, summary = runvalidation.validate(UPLOAD_FOLDER+fname, primitives, snaptol, plantol)    
+    print summary
+    return True
+    # print "yo celery", file
+    # time.sleep(10)
+    return file
 
 def verify_tolerance(t, defaultval):
     t = t.replace(',', '.')
@@ -25,16 +66,6 @@ def verify_tolerance(t, defaultval):
       return d
     except:
       return d
-
-@celery.task
-def validate(fname, primitives, snaptol, plantol):
-    totalxml, summary = runvalidation.validate(UPLOAD_FOLDER+fname, primitives, snaptol, plantol)    
-    print summary
-    return True
-    # print "yo celery", file
-    # time.sleep(10)
-
-    return file
 
 @app.route('/errors')
 def errors():
@@ -132,9 +163,8 @@ def index():
               primitives = request.form['primitives']
               snaptol = verify_tolerance(request.form['snaptol'], '1e-3')
               plantol = verify_tolerance(request.form['plantol'], '1e-2')
-              uploadtime = time.localtime()
+              uploadtime = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())
               celtask = validate.delay(fname, primitives, snaptol, plantol)    
-              # celtask = runvalidation.validate.delay(fname, primitives, snaptol, plantol)    
               jid = celtask.id
 
               db = get_db()
@@ -144,7 +174,7 @@ def index():
                         request.form['primitives'], 
                         snaptol, 
                         plantol, 
-                        time.strftime('%Y-%m-%dT%H:%M:%S', uploadtime)])
+                        uploadtime])
               db.commit()
               return render_template("index.html", jobid=jid)
             else:
