@@ -12,6 +12,9 @@
   {% if zeroprimitives %}
   <div class="panel panel-danger">
     <div class="panel-heading">Summary: no 3D primitives found in the input file.</div>
+  {% elif badinput %}
+  <div class="panel panel-danger">
+    <div class="panel-heading">Summary: wrong XML input.</div>
   {% else %}
   <div class="panel panel-danger">
     <div class="panel-heading">Summary: not all 3D primitives are valid</div>

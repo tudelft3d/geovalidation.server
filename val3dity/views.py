@@ -50,7 +50,7 @@ dErrors = {
 @celery.task
 def validate(fname, primitives, snaptol, plantol, uploadtime):
     reportxml, summary = runvalidation.validate(fname, primitives, snaptol, plantol, uploadtime)    
-    # db = get_db()
+    #-- write summary to database
     db = sqlite3.connect(app.config['DATABASE'])
     db.row_factory = sqlite3.Row
     db.execute('update tasks set noprimitives=?, noinvalid=?, errors=? where jid=?',
@@ -60,7 +60,13 @@ def validate(fname, primitives, snaptol, plantol, uploadtime):
               validate.request.id])
     db.commit()
     db.close()
-    os.remove(fname) #-- rm the uploaded file
+    #-- write summary to database
+    s = "%s%s.xml" % (REPORTS_FOLDER, validate.request.id)        
+    fout = open(s, 'w')
+    fout.write('\n'.join(reportxml))
+    fout.close()
+    #-- rm the uploaded file
+    os.remove(fname) 
     return True
 
 def verify_tolerance(t, defaultval):
@@ -95,10 +101,6 @@ def faq():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-
-def get_job_id():
-    return str(uuid.uuid4())
-    # return str(uuid.uuid4()).split('-')[0]
 
 
 @app.route('/addgmlids', methods=['GET', 'POST'])
@@ -201,13 +203,22 @@ def reports(jobid):
     #-- it exists
     celtask = celery.AsyncResult(jobid)
     if (celtask.ready() == False):
-        return render_template("status.html", notask=False, info='Validation in progress... be patient', refresh=True)
+        return render_template("status.html", notask=False, info='Validation in progress', refresh=True)
     # print celtask.result
     # return render_template("status.html", success=True, info1='done, finished.', info2='great', refresh=False)
     # print '---', j['timestamp']
     fname = j['file']
+    if (j['errors'] == '901'):
+        return render_template("report.html", 
+                              filename=fname,
+                              jid=jobid,
+                              noprimitives=0, 
+                              noinvalid=0,
+                              zeroprimitives=False,
+                              badinput=True,
+                              welldone=False 
+                              )    
     if (j['noprimitives'] == 0):
-        print "---1"
         return render_template("report.html", 
                               filename=fname,
                               jid=jobid,
@@ -250,51 +261,3 @@ def reports_download(jobid):
     return send_from_directory(app.config['REPORTS_FOLDER'], '%s.xml' % jobid)
 
 
-@app.route('/reports_2/<jobid>')
-def reports_2(jobid):
-    fs = "%s%s.txt" % (REPORTS_FOLDER, jobid)
-    fr = "%s%s.xml" % (REPORTS_FOLDER, jobid)
-    if not os.path.exists(fs):
-        return render_template("status.html", success=False, info1='No such report or the process is not finished.', info2='Be patient.', refresh=True)
-    else:
-        summary = open(fs, "r").read().split('\n')
-        report = open(fr, "r")
-        print summary
-        report.readline()
-        tmp = report.readline()
-        fname = (tmp.split(">")[1]).split("<")[0]
-        if len(summary) == 1:
-            return render_template("report.html", 
-                                  problems='%s'%summary[0],
-                                  filename=fname,
-                                  welldone=False,
-                                  jid=jobid
-                                  )
-        else:
-            if ( (summary[0][-2:] != ' 0') and (summary[2] == 'Hourrraaa!') ):
-                return render_template("report.html", 
-                                      filename=fname,
-                                      jid=jobid,
-                                      summary0=summary[0], 
-                                      summary1=summary[1],
-                                      welldone=True 
-                                      )
-            elif ( (summary[0][-2:] == ' 0') and (summary[2] == 'Hourrraaa!') ):
-                return render_template("report.html", 
-                                      filename=fname,
-                                      jid=jobid,
-                                      summary0=summary[0], 
-                                      summary1=summary[1],
-                                      zeroprimitives=True,
-                                      welldone=False 
-                                      )
-            else:
-                print summary[3:-1]
-                return render_template("/report.html", 
-                                      filename=fname,
-                                      jid=jobid,
-                                      summary0=summary[0], 
-                                      summary1=summary[1],
-                                      errors=summary[3:-1]
-                                      )
- 

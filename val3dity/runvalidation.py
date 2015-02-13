@@ -21,9 +21,9 @@ def validate(fin, primitives, snaptol, plantol, uploadtime):
       reportxml.append('\t<primitives>' + 'gml:MultiSurface' + '</primitives>')
     else:
       reportxml.append('\t<primitives>' + 'gml:Solid' + '</primitives>')
-    reportxml.append('\t<snaptolerance>' + snaptol + '</snaptolerance>')
-    reportxml.append('\t<planaritytolerance>' + plantol + '</planaritytolerance>')
-    reportxml.append('\t<time>' + uploadtime + '</time>')
+    reportxml.append('\t<snaptolerance>' + str(snaptol) + '</snaptolerance>')
+    reportxml.append('\t<planaritytolerance>' + str(plantol) + '</planaritytolerance>')
+    reportxml.append('\t<time>' + str(uploadtime) + '</time>')
     reportxml.append("ERROR: Problems with parsing the XML. Cannot validate.")
     reportxml.append('</val3dity>')
     dSummary = {}
