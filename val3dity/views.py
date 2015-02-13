@@ -48,13 +48,20 @@ dErrors = {
 
 
 @celery.task
-def validate(fname, primitives, snaptol, plantol):
-    totalxml, summary = runvalidation.validate(UPLOAD_FOLDER+fname, primitives, snaptol, plantol)    
-    print summary
+def validate(fname, primitives, snaptol, plantol, uploadtime):
+    reportxml, summary = runvalidation.validate(fname, primitives, snaptol, plantol, uploadtime)    
+    # db = get_db()
+    db = sqlite3.connect(app.config['DATABASE'])
+    db.row_factory = sqlite3.Row
+    db.execute('update tasks set noprimitives=?, noinvalid=?, errors=? where jid=?',
+              [summary['noprimitives'], 
+              summary['noinvalid'], 
+              summary['errors'], 
+              validate.request.id])
+    db.commit()
+    db.close()
+    os.remove(fname) #-- rm the uploaded file
     return True
-    # print "yo celery", file
-    # time.sleep(10)
-    return file
 
 def verify_tolerance(t, defaultval):
     t = t.replace(',', '.')
@@ -136,6 +143,12 @@ def get_db():
         top.sqlite_db = sqlite_db
     return top.sqlite_db
 
+@app.teardown_appcontext
+def close_db_connection(exception):
+    """Closes the database again at the end of the request."""
+    top = _app_ctx_stack.top
+    if hasattr(top, 'sqlite_db'):
+        top.sqlite_db.close()
 
 def query_db(query, args=(), one=False):
     cur = get_db().execute(query, args)
@@ -144,12 +157,6 @@ def query_db(query, args=(), one=False):
     return (rv[0] if rv else None) if one else rv
 
 
-@app.teardown_appcontext
-def close_db_connection(exception):
-    """Closes the database again at the end of the request."""
-    top = _app_ctx_stack.top
-    if hasattr(top, 'sqlite_db'):
-        top.sqlite_db.close()
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -164,9 +171,8 @@ def index():
               snaptol = verify_tolerance(request.form['snaptol'], '1e-3')
               plantol = verify_tolerance(request.form['plantol'], '1e-2')
               uploadtime = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())
-              celtask = validate.delay(fname, primitives, snaptol, plantol)    
+              celtask = validate.delay(UPLOAD_FOLDER+fname, primitives, snaptol, plantol, uploadtime)    
               jid = celtask.id
-
               db = get_db()
               db.execute('insert into tasks (jid, file, primitives, snaptol, plantol, timestamp) values (?, ?, ?, ?, ?, ?)',
                         [jid, 
@@ -176,7 +182,8 @@ def index():
                         plantol, 
                         uploadtime])
               db.commit()
-              return render_template("index.html", jobid=jid)
+              # return render_template("index.html", jobid=jid)
+              return redirect('/val3dity/reports/%s' % jid)
             else:
               return render_template("index.html", problem='Uploaded file is not a GML file.')
         else:
@@ -196,7 +203,7 @@ def reports(jobid):
     if (celtask.ready() == False):
         return render_template("status.html", success=False, info1='Tasks not finished.', info2='Be patient.', refresh=True)
     # print celtask.result
-    return render_template("status.html", success=False, info1='done, finished.', info2='great', refresh=False)
+    return render_template("status.html", success=True, info1='done, finished.', info2='great', refresh=False)
 
 
 @app.route('/reports/download/<jobid>')

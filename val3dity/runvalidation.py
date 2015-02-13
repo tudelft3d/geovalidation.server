@@ -11,31 +11,30 @@ from settings import *
 def validate(fin, primitives, snaptol, plantol, uploadtime):
   fin = open(fin)
   if (construct_polys(fin, primitives, snaptol) == 1):
-    totalxml, dSummary = validate_polys(fin, primitives, snaptol, plantol, uploadtime)
+    reportxml, dSummary = validate_polys(fin, primitives, snaptol, plantol, uploadtime)
   else: #-- something went wrong, XML probably invalid
-    totalxml = []
-    totalxml.append('<val3dity>')
+    reportxml = []
+    reportxml.append('<val3dity>')
     a = (fin.name).rfind('/')
-    totalxml.append('\t<inputFile>' + (fin.name)[a+1:] + '</inputFile>')
+    reportxml.append('\t<inputFile>' + (fin.name)[a+1:] + '</inputFile>')
     if (primitives == 'ms'):
-      totalxml.append('\t<primitives>' + 'gml:MultiSurface' + '</primitives>')
+      reportxml.append('\t<primitives>' + 'gml:MultiSurface' + '</primitives>')
     else:
-      totalxml.append('\t<primitives>' + 'gml:Solid' + '</primitives>')
-    totalxml.append('\t<snaptolerance>' + snaptol + '</snaptolerance>')
-    totalxml.append('\t<planaritytolerance>' + plantol + '</planaritytolerance>')
-    totalxml.append('\t<time>' + uploadtime + '</time>')
-    totalxml.append("ERROR: Problems with parsing the XML. Cannot validate.")
-    totalxml.append('</val3dity>')
+      reportxml.append('\t<primitives>' + 'gml:Solid' + '</primitives>')
+    reportxml.append('\t<snaptolerance>' + snaptol + '</snaptolerance>')
+    reportxml.append('\t<planaritytolerance>' + plantol + '</planaritytolerance>')
+    reportxml.append('\t<time>' + uploadtime + '</time>')
+    reportxml.append("ERROR: Problems with parsing the XML. Cannot validate.")
+    reportxml.append('</val3dity>')
     dSummary = {}
-    dSummary['inprimitives'] = 0
-    dSummary['invalid'] = 0
+    dSummary['noprimitives'] = 0
+    dSummary['noinvalid'] = 0
     dSummary['errors'] = 901
-
-  print "--"*15
-  print dSummary
-  print "--"*15
-  return totalxml, dSummary
-
+  # print "--"*15
+  # print dSummary
+  # print "--"*15
+  # print reportxml
+  return reportxml, dSummary
 
 
 def construct_polys(fin, primitives, snap):
@@ -76,7 +75,7 @@ def validate_polys(fin, primitives, snap, planarity, uploadtime):
       else:
         dFiles[f1].append(f)
   i = 0
-  dSummary['inprimitives'] = len(dFiles)
+  dSummary['noprimitives'] = len(dFiles)
   invalidsolids = 0
   xmlsolids = []
   errorspresent = []
@@ -114,23 +113,26 @@ def validate_polys(fin, primitives, snap, planarity, uploadtime):
         o = '\t<MultiSurface>\n\t\t<id>' + solidname + '</id>\n' + o + '\t</MultiSurface>'
       xmlsolids.append(o)
     
-  totalxml = []
-  totalxml.append('<val3dity>')
+  reportxml = []
+  reportxml.append('<val3dity>')
   a = (fin.name).rfind('/')
-  totalxml.append('\t<inputFile>' + (fin.name)[a+1:] + '</inputFile>')
+  reportxml.append('\t<inputFile>' + (fin.name)[a+1:] + '</inputFile>')
   if (primitives == 'ms'):
-    totalxml.append('\t<primitives>' + 'gml:MultiSurface' + '</primitives>')
+    reportxml.append('\t<primitives>' + 'gml:MultiSurface' + '</primitives>')
   else:
-    totalxml.append('\t<primitives>' + 'gml:Solid' + '</primitives>')
-  totalxml.append('\t<snaptolerance>' + str(snap) + '</snaptolerance>')
-  totalxml.append('\t<planaritytolerance>' + str(planarity) + '</planaritytolerance>')
-  totalxml.append('\t<time>' + uploadtime + '</time>')
-  totalxml.append("\n".join(xmlsolids))
-  totalxml.append('</val3dity>')
+    reportxml.append('\t<primitives>' + 'gml:Solid' + '</primitives>')
+  reportxml.append('\t<snaptolerance>' + str(snap) + '</snaptolerance>')
+  reportxml.append('\t<planaritytolerance>' + str(planarity) + '</planaritytolerance>')
+  reportxml.append('\t<time>' + uploadtime + '</time>')
+  reportxml.append("\n".join(xmlsolids))
+  reportxml.append('</val3dity>')
   
-  dSummary['invalid'] = invalidsolids
-  dSummary['errors'] = "-".join(errorspresent)
-  return totalxml, dSummary
+  dSummary['noinvalid'] = invalidsolids
+  if len(errorspresent) == 0:
+    dSummary['errors'] = "-1"
+  else:
+    dSummary['errors'] = "-".join(errorspresent)
+  return reportxml, dSummary
 
 if __name__ == '__main__':
   validate(sys.argv[1], "solid", "0.001", "0.001", "2015-02-13")
