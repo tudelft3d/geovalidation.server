@@ -3,7 +3,7 @@
     <h1>about</h1>
 </div>
 
-The validator, which uses the open-source project [val3dity](https://github.com/tudelft-gist/val3dity) in the background, checks whether the 3D primitives (__gml:Solid__ or __gml:MultiSurface__) stored in a GML file are *geometrically* valid according to the international standard [ISO 19107:2003](http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012). Any GML files, or one of the formats built upon it (such as CityGML), can be used as input. The validator simply scans the file looking for the __gml:Solid__ or __gml:MultiSurface__ tags and validates these (all the rest is ignored). It assumes that the input XML is syntactically valid according to the XSD of GML.
+The validator, which uses the open-source project [val3dity](https://github.com/tudelft3d/val3dity) in the background, checks whether the 3D primitives (__gml:Solid__ or __gml:MultiSurface__) stored in a GML file are *geometrically* valid according to the international standard [ISO 19107:2003](http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012). Any GML files, or one of the formats built upon it (such as CityGML), can be used as input. The validator simply scans the file looking for the __gml:Solid__ or __gml:MultiSurface__ tags and validates these (all the rest is ignored). It assumes that the input XML is syntactically valid according to the XSD of GML.
 
 <p><img width='500' src="{{ url_for('static', filename='img/workflow.svg') }}" alt="" /></p>
 

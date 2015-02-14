@@ -5,13 +5,13 @@
 
 <!--TOC-->
 
----
+- - -
 
 ### What do you do with my uploaded file?
 
 We delete it right after having validated it, we promise. The report is however available to anyone who knows its ID.
 
----
+- - -
 
 ### How should I interpret the report?
 
@@ -19,27 +19,27 @@ We delete it right after having validated it, we promise. The report is however 
 
 The report lists only the 3D primitives that are *not* valid, and gives one or more <a href="{{  url_for("errors")  }}">errors</a> for each. If your primitives have __gml:id__ then these are used to report the errors, if not then the number means the order of the primitives in the file (the first one being 1). We offer a <a href="{{  url_for("addgmlids")  }}">small service</a> that adds a __gml:id__ to all the __gml:Solid__ in your file. If a surface is reported invalid, then the ID of the surface is also based on the order of the surfaces in one __gml:Shell__; -1 means that it's not relevant. Some examples, referring to the example above. The 25th solid in the file is invalid because the 14th surface of its first shell is non-planar; the 41st solid is invalid because all the normals of its third shell are the wrong orientation (-1 means that the error is for no specific surface); the 666th solid has 2 shells that are face adjacent, one of them being the 2nd one (its 3rd surface is touching another one). All the other solids in the file are valid.
 
----
+- - -
 
 ### What is the snap tolerance I need to setup when I upload a file?
 
 Geometries modelled in GML store amazingly very little topological relationships. A cube is for instance represented with 6 surfaces, all stored independently. This means that the coordinates xyz of a single vertex (where 3 surfaces "meet") is stored 3 times. It is possible that these 3 vertices are not exactly at the same location (eg (0.01, 0.5, 1.0), (0.011, 0.49999, 1.00004) and (0.01002, 0.5002, 1.0007)), and that would create problems when validating since there would for example be holes in the cube. The snap tolerance basically gives a threshold that says: "if 2 points are closer then *X*, then we assume that they are the same". It's setup by default to be 1mm. 
 
----
+- - -
 
 ### I don't see all the errors in my solid.
 
-It's normal: as shown in the figure below, a solid is validated *hierarchically*, ie first every surface (a polygon embedded in 3D) is validated in 2D (by projecting it to a plane), then every shell is validated, and finally the interactions between the shells are analysed to verify whether the solid is valid. If at one stage there are errors, then the validation stops to avoid "cascading errors". So if you get the error "210 NON\_PLANAR\_SURFACE", then fix it and re-run the validator again. That does mean that you might have to upload your file and get it validated several times---if that becomes too tedious we strongly suggest you to download the [code](https://github.com/tudelft-gist/val3dity), compile it and run it locally (it's open-source and free to use).
+It's normal: as shown in the figure below, a solid is validated *hierarchically*, ie first every surface (a polygon embedded in 3D) is validated in 2D (by projecting it to a plane), then every shell is validated, and finally the interactions between the shells are analysed to verify whether the solid is valid. If at one stage there are errors, then the validation stops to avoid "cascading errors". So if you get the error "210 NON\_PLANAR\_SURFACE", then fix it and re-run the validator again. That does mean that you might have to upload your file and get it validated several times---if that becomes too tedious we strongly suggest you to download the [code](https://github.com/tudelft3d/val3dity), compile it and run it locally (it's open-source and free to use).
 
 <p><img width='500' src="{{ url_for('static', filename='img/workflow.svg') }}" alt="" /></p>
 
----
+- - -
 
 ### I'm sure my solid is valid, but the validator says that something is wrong.
 
-It's possible that there are bugs in [val3dity](https://github.com/tudelft-gist/val3dity). Please [report the issue](https://github.com/tudelft-gist/val3dity/issues).
+It's possible that there are bugs in [val3dity](https://github.com/tudelft3d/val3dity). Please [report the issue](https://github.com/tudelft3d/val3dity/issues).
 
----
+- - -
 
 ### The validation report says that there are no solids in my file, but I can see the buildings with my viewer!
 
@@ -49,41 +49,41 @@ There are many (or more precisely: [too many](http://erouault.blogspot.nl/2014/0
 
 <script src="https://gist.github.com/hugoledoux/10551979.js"></script>
 
-You have to speficy which 3D primitives should be validated.
+If your dataset contains volumes but these are stored as __gml:MultiSurfaces__ (eg the [open dataset of Rotterdam](http://www.rotterdamopendata.nl/dataset/rotterdam-3d-bestanden)), then use our [CityGML Solidifier](https://github.com/tudelft3d/citygml-solidifier).
 
----
+- - -
 
 ### Can my GML file contain more than one gml:Solid or gml:MultiSurface?
 
 Yes, all the 3D primitives in the file will be validated, one by one.
 
----
+- - -
 
 ### Do you validate the topological relationships between the solids?
 
 No we don't. Each solid is validated completely independently from the others.
 
----
+- - -
 
 ### The server says my file is too big, what's the maximum?
 
-50MB. If you need more, [get in touch](/val3dity/contact) or download the [code](https://github.com/tudelft-gist/val3dity), compile it and run it locally.
+50MB. If you need more, download the [code](https://github.com/tudelft3d/val3dity), compile it and run it locally.
 
----
+- - -
 
 ### The IDs for the shells and surfaces in the report, are they 0-based or 1-based?
 
 1-based.
 
----
+- - -
 
 ### I don't have IDs for my __gml:Solid__.
 
 We offer a <a href="{{  url_for("addgmlids")  }}">small service</a> that adds a __gml:id__ to all the __gml:Solid__ in your file
 
----
+- - -
 
 ### Where can I get files containing __gml:Solids__?
 
-On the official [CityGML website](http://www.citygml.org/index.php?id=1539) there are a few files with 3D buildings.
+We maintain a [repository of unit tests](https://github.com/tudelft3d/CityGML-QIE-3Dvalidation) (file containing one solid that has *one* error) for testing our code. Also, on the official [CityGML website](http://www.citygml.org/index.php?id=1539) there are a few files with 3D buildings, and on the [CityGML wiki](http://www.citygmlwiki.org/index.php/Open_Data_Initiatives) there are links to rather large datasets of cities (although they do no always contain __gml:Solids__).
 

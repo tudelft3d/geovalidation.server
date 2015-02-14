@@ -197,17 +197,16 @@ def index():
 def reports(jobid):
     #-- check if job is in the database
     j = query_db('select * from tasks where jid = ?', [jobid], one=True)
-
+    fname = j['file']
     if j is None:
         return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
     #-- it exists
     celtask = celery.AsyncResult(jobid)
     if (celtask.ready() == False):
-        return render_template("status.html", notask=False, info='Validation in progress', refresh=True)
+        return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
     # print celtask.result
     # return render_template("status.html", success=True, info1='done, finished.', info2='great', refresh=False)
     # print '---', j['timestamp']
-    fname = j['file']
     if (j['errors'] == '901'):
         return render_template("report.html", 
                               filename=fname,

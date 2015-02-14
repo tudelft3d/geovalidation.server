@@ -44,7 +44,7 @@
 
 <h3 id="i-dont-see-all-the-errors-in-my-solid">I don&#8217;t see all the errors in my solid.</h3>
 
-<p>It&#8217;s normal: as shown in the figure below, a solid is validated <em>hierarchically</em>, ie first every surface (a polygon embedded in 3D) is validated in 2D (by projecting it to a plane), then every shell is validated, and finally the interactions between the shells are analysed to verify whether the solid is valid. If at one stage there are errors, then the validation stops to avoid &#8220;cascading errors&#8221;. So if you get the error &#8220;210 NON_PLANAR_SURFACE&#8221;, then fix it and re-run the validator again. That does mean that you might have to upload your file and get it validated several times&#8212;if that becomes too tedious we strongly suggest you to download the <a href="https://github.com/tudelft-gist/val3dity">code</a>, compile it and run it locally (it&#8217;s open-source and free to use).</p>
+<p>It&#8217;s normal: as shown in the figure below, a solid is validated <em>hierarchically</em>, ie first every surface (a polygon embedded in 3D) is validated in 2D (by projecting it to a plane), then every shell is validated, and finally the interactions between the shells are analysed to verify whether the solid is valid. If at one stage there are errors, then the validation stops to avoid &#8220;cascading errors&#8221;. So if you get the error &#8220;210 NON_PLANAR_SURFACE&#8221;, then fix it and re-run the validator again. That does mean that you might have to upload your file and get it validated several times&#8212;if that becomes too tedious we strongly suggest you to download the <a href="https://github.com/tudelft3d/val3dity">code</a>, compile it and run it locally (it&#8217;s open-source and free to use).</p>
 
 <p><img width='500' src="{{ url_for('static', filename='img/workflow.svg') }}" alt="" /></p>
 
@@ -52,7 +52,7 @@
 
 <h3 id="im-sure-my-solid-is-valid-but-the-validator-says-that-something-is-wrong">I&#8217;m sure my solid is valid, but the validator says that something is wrong.</h3>
 
-<p>It&#8217;s possible that there are bugs in <a href="https://github.com/tudelft-gist/val3dity">val3dity</a>. Please <a href="https://github.com/tudelft-gist/val3dity/issues">report the issue</a>.</p>
+<p>It&#8217;s possible that there are bugs in <a href="https://github.com/tudelft3d/val3dity">val3dity</a>. Please <a href="https://github.com/tudelft3d/val3dity/issues">report the issue</a>.</p>
 
 <hr />
 
@@ -64,7 +64,7 @@
 
 <script src="https://gist.github.com/hugoledoux/10551979.js"></script>
 
-<p>You have to speficy which 3D primitives should be validated.</p>
+<p>If your dataset contains volumes but these are stored as <strong>gml:MultiSurfaces</strong> (eg the <a href="http://www.rotterdamopendata.nl/dataset/rotterdam-3d-bestanden">open dataset of Rotterdam</a>), then use our <a href="https://github.com/tudelft3d/citygml-solidifier">CityGML Solidifier</a>.</p>
 
 <hr />
 
@@ -82,7 +82,7 @@
 
 <h3 id="the-server-says-my-file-is-too-big-whats-the-maximum">The server says my file is too big, what&#8217;s the maximum?</h3>
 
-<p>50MB. If you need more, <a href="/val3dity/contact">get in touch</a> or download the <a href="https://github.com/tudelft-gist/val3dity">code</a>, compile it and run it locally.</p>
+<p>50MB. If you need more, download the <a href="https://github.com/tudelft3d/val3dity">code</a>, compile it and run it locally.</p>
 
 <hr />
 
@@ -100,6 +100,6 @@
 
 <h3 id="where-can-i-get-files-containing-__gmlsolids__">Where can I get files containing <strong>gml:Solids</strong>?</h3>
 
-<p>On the official <a href="http://www.citygml.org/index.php?id=1539">CityGML website</a> there are a few files with 3D buildings.</p>
+<p>We maintain a <a href="https://github.com/tudelft3d/CityGML-QIE-3Dvalidation">repository of unit tests</a> (file containing one solid that has <em>one</em> error) for testing our code. Also, on the official <a href="http://www.citygml.org/index.php?id=1539">CityGML website</a> there are a few files with 3D buildings, and on the <a href="http://www.citygmlwiki.org/index.php/Open_Data_Initiatives">CityGML wiki</a> there are links to rather large datasets of cities (although they do no always contain <strong>gml:Solids</strong>).</p>
 
 {% endblock %}
