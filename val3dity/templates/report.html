@@ -25,7 +25,7 @@
         <p>Number of invalid primitives: {{ noinvalid }}</p>
         {% if welldone %}
           <img src="{{ url_for('static', filename='img/welldone.png') }}" width="120" alt="">
-        {% else %}
+        {% elif not zeroprimitives %}
           <p>Errors present: (<a href="{{ url_for('errors') }}">overview of the possible errors</a>)</p>
           <ul>
           {% for error in errors %}
@@ -37,7 +37,7 @@
   </div>  
 
   <div class="well">  
-    <p>Download the report detailing the errors: <a href="{{ url_for('index') }}reports/download/{{ jid }}">{{ jid }}.xml</a></p>
+    <p>Download the report detailing the errors: <a href="{{ url_for('index') }}reports/download/{{ jid }}">report.xml</a></p>
     <p>(<a href="{{ url_for('index') }}faq#how-should-i-interpret-the-report">how to interpret the report?</a>)</p>
   </div>
 {% endblock %}
