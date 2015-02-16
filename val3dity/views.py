@@ -1,9 +1,8 @@
 from val3dity import app
 from val3dity import celery
-from settings import *
+# from settings import *
 
 import runvalidation
-
 
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, render_template, request, flash, redirect, url_for, send_from_directory, _app_ctx_stack
@@ -61,7 +60,7 @@ def validate(fname, primitives, snaptol, plantol, uploadtime):
     db.commit()
     db.close()
     #-- write summary to database
-    s = "%s%s.xml" % (REPORTS_FOLDER, validate.request.id)        
+    s = "%s%s.xml" % (app.config['REPORTS_FOLDER'], validate.request.id)        
     fout = open(s, 'w')
     fout.write('\n'.join(reportxml))
     fout.close()
@@ -102,7 +101,6 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-
 @app.route('/addgmlids', methods=['GET', 'POST'])
 def addgmlids():
     if request.method == 'POST':
@@ -113,7 +111,7 @@ def addgmlids():
             n = os.path.join(app.config['TMP_FOLDER'], fname)
             f.save(n)
             n2 = n[:-4] + ".id.xml"
-            os.system("%s %s %s" % (ADDGMLIDS_EXE, n, n2))
+            os.system("%s %s %s" % (app.config['ADDGMLIDS_EXE'], n, n2))
             return send_from_directory(app.config['TMP_FOLDER'], '%s.id.xml' % fname[:-4])
         else:
             return render_template("status.html", success=False, info1='Uploaded file is not a GML file.')
@@ -173,9 +171,10 @@ def index():
               snaptol = verify_tolerance(request.form['snaptol'], '1e-3')
               plantol = verify_tolerance(request.form['plantol'], '1e-2')
               uploadtime = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())
-              celtask = validate.delay(UPLOAD_FOLDER+fname, primitives, snaptol, plantol, uploadtime)    
+              celtask = validate.delay(app.config['UPLOAD_FOLDER']+fname, primitives, snaptol, plantol, uploadtime)    
               jid = celtask.id
               db = get_db()
+              print "1"
               db.execute('insert into tasks (jid, file, primitives, snaptol, plantol, timestamp) values (?, ?, ?, ?, ?, ?)',
                         [jid, 
                         fname, 
@@ -184,6 +183,7 @@ def index():
                         plantol, 
                         uploadtime])
               db.commit()
+              print "2"
               # return render_template("index.html", jobid=jid)
               return redirect('/val3dity/reports/%s' % jid)
             else:
@@ -196,12 +196,16 @@ def index():
 @app.route('/reports/<jobid>')
 def reports(jobid):
     #-- check if job is in the database
+    print "2"
     j = query_db('select * from tasks where jid = ?', [jobid], one=True)
     fname = j['file']
+    print fname
     if j is None:
         return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
     #-- it exists
     celtask = celery.AsyncResult(jobid)
+    print celtask
+    print j['errors']
     if (celtask.ready() == False):
         return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
     # print celtask.result

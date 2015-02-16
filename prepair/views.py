@@ -1,11 +1,8 @@
 from prepair import app
-from settings import *
 
 from flask import render_template, request, redirect, url_for
 import os
 import subprocess
-
-MAXSIZE = 1e4
 
 
 @app.route('/about')
@@ -20,10 +17,10 @@ def index():
         thewkt = request.form['thewkt']
         if thewkt == "":
             return render_template("index.html", problem="Error: no WKT given.")
-        if len(thewkt) > MAXSIZE:
-            return render_template("index.html", problem="Error: WKT too big (max allowed is %d char)." % MAXSIZE)
+        if len(thewkt) > app.config['WKT_MAXSIZE']:
+            return render_template("index.html", problem="Error: WKT too big (max allowed is %d char)." % app.config['WKT_MAXSIZE'])
         cmd = []
-        cmd.append(PREPAIREXE)
+        cmd.append(app.config['PREPAIREXE'])
         cmd.append("--wkt")
         cmd.append(r"%s" % thewkt)
         op = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

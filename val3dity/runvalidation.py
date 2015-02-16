@@ -1,3 +1,4 @@
+
 import os
 import sys
 import shutil
@@ -5,7 +6,19 @@ import glob
 import subprocess
 from lxml import etree
 from StringIO import StringIO
-from settings import *
+
+VAL3DITY_FOLDER = '/Users/hugo/projects/val3dity/'
+GML2POLY_EXE    = 'python %sressources/python/gml2poly/gml2poly.py' % (VAL3DITY_FOLDER)
+TMP_FOLDER      = '/tmp/'
+
+if GML2POLY_EXE in os.environ:
+  GML2POLY_EXE = os.environ['GML2POLY_EXE']
+if VAL3DITY_FOLDER in os.environ:
+  VAL3DITY_FOLDER = os.environ['VAL3DITY_FOLDER']
+if TMP_FOLDER   in os.environ:
+  TMP_FOLDER = os.environ['TMP_FOLDER']
+
+TMPOLYS_FOLDER = TMP_FOLDER + 'tmpolys/'
 
 
 def validate(fin, primitives, snaptol, plantol, uploadtime):
@@ -30,10 +43,6 @@ def validate(fin, primitives, snaptol, plantol, uploadtime):
     dSummary['noprimitives'] = 0
     dSummary['noinvalid'] = 0
     dSummary['errors'] = 901
-  # print "--"*15
-  # print dSummary
-  # print "--"*15
-  # print reportxml
   return reportxml, dSummary
 
 
@@ -55,11 +64,6 @@ def construct_polys(fin, primitives, snap):
     return 0
   else:
     return 1
-
-
-def remove_tmpolys():
-  os.chdir("..")
-  shutil.rmtree("tmpolys")
 
 
 def validate_polys(fin, primitives, snap, planarity, uploadtime):
