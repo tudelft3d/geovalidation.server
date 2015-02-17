@@ -8,15 +8,20 @@ from lxml import etree
 from StringIO import StringIO
 
 VAL3DITYEXE_FOLDER = '/Users/hugo/projects/val3dity/'
+# VAL3DITYEXE_FOLDER = '/Users/roger'
 TMP_FOLDER      = '/tmp/'
 
-if VAL3DITYEXE_FOLDER in os.environ:
-  VAL3DITYEXE_FOLDER = os.environ['VAL3DITYEXE_FOLDER']
-if TMP_FOLDER   in os.environ:
-  TMP_FOLDER = os.environ['TMP_FOLDER']
+# if VAL3DITYEXE_FOLDER in os.environ:
+#   VAL3DITYEXE_FOLDER = os.environ['VAL3DITYEXE_FOLDER']
+# if TMP_FOLDER   in os.environ:
+#   TMP_FOLDER = os.environ['TMP_FOLDER']
 
-GML2POLYEXE    = 'python %sressources/python/gml2poly/gml2poly.py' % (VAL3DITYEXE_FOLDER)
-TMPOLYS_FOLDER = TMP_FOLDER + 'tmpolys/'
+# print VAL3DITYEXE_FOLDER
+# # print os.environ
+# if 'GEOVALIDATION_SETTINGS' in os.environ:
+#   print os.environ['GEOVALIDATION_SETTINGS']
+# GML2POLYEXE    = 'python %sressources/python/gml2poly/gml2poly.py' % (VAL3DITYEXE_FOLDER)
+# TMPOLYS_FOLDER = TMP_FOLDER + 'tmpolys/'
 
 
 def validate(fin, primitives, snaptol, plantol, uploadtime):
