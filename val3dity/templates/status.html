@@ -1,14 +1,13 @@
 {% extends "layout.html" %}
 {% block body %}
 
-{% if success %}
-  <div class="alert alert-success">
-{% else %}
+{% if notask %}
   <div class="alert alert-danger">
+    <p><i class="fa fa-exclamation-triangle fa-2x"></i> {{ info }}</p>
+{% else %}
+  <div class="alert alert-info">
+    <p><i class="fa fa-cog fa-spin"></i> {{ info }}</p>
 {% endif %} 
-
-<p>{{ info1 }}</p>
-<p>{{ info2 }}</p>
 </div>
 
 {% endblock %}

@@ -35,13 +35,13 @@
     <div class="form-group">
       <label class="col-sm-4 control-label">Snap tolerance <i class="fa fa-question-circle" data-toggle="tooltip" title="if 2 points are closer then this value then we assume they are the same" ></i></label>
       <div class="col-sm-8">
-        <input name="snap_tolerance" type="text" class="form-control" value="0.001">
+        <input name="snaptol" type="text" class="form-control" value="0.001">
       </div>
     </div>
     <div class="form-group">
       <label class="col-sm-4 control-label">Planarity tolerance <i class="fa fa-question-circle" data-toggle="tooltip" title="maximum distance between a point and a fitted plane" ></i></label>
       <div class="col-sm-8">
-        <input name="planarity_d2p_tolerance" type="text" class="form-control" value="0.01">
+        <input name="plantol" type="text" class="form-control" value="0.01">
       </div>
     </div>
     
@@ -55,17 +55,9 @@
   </form>
   </div>
 
-{% if jobid %}
-  <div class="alert alert-success">
-    <p>File successfully uploaded.</p>
-    <p>The ID for your validation task is {{ jobid }}.</p>
-    <p>The validation report will soon be available <a href="{{ url_for('index') }}reports/{{ jobid }}">there</a>; it might take a few minutes, depending on the size of the file.</p>
-  </div>
-{% endif %}
-
 {% if problem %}
   <div class="alert alert-danger">
-    <p>{{ problem }}</p>
+    <p><i class="fa fa-exclamation-triangle"></i> {{ problem }}</p>
   </div>
 {% endif %}
 

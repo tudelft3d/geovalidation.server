@@ -12,20 +12,20 @@
   {% if zeroprimitives %}
   <div class="panel panel-danger">
     <div class="panel-heading">Summary: no 3D primitives found in the input file.</div>
+  {% elif badinput %}
+  <div class="panel panel-danger">
+    <div class="panel-heading">Summary: wrong XML input.</div>
   {% else %}
   <div class="panel panel-danger">
     <div class="panel-heading">Summary: not all 3D primitives are valid</div>
   {% endif %}
 {% endif %}
       <div class="panel-body">
-      {% if problems %}
-        <p><FONT COLOR="#fa1b33">{{ problems }}</FONT></p>
-      {% else %}
-        <p>{{ summary0 }}</p>
-        <p>{{ summary1 }}</p>
+        <p>Number of primitives in file: {{ noprimitives }}</p>
+        <p>Number of invalid primitives: {{ noinvalid }}</p>
         {% if welldone %}
           <img src="{{ url_for('static', filename='img/welldone.png') }}" width="120" alt="">
-        {% else %}
+        {% elif not zeroprimitives %}
           <p>Errors present: (<a href="{{ url_for('errors') }}">overview of the possible errors</a>)</p>
           <ul>
           {% for error in errors %}
@@ -33,12 +33,11 @@
           {% endfor %}
           </ul>
         {% endif %}  
-      {% endif %}
     </div>
   </div>  
 
   <div class="well">  
-    <p>Download the report detailing the errors: <a href="{{ url_for('index') }}reports/download/{{ jid }}">{{ jid }}.xml</a></p>
+    <p>Download the report detailing the errors: <a href="{{ url_for('index') }}reports/download/{{ jid }}">report.xml</a></p>
     <p>(<a href="{{ url_for('index') }}faq#how-should-i-interpret-the-report">how to interpret the report?</a>)</p>
   </div>
 {% endblock %}
