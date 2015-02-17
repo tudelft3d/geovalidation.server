@@ -3,14 +3,17 @@ body {
   background-color: #fafafa;
   font-color: #2df5dd;
   padding-top: 50px;
-  text-align: left;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.alert {
+  text-align: center;
 }
 
 p,ul {
-  /*font-family: 'Inconsolata', null;*/
   font-size: 18px;
   line-height: 120%;
-  /*background-color: #fafafa;*/
-  /*font-color: #2df5dd;*/
-  /*text-align: left; */
 }
