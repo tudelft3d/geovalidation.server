@@ -7,6 +7,7 @@
 1. [val3dity](https://github.com/tudelft3d/val3dity)
 1. [prepair](https://github.com/tudelft3d/prepair)
 
+These 2 should be installed and compiled, also the python scripts inside `val3dity/resources/...` are used (to convert GML to another format.)
 
 ## Installation
 
