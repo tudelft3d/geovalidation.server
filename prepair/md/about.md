@@ -3,11 +3,15 @@
     <h1>about</h1>
 </div>
 
-prepair--pronounce 'pee-repair' as in 'polygon repair'--permits us to easily repair 'broken' GIS polygons according to the international standard [ISO19107](http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012) (Geographic information--Spatial schema). Given one input polygon (or a MultiPolygon), it *automatically* repairs it and returns back a valid polygon (actually a MultiPolygon since the input can represent more than one polygon--think of a 'bowtie' for instance).
+prepair---pronounce 'pee-repair' as in 'polygon repair'---permits us to easily repair 'broken' GIS polygons according to the international standards [ISO19107](http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012) (Geographic information---Spatial schema) and [OGC Simple Feature](http://www.opengeospatial.org/standards/sfs). 
+Given one input polygon (or a MultiPolygon), it *automatically* repairs it and returns back a valid polygon (actually a MultiPolygon since the input can represent more than one polygon, think of a 'bowtie' for instance).
 
-It is an [open-source project](https://github.com/tudelft3d/prepair) released under the GPL licence. We offer here a simplified version: only the [WKT](http://en.wikipedia.org/wiki/Well-known_text) of a polygon (or MultiPolygon) can be given as input, and it is repaired with an extension of the [odd-even algorithm](https://en.wikipedia.org/wiki/Even-odd_rule) to handle GIS polygons containing inner rings and degeneracies. Also, only rather small WKT are supported.
+It is an [open-source project](https://github.com/tudelft3d/prepair) released under the GPL licence. 
+We offer here a simplified version: only the [WKT](http://en.wikipedia.org/wiki/Well-known_text) of a polygon (or MultiPolygon) can be given as input, and it is repaired with an extension of the [odd-even algorithm](https://en.wikipedia.org/wiki/Even-odd_rule) to handle GIS polygons containing inner rings and degeneracies. 
+Also, only rather small WKT are supported.
 
 For repairing bigger polygons in *shapefiles* for instance, or for more repairing options, download the [code](https://github.com/tudelft3d/prepair) and compile it. 
+We also offer [Windows binaries](https://github.com/tudelft3d/prepair/releases) and a [plugin for QGIS](https://github.com/tudelft3d/prepair-qgis).
 
 Most of the details of the implementation are available in this scientific article:
 

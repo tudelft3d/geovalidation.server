@@ -5,11 +5,15 @@
     <h1>about</h1>
 </div>
 
-<p>prepair&#8211;pronounce &#8216;pee-repair&#8217; as in &#8216;polygon repair&#8217;&#8211;permits us to easily repair &#8216;broken&#8217; GIS polygons according to the international standard <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO19107</a> (Geographic information&#8211;Spatial schema). Given one input polygon (or a MultiPolygon), it <em>automatically</em> repairs it and returns back a valid polygon (actually a MultiPolygon since the input can represent more than one polygon&#8211;think of a &#8216;bowtie&#8217; for instance).</p>
+<p>prepair&#8212;pronounce &#8216;pee-repair&#8217; as in &#8216;polygon repair&#8217;&#8212;permits us to easily repair &#8216;broken&#8217; GIS polygons according to the international standards <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO19107</a> (Geographic information&#8212;Spatial schema) and <a href="http://www.opengeospatial.org/standards/sfs">OGC Simple Feature</a>. 
+Given one input polygon (or a MultiPolygon), it <em>automatically</em> repairs it and returns back a valid polygon (actually a MultiPolygon since the input can represent more than one polygon, think of a &#8216;bowtie&#8217; for instance).</p>
 
-<p>It is an <a href="https://github.com/tudelft3d/prepair">open-source project</a> released under the GPL licence. We offer here a simplified version: only the <a href="http://en.wikipedia.org/wiki/Well-known_text">WKT</a> of a polygon (or MultiPolygon) can be given as input, and it is repaired with an extension of the <a href="https://en.wikipedia.org/wiki/Even-odd_rule">odd-even algorithm</a> to handle GIS polygons containing inner rings and degeneracies. Also, only rather small WKT are supported.</p>
+<p>It is an <a href="https://github.com/tudelft3d/prepair">open-source project</a> released under the GPL licence. 
+We offer here a simplified version: only the <a href="http://en.wikipedia.org/wiki/Well-known_text">WKT</a> of a polygon (or MultiPolygon) can be given as input, and it is repaired with an extension of the <a href="https://en.wikipedia.org/wiki/Even-odd_rule">odd-even algorithm</a> to handle GIS polygons containing inner rings and degeneracies. 
+Also, only rather small WKT are supported.</p>
 
-<p>For repairing bigger polygons in <em>shapefiles</em> for instance, or for more repairing options, download the <a href="https://github.com/tudelft3d/prepair">code</a> and compile it. </p>
+<p>For repairing bigger polygons in <em>shapefiles</em> for instance, or for more repairing options, download the <a href="https://github.com/tudelft3d/prepair">code</a> and compile it. 
+We also offer <a href="https://github.com/tudelft3d/prepair/releases">Windows binaries</a> and a <a href="https://github.com/tudelft3d/prepair-qgis">plugin for QGIS</a>.</p>
 
 <p>Most of the details of the implementation are available in this scientific article:</p>
 
