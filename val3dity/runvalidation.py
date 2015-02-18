@@ -7,27 +7,11 @@ import subprocess
 from lxml import etree
 from StringIO import StringIO
 
-VAL3DITYEXE_FOLDER = '/Users/hugo/projects/val3dity/'
-# VAL3DITYEXE_FOLDER = '/Users/roger'
-TMP_FOLDER      = '/tmp/'
 
-# if VAL3DITYEXE_FOLDER in os.environ:
-#   VAL3DITYEXE_FOLDER = os.environ['VAL3DITYEXE_FOLDER']
-# if TMP_FOLDER   in os.environ:
-#   TMP_FOLDER = os.environ['TMP_FOLDER']
-
-# print VAL3DITYEXE_FOLDER
-# # print os.environ
-# if 'GEOVALIDATION_SETTINGS' in os.environ:
-#   print os.environ['GEOVALIDATION_SETTINGS']
-# GML2POLYEXE    = 'python %sressources/python/gml2poly/gml2poly.py' % (VAL3DITYEXE_FOLDER)
-# TMPOLYS_FOLDER = TMP_FOLDER + 'tmpolys/'
-
-
-def validate(fin, primitives, snaptol, plantol, uploadtime):
+def validate(jid, fin, primitives, snaptol, plantol, uploadtime, val3dityexefolder, tmpfolder):
   fin = open(fin)
-  if (construct_polys(fin, primitives, snaptol) == 1):
-    reportxml, dSummary = validate_polys(fin, primitives, snaptol, plantol, uploadtime)
+  if (construct_polys(jid, fin, primitives, snaptol, val3dityexefolder, tmpfolder) == 1):
+    reportxml, dSummary = validate_polys(jid, fin, primitives, snaptol, plantol, uploadtime, val3dityexefolder, tmpfolder)
   else: #-- something went wrong, XML probably invalid
     reportxml = []
     reportxml.append('<val3dity>')
@@ -49,14 +33,17 @@ def validate(fin, primitives, snaptol, plantol, uploadtime):
   return reportxml, dSummary
 
 
-def construct_polys(fin, primitives, snap):
+def construct_polys(jid, fin, primitives, snap, val3dityexe_folder, tmpfolder):
   print "Extracting the 3D primitives from the CityGML file"
   print fin.name
+  GML2POLYEXE = 'python %sressources/python/gml2poly/gml2poly.py' % (val3dityexe_folder)
+  TMPOLYS_FOLDER = tmpfolder + jid
+  print "temp folder:", TMPOLYS_FOLDER
   if not os.path.exists(TMPOLYS_FOLDER):
-      os.mkdir(TMPOLYS_FOLDER)
+    os.mkdir(TMPOLYS_FOLDER)
   else:
-      shutil.rmtree(TMPOLYS_FOLDER)
-      os.mkdir(TMPOLYS_FOLDER)
+    shutil.rmtree(TMPOLYS_FOLDER)
+    os.mkdir(TMPOLYS_FOLDER)
   if primitives == 'solid':
     s = "%s %s %s --snap_tolerance %s" % (GML2POLYEXE, fin.name, TMPOLYS_FOLDER, snap)
   else:
@@ -69,9 +56,10 @@ def construct_polys(fin, primitives, snap):
     return 1
 
 
-def validate_polys(fin, primitives, snap, planarity, uploadtime):
+def validate_polys(jid, fin, primitives, snap, planarity, uploadtime, val3dityexefolder, tmpfolder):
   dSummary = {}
   dFiles = {}
+  TMPOLYS_FOLDER = tmpfolder + jid
   os.chdir(TMPOLYS_FOLDER)
   for f in os.listdir('.'):
     if f[-4:] == 'poly':
@@ -88,7 +76,7 @@ def validate_polys(fin, primitives, snap, planarity, uploadtime):
   errorspresent = []
   for solidname in dFiles:
     cmd = []
-    cmd.append(VAL3DITYEXE_FOLDER + "val3dity")
+    cmd.append(val3dityexefolder + "val3dity")
     if (primitives == 'ms'):
       cmd.append("-onlysurfaces")
     cmd.append("-xml")

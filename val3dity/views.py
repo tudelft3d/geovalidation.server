@@ -1,6 +1,5 @@
 from val3dity import app
 from val3dity import celery
-# from settings import *
 
 import runvalidation
 
@@ -48,7 +47,14 @@ dErrors = {
 
 @celery.task
 def validate(fname, primitives, snaptol, plantol, uploadtime):
-    reportxml, summary = runvalidation.validate(fname, primitives, snaptol, plantol, uploadtime)    
+    reportxml, summary = runvalidation.validate(validate.request.id, 
+                                                fname,
+                                                primitives,
+                                                snaptol,
+                                                plantol,
+                                                uploadtime,
+                                                app.config['VAL3DITYEXE_FOLDER'],    
+                                                app.config['TMP_FOLDER'])    
     #-- write summary to database
     db = sqlite3.connect(app.config['DATABASE'])
     db.row_factory = sqlite3.Row
@@ -166,6 +172,7 @@ def index():
         if f:
             if allowed_file(f.filename):
               fname = secure_filename(f.filename)
+              print "1"
               f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
               primitives = request.form['primitives']
               snaptol = verify_tolerance(request.form['snaptol'], '1e-3')
@@ -174,7 +181,6 @@ def index():
               celtask = validate.delay(app.config['UPLOAD_FOLDER']+fname, primitives, snaptol, plantol, uploadtime)    
               jid = celtask.id
               db = get_db()
-              print "1"
               db.execute('insert into tasks (jid, file, primitives, snaptol, plantol, timestamp) values (?, ?, ?, ?, ?, ?)',
                         [jid, 
                         fname, 
@@ -183,7 +189,6 @@ def index():
                         plantol, 
                         uploadtime])
               db.commit()
-              print "2"
               # return render_template("index.html", jobid=jid)
               return redirect('/val3dity/reports/%s' % jid)
             else:
@@ -196,7 +201,6 @@ def index():
 @app.route('/reports/<jobid>')
 def reports(jobid):
     #-- check if job is in the database
-    print "2"
     j = query_db('select * from tasks where jid = ?', [jobid], one=True)
     fname = j['file']
     print fname
