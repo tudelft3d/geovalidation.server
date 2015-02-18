@@ -27,6 +27,15 @@ Edit the configuration file `geovalidation.cfg` for you server and export them:
 `export GEOVALIDATION_SETTINGS=/path/to/geovalidation.cfg`
 
 
+## Folders to store (temporary) results and uploaded files
+
+```
+cd val3dity
+mkdir uploads
+mkdir reports
+mkdir tmp
+```
+
 ## sqlite database
 
 A small database (`val3dity.sql`) must be used to store the results:
