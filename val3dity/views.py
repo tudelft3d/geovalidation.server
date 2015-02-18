@@ -202,19 +202,16 @@ def index():
 def reports(jobid):
     #-- check if job is in the database
     j = query_db('select * from tasks where jid = ?', [jobid], one=True)
-    fname = j['file']
-    print fname
     if j is None:
         return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
     #-- it exists
-    celtask = celery.AsyncResult(jobid)
-    print celtask
-    print j['errors']
-    if (celtask.ready() == False):
-        return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
-    # print celtask.result
-    # return render_template("status.html", success=True, info1='done, finished.', info2='great', refresh=False)
-    # print '---', j['timestamp']
+    fname = j['file']
+    print fname
+    if j['noprimitives'] is None:
+        celtask = celery.AsyncResult(jobid)
+        if (celtask.ready() == False):
+            print "task not finished."
+            return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
     if (j['errors'] == '901'):
         return render_template("report.html", 
                               filename=fname,
@@ -244,12 +241,13 @@ def reports(jobid):
                                welldone=True) 
     else:
         s = j['errors'].split('-')
+        errors = map(int, s)
+        errors.sort()
         lserrors = [] 
-        for e in s:
-            description = dErrors[int(e)]
-            s = e + " -- " + description
-            print s
-            lserrors.append(s)
+        for e in errors:
+            description = dErrors[e]
+            errors = str(e) + " -- " + description
+            lserrors.append(errors)
         print lserrors
 
         return render_template("report.html", 
