@@ -10,7 +10,7 @@ import os
 import uuid
 import time
 
-ALLOWED_EXTENSIONS = set(['gml', 'xml'])
+ALLOWED_EXTENSIONS = set(['gml', 'xml', 'obj', 'poly'])
 
 
 dErrors = {
@@ -55,22 +55,17 @@ def validate(fname, primitives, snaptol, plantol, uploadtime):
                                      snaptol,
                                      plantol,
                                      app.config['VAL3DITYEXE_FOLDER'],    
-                                     app.config['UPLOAD_FOLDER'])    
+                                     app.config['REPORTS_FOLDER'])    
     #-- write summary to database
     db = sqlite3.connect(app.config['DATABASE'])
     db.row_factory = sqlite3.Row
     db.execute('update tasks set noprimitives=?, noinvalid=?, errors=? where jid=?',
-              [summary['noprimitives'], 
-              summary['noinvalid'], 
-              summary['errors'], 
-              validate.request.id])
+               [summary['noprimitives'], 
+               summary['noinvalid'], 
+               summary['errors'], 
+               validate.request.id])
     db.commit()
     db.close()
-    #-- write summary to database
-    s = "%s%s.xml" % (app.config['REPORTS_FOLDER'], validate.request.id)        
-    fout = open(s, 'w')
-    fout.write('\n'.join(reportxml))
-    fout.close()
     #-- rm the uploaded file
     os.remove(fname) 
     return True
@@ -216,6 +211,7 @@ def reports(jobid):
                               filename=fname,
                               jid=jobid,
                               noprimitives=0, 
+                              primitives=j['primitives'],
                               noinvalid=0,
                               zeroprimitives=False,
                               badinput=True,
@@ -226,6 +222,7 @@ def reports(jobid):
                               filename=fname,
                               jid=jobid,
                               noprimitives=0, 
+                              primitives=j['primitives'],
                               noinvalid=0,
                               zeroprimitives=True,
                               welldone=False 
@@ -235,6 +232,7 @@ def reports(jobid):
                                filename=fname, 
                                jid=jobid, 
                                noprimitives=j['noprimitives'], 
+                               primitives=j['primitives'],
                                noinvalid=0, 
                                zeroprimitives=False, 
                                welldone=True) 
@@ -253,6 +251,7 @@ def reports(jobid):
                               filename=fname,
                               jid=jobid,
                               noprimitives=j['noprimitives'], 
+                              primitives=j['primitives'],
                               noinvalid=j['noinvalid'],
                               zeroprimitives=False,
                               errors=lserrors,

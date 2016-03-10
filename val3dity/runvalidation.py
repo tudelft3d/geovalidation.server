@@ -21,14 +21,13 @@ def validate(jid, fin, primitives, snaptol, plantol, val3dityexefolder, reportsf
   cmd.append("--snap_tolerance")
   cmd.append(str(snaptol))
   cmd.append("--unittests")
-  # print " ".join(cmd)
+  print " ".join(cmd)
   op = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   R = op.poll()
   if R:
     res = op.communicate()
     raise ValueError(res[1])
   re =  op.communicate()[0]
-  # print re
   dSummary = {}
   if (re != ''):
       if (re.find('@VALID') != -1):
@@ -37,7 +36,7 @@ def validate(jid, fin, primitives, snaptol, plantol, val3dityexefolder, reportsf
         codes = s.split(" ")
         dSummary['noprimitives'] = codes[0]
         dSummary['noinvalid'] = "0"
-        dSummary['errors'] = ""
+        dSummary['errors'] = "-1"
         return dSummary
       else:
         i = re.find('@INVALID')
@@ -48,6 +47,7 @@ def validate(jid, fin, primitives, snaptol, plantol, val3dityexefolder, reportsf
         dSummary['errors'] = "-".join(codes[2:-1])
         return dSummary
   return dSummary
+
 
 if __name__ == '__main__':
   r = validate("myjid", 
