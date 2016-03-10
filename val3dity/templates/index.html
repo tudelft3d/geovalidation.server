@@ -2,13 +2,13 @@
 {% block body %}
 
   <div class="page-header">
-    <h2><img src="{{ url_for('static', filename='img/val3dity.png') }}" width=250 alt=""/><br>geometric validation of GML 3D primitives</h2>
+    <h2><img src="{{ url_for('static', filename='img/val3dity.png') }}" width=250 alt=""/><br>geometric validation of 3D primitives according to ISO19107</h2>
   </div>
       
   <div class="well">
   <form class="form-horizontal" role="form" action="" method=post enctype=multipart/form-data>
     <div class="form-group">
-      <label class="col-sm-4 control-label">Input GML file <i class="fa fa-question-circle" data-toggle="tooltip" title="any GML file containing gml:Solids or gml:MultiSurfaces" ></i></label>
+      <label class="col-sm-4 control-label">Input file <i class="fa fa-question-circle" data-toggle="tooltip" title="any GML file or OBJ" ></i></label>
       <div class="col-sm-8">
           <div class="fileinput fileinput-new" data-provides="fileinput">
           <span class="btn btn-default btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" name="file"></span>
@@ -23,10 +23,13 @@
       <div class="col-sm-8">
         <div class="btn-group" data-toggle="buttons">
           <label class="btn btn-default active">
-            <input type="radio" name="primitives" value="solid" checked> gml:Solids
+            <input type="radio" name="primitives" value="solid" checked> Solids
           </label>
           <label class="btn btn-default">
-            <input type="radio" name="primitives" value="ms"> gml:MultiSurfaces 
+            <input type="radio" name="primitives" value="ms"> MultiSurfaces 
+          </label>
+          <label class="btn btn-default">
+            <input type="radio" name="primitives" value="solid" checked> CompositeSolids
           </label>
         </div>
       </div>
