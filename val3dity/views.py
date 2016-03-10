@@ -49,14 +49,13 @@ dErrors = {
 
 @celery.task
 def validate(fname, primitives, snaptol, plantol, uploadtime):
-    reportxml, summary = runvalidation.validate(validate.request.id, 
-                                                fname,
-                                                primitives,
-                                                snaptol,
-                                                plantol,
-                                                uploadtime,
-                                                app.config['VAL3DITYEXE_FOLDER'],    
-                                                app.config['TMP_FOLDER'])    
+    summary = runvalidation.validate(validate.request.id, 
+                                     fname,
+                                     primitives,
+                                     snaptol,
+                                     plantol,
+                                     app.config['VAL3DITYEXE_FOLDER'],    
+                                     app.config['UPLOAD_FOLDER'])    
     #-- write summary to database
     db = sqlite3.connect(app.config['DATABASE'])
     db.row_factory = sqlite3.Row
@@ -192,7 +191,7 @@ def index():
               # return render_template("index.html", jobid=jid)
               return redirect('/val3dity/reports/%s' % jid)
             else:
-              return render_template("index.html", problem='Uploaded file is not a GML file.')
+              return render_template("index.html", problem='Uploaded file is not a valid file.')
         else:
             return render_template("index.html", problem='No file selected.')
     return render_template("index.html")
