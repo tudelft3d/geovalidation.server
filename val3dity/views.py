@@ -10,66 +10,62 @@ import os
 import uuid
 import time
 
-ALLOWED_EXTENSIONS = set(['gml', 'xml'])
+ALLOWED_EXTENSIONS = set(['gml', 'xml', 'obj', 'poly'])
+
 
 dErrors = {
-  101: 'TOO_FEW_POINTS',
-  102: 'CONSECUTIVE_POINTS_SAME',
-  103: 'NOT_CLOSED',
-  104: 'SELF_INTERSECTION',
-  105: 'COLLAPSED_TO_LINE',
-  201: 'INTERSECTION_RINGS',
-  202: 'DUPLICATED_RINGS',
-  203: 'NON_PLANAR_POLYGON_DISTANCE_PLANE',
-  204: 'NON_PLANAR_POLYGON_NORMALS_DEVIATION',
-  205: 'POLYGON_INTERIOR_DISCONNECTED',
-  206: 'HOLE_OUTSIDE',
-  207: 'INNER_RINGS_NESTED',
-  208: 'ORIENTATION_RINGS_SAME',
-  300: 'NOT_VALID_2_MANIFOLD',
-  301: 'TOO_FEW_POLYGONS',
-  302: 'SHELL_NOT_CLOSED',
-  303: 'NON_MANIFOLD_VERTEX',
-  304: 'NON_MANIFOLD_EDGE',
-  305: 'MULTIPLE_CONNECTED_COMPONENTS',
-  306: 'SHELL_SELF_INTERSECTION',
-  307: 'POLYGON_WRONG_ORIENTATION',
-  308: 'ALL_POLYGONS_WRONG_ORIENTATION',
-  309: 'VERTICES_NOT_USED',
-  401: 'SHELLS_FACE_ADJACENT',
-  402: 'INTERSECTION_SHELLS',
-  403: 'INNER_SHELL_OUTSIDE_OUTER',
-  404: 'SOLID_INTERIOR_DISCONNECTED',
-  901: 'INVALID_INPUT_FILE',
-  999: 'UNKNOWN_ERROR',
+  101: "TOO_FEW_POINTS",
+  102: "CONSECUTIVE_POINTS_SAME",
+  103: "RING_NOT_CLOSED",
+  104: "RING_SELF_INTERSECTION",
+  105: "RING_COLLAPSED",
+  201: "INTERSECTION_RINGS",
+  202: "DUPLICATED_RINGS",
+  203: "NON_PLANAR_POLYGON_DISTANCE_PLANE",
+  204: "NON_PLANAR_POLYGON_NORMALS_DEVIATION",
+  205: "POLYGON_INTERIOR_DISCONNECTED",
+  206: "HOLE_OUTSIDE",
+  207: "INNER_RINGS_NESTED",
+  208: "ORIENTATION_RINGS_SAME",
+  300: "NOT_VALID_2_MANIFOLD",
+  301: "TOO_FEW_POLYGONS",
+  302: "SHELL_NOT_CLOSED",
+  303: "NON_MANIFOLD_VERTEX",
+  304: "NON_MANIFOLD_EDGE",
+  305: "MULTIPLE_CONNECTED_COMPONENTS",
+  306: "SHELL_SELF_INTERSECTION",
+  307: "POLYGON_WRONG_ORIENTATION",
+  308: "ALL_POLYGONS_WRONG_ORIENTATION",
+  309: "VERTICES_NOT_USED",
+  401: "SHELLS_FACE_ADJACENT",
+  402: "INTERSECTION_SHELLS",
+  403: "INNER_SHELL_OUTSIDE_OUTER",
+  404: "SOLID_INTERIOR_DISCONNECTED",
+  901: "INVALID_INPUT_FILE",
+  902: "EMPTY_PRIMITIVE",
+  999: "UNKNOWN_ERROR",
 }
 
 
 @celery.task
 def validate(fname, primitives, snaptol, plantol, uploadtime):
-    reportxml, summary = runvalidation.validate(validate.request.id, 
-                                                fname,
-                                                primitives,
-                                                snaptol,
-                                                plantol,
-                                                uploadtime,
-                                                app.config['VAL3DITYEXE_FOLDER'],    
-                                                app.config['TMP_FOLDER'])    
+    summary = runvalidation.validate(validate.request.id, 
+                                     fname,
+                                     primitives,
+                                     snaptol,
+                                     plantol,
+                                     app.config['VAL3DITYEXE_FOLDER'],    
+                                     app.config['REPORTS_FOLDER'])    
     #-- write summary to database
     db = sqlite3.connect(app.config['DATABASE'])
     db.row_factory = sqlite3.Row
     db.execute('update tasks set noprimitives=?, noinvalid=?, errors=? where jid=?',
-              [summary['noprimitives'], 
-              summary['noinvalid'], 
-              summary['errors'], 
-              validate.request.id])
+               [summary['noprimitives'], 
+               summary['noinvalid'], 
+               summary['errors'], 
+               validate.request.id])
     db.commit()
     db.close()
-    #-- write summary to database
-    s = "%s%s.xml" % (app.config['REPORTS_FOLDER'], validate.request.id)        
-    fout = open(s, 'w')
-    fout.write('\n'.join(reportxml))
-    fout.close()
     #-- rm the uploaded file
     os.remove(fname) 
     return True
@@ -163,8 +159,6 @@ def query_db(query, args=(), one=False):
     return (rv[0] if rv else None) if one else rv
 
 
-
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -192,7 +186,7 @@ def index():
               # return render_template("index.html", jobid=jid)
               return redirect('/val3dity/reports/%s' % jid)
             else:
-              return render_template("index.html", problem='Uploaded file is not a GML file.')
+              return render_template("index.html", problem='Uploaded file is not a valid file.')
         else:
             return render_template("index.html", problem='No file selected.')
     return render_template("index.html")
@@ -217,6 +211,7 @@ def reports(jobid):
                               filename=fname,
                               jid=jobid,
                               noprimitives=0, 
+                              primitives=j['primitives'],
                               noinvalid=0,
                               zeroprimitives=False,
                               badinput=True,
@@ -227,6 +222,7 @@ def reports(jobid):
                               filename=fname,
                               jid=jobid,
                               noprimitives=0, 
+                              primitives=j['primitives'],
                               noinvalid=0,
                               zeroprimitives=True,
                               welldone=False 
@@ -236,6 +232,7 @@ def reports(jobid):
                                filename=fname, 
                                jid=jobid, 
                                noprimitives=j['noprimitives'], 
+                               primitives=j['primitives'],
                                noinvalid=0, 
                                zeroprimitives=False, 
                                welldone=True) 
@@ -254,6 +251,7 @@ def reports(jobid):
                               filename=fname,
                               jid=jobid,
                               noprimitives=j['noprimitives'], 
+                              primitives=j['primitives'],
                               noinvalid=j['noinvalid'],
                               zeroprimitives=False,
                               errors=lserrors,

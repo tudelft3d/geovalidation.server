@@ -17,10 +17,8 @@ app.config.from_envvar('GEOVALIDATION_SETTINGS', silent=True)
 #-- fixed setup for folders and database and etc
 app.config['UPLOAD_FOLDER']         = app.config['VAL3DITY_SERVER'] + 'uploads/'
 app.config['REPORTS_FOLDER']        = app.config['VAL3DITY_SERVER'] + 'reports/'
-app.config['TMP_FOLDER']            = app.config['VAL3DITY_SERVER'] + 'tmp/'
 app.config['DATABASE']              = app.config['VAL3DITY_SERVER'] + 'val3dity.sqlite'
 app.config['PROBLEMFILES_FOLDER']   = app.config['VAL3DITY_SERVER'] + 'problemfiles/'
-app.config['ADDGMLIDSEXE']          = 'python %sressources/python/addgmlids.py' % (app.config['VAL3DITYEXE_FOLDER'])
 
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
