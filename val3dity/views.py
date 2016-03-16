@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 import os
 import uuid
 import time
+import copy
 
 ALLOWED_EXTENSIONS = set(['gml', 'xml', 'obj', 'poly'])
 
@@ -107,11 +108,24 @@ def allowed_file(filename):
 def stats():
     totaljobs   = query_db('select count(*) from tasks', [], one=True)
     totalsolids = query_db('select sum(noprimitives) from tasks', [], one=True)
-    totalinvalidsolids = query_db('select sum(noinvalid) from tasks where noprimitives', [], one=True)
+    totalinvalidsolids = query_db('select sum(noinvalid) from tasks', [], one=True)
     percentage = int((float(totalinvalidsolids[0]) / float(totalsolids[0])) * 100)
     last = query_db('select * from tasks order by timestamp desc limit 1;', [], one=True)
-
-    print percentage
+    allerrors = query_db('select errors from tasks where errors is not null and errors!=-1', [])
+    myerr = copy.deepcopy(dErrors)
+    for each in myerr:
+      myerr[each] = 0;
+    for es in allerrors:
+      tmp = es[0].split("-")
+      ei = map(int, tmp)
+      for e in ei:
+        myerr[e] += 1
+    higherr = 100;
+    highest = 0;
+    for e in myerr:
+      if myerr[e] > highest:
+        highest = myerr[e]
+        higherr = e
     return render_template("stats.html", 
                            totaljobs=totaljobs[0],
                            totalsolids=totalsolids[0],
@@ -119,6 +133,8 @@ def stats():
                            percentageinvalids=percentage,
                            lastdate=last['timestamp'],
                            lastprimitives=last['noprimitives'],
+                           mosterror=higherr,
+                           mosterrordef=dErrors[higherr],
                            lastinvalids=last['noinvalid'],
                            lasterrors=last['errors']
                           )
