@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <div class="page-header">
+    <h1>Some statistics </h1>
+  </div>
+
+
+  <div class="panel panel-primary">
+    <div class="panel-heading">(since 2016-03-16)</div>
+      <div class="panel-body">
+        <p>Total number of Solids validated: {{ totalsolids }}</p>
+        <p>Total number of invalid Solids: {{ totalinvalidsolids }} ({{ percentageinvalids }}%)</p>
+        <p>Total use: {{ totaljobs }}</p>
+    </div>
+  </div>  
+
+  <div class="panel panel-info">
+    <div class="panel-heading">Last validation</div>
+      <div class="panel-body">
+        <p>Date: {{ lastdate }}</p>
+        <p>Number of Solids: {{ lastprimitives }}</p>
+        <p>Invalid Solids: {{ lastinvalids }}</p>
+        <p>Errors present: {{ lasterrors }}</p>
+    </div>
+  </div>  
+
+
+{% endblock %}

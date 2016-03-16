@@ -103,6 +103,27 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
+@app.route('/stats')
+def stats():
+    totaljobs   = query_db('select count(*) from tasks', [], one=True)
+    totalsolids = query_db('select sum(noprimitives) from tasks', [], one=True)
+    totalinvalidsolids = query_db('select sum(noinvalid) from tasks where noprimitives', [], one=True)
+    percentage = int((float(totalinvalidsolids[0]) / float(totalsolids[0])) * 100)
+    last = query_db('select * from tasks order by timestamp desc limit 1;', [], one=True)
+
+    print percentage
+    return render_template("stats.html", 
+                           totaljobs=totaljobs[0],
+                           totalsolids=totalsolids[0],
+                           totalinvalidsolids=totalinvalidsolids[0],
+                           percentageinvalids=percentage,
+                           lastdate=last['timestamp'],
+                           lastprimitives=last['noprimitives'],
+                           lastinvalids=last['noinvalid'],
+                           lasterrors=last['errors']
+                          )
+    
+
 @app.route('/addgmlids', methods=['GET', 'POST'])
 def addgmlids():
     if request.method == 'POST':
