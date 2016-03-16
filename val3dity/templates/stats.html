@@ -2,28 +2,52 @@
 {% block body %}
 
   <div class="page-header">
-    <h1>Some statistics </h1>
+    <h1>Some statistics</h1>
+  </div>
+
+  <div class="panel panel-primary">
+  <div class="panel-heading">(since 2015-02-17)</div>
+    <ul class="list-group">
+    <li class="list-group-item">
+      <span class="badge"> {{ totalsolids }}</span>
+      Total number of solids validated
+    </li>
+    <li class="list-group-item">
+      <span class="badge">{{ totalinvalidsolids }}</span>
+      Total number of invalid solids
+    </li>  
+    <li class="list-group-item">
+      <span class="badge">{{ percentageinvalids }}%</span>
+      Percentage of invalid solids
+    </li>
+    <li class="list-group-item">
+      <span class="badge">{{ totaljobs }} </span>
+      Total uploaded files
+    </li>
+    <li class="list-group-item">
+      <span class="badge"> {{ mosterror }} -- {{ mosterrordef }} </span>
+      Most common error
+    </li>
+    </ul>
   </div>
 
 
-  <div class="panel panel-primary">
-    <div class="panel-heading">(since 2015-02-17)</div>
-      <div class="panel-body">
-        <p>Total number of Solids validated: {{ totalsolids }}</p>
-        <p>Total number of invalid Solids: {{ totalinvalidsolids }} ({{ percentageinvalids }}%)</p>
-        <p>Total uploaded files: {{ totaljobs }} </p>
-        <p>Most common error: {{ mosterror }} -- {{ mosterrordef }} </p>
-    </div>
-  </div>  
-
   <div class="panel panel-info">
-    <div class="panel-heading">Last validation</div>
-      <div class="panel-body">
-        <p>Date: {{ lastdate }}</p>
-        <p>Number of Solids: {{ lastprimitives }}</p>
-        <p>Invalid Solids: {{ lastinvalids }}</p>
-        <p>Errors present: {{ lasterrors }}</p>
-    </div>
+    <div class="panel-heading">Last validation ({{ lastdate }})</div>
+      <ul class="list-group">
+      <li class="list-group-item">
+      <span class="badge">{{ lastprimitives }}</span>
+      Number of Solids
+    </li>  
+    <li class="list-group-item">
+      <span class="badge">{{ lastinvalids }}</span>
+      Invalid Solids
+    </li>  
+    <li class="list-group-item">
+      <span class="badge">{{ lasterrors }}</span>
+      Errors present
+    </li>  
+    </ul>
   </div>  
 
 
