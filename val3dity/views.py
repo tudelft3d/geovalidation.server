@@ -127,15 +127,15 @@ def stats():
         highest = myerr[e]
         higherr = e
     return render_template("stats.html", 
-                           totaljobs=totaljobs[0],
-                           totalsolids=totalsolids[0],
-                           totalinvalidsolids=totalinvalidsolids[0],
+                           totaljobs="{:,}".format(totaljobs[0]),
+                           totalsolids="{:,}".format(totalsolids[0]),
+                           totalinvalidsolids="{:,}".format(totalinvalidsolids[0]),
                            percentageinvalids=percentage,
                            lastdate=last['timestamp'],
-                           lastprimitives=last['noprimitives'],
+                           lastprimitives="{:,}".format(last['noprimitives']),
                            mosterror=higherr,
                            mosterrordef=dErrors[higherr],
-                           lastinvalids=last['noinvalid'],
+                           lastinvalids="{:,}".format(last['noinvalid']),
                            lasterrors=last['errors']
                           )
     
