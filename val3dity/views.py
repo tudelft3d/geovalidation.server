@@ -116,7 +116,7 @@ def stats():
     last5 = query_db('select * from tasks order by timestamp desc limit 5', [], one=False)
     a = []
     for each in last5:
-      a.append((each['timestamp'], each['noprimitives'], each['noinvalid'], each['errors']))
+      a.append((each['timestamp'].replace("T", " "), each['noprimitives'], each['noinvalid'], each['errors']))
     allerrors = query_db('select errors from tasks where errors is not null and errors!=-1', [])
     myerr = copy.deepcopy(dErrors)
     for each in myerr:
