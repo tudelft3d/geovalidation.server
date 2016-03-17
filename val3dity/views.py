@@ -103,6 +103,9 @@ def faq():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('404.html'), 404
 
 @app.route('/stats')
 def stats():
