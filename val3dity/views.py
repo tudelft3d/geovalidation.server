@@ -206,7 +206,6 @@ def index():
         if f:
             if allowed_file(f.filename):
               fname = secure_filename(f.filename)
-              print "1"
               f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
               primitives = request.form['primitives']
               snaptol = verify_tolerance(request.form['snaptol'], '1e-3')
@@ -223,7 +222,6 @@ def index():
                         plantol, 
                         uploadtime])
               db.commit()
-              # return render_template("index.html", jobid=jid)
               return redirect('/val3dity/reports/%s' % jid)
             else:
               return render_template("index.html", problem='Uploaded file is not a valid file.')
