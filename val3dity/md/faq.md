@@ -40,7 +40,7 @@ If the input file is OBJ or OFF, then this doesn't apply.
 ### I don't see all the errors in my solid.
 
 It's normal: as shown in the figure below, a solid is validated *hierarchically*, ie first every surface (a polygon embedded in 3D) is validated in 2D (by projecting it to a plane), then every shell is validated, and finally the interactions between the shells are analysed to verify whether the solid is valid. 
-If at one stage there are errors, then the validation stops to avoid "cascading errors". So if you get the error `203 NON\_PLANAR\_POLYGON\_DISTANCE\_PLANE`, then fix it and re-run the validator again. 
+If at one stage there are errors, then the validation stops to avoid "cascading errors". So if you get the error `203 NON_PLANAR_POLYGON_DISTANCE_PLANE`, then fix it and re-run the validator again. 
 That does mean that you might have to upload your file and get it validated several times---if that becomes too tedious we strongly suggest you to download the [code](https://github.com/tudelft3d/val3dity), compile it and run it locally (it's open-source and free to use).
 
 <p><img width='500' src="{{ url_for('static', filename='img/workflow.svg') }}" alt="" /></p>
