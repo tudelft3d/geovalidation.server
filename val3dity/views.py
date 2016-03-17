@@ -139,7 +139,7 @@ def stats():
                            mosterror=higherr,
                            mosterrordef=dErrors[higherr],
                            lastinvalids="{:,}".format(last['noinvalid']),
-                           lasterrors=last['errors']
+                           lasterrors=lasterrors
                           )
     
 
