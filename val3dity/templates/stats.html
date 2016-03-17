@@ -31,24 +31,34 @@
     </ul>
   </div>
 
+  <!-- <div class="panel panel-info"> -->
+    <!-- <div class="panel-heading">Last 5 validations </div> -->
 
-  <div class="panel panel-info">
-    <div class="panel-heading">Last validation: {{ lastdate }}</div>
-      <ul class="list-group">
-      <li class="list-group-item">
-      <span class="badge">{{ lastprimitives }}</span>
-      Number of solids
-    </li>  
-    <li class="list-group-item">
-      <span class="badge">{{ lastinvalids }}</span>
-      Invalid solids
-    </li>  
-    <li class="list-group-item">
-      <span class="badge">{{ lasterrors }}</span>
-      Error code(s) present
-    </li>  
-    </ul>
-  </div>  
+  <hr>
+  <h3>Last 5 validations</h3>  
+    <table class="table">
+      <tr>
+        <th>date</th>
+        <th># solids</th> 
+        <th># invalid</th>
+        <th>error codes</th>
+      </tr>
+    {% for each in last5 %}
+      {% if each[2] == 0 and each[1] > 0 %}
+      <tr class="success">
+      {% else %}
+      <tr class="danger">
+      {% endif %}
+        <td>{{ each[0] }}</td>
+        <td>{{ each[1] }}</td> 
+        <td>{{ each[2] }}</td>
+        <td>{{ each[3] }}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  <!-- </div> -->
+
+
 
 
 {% endblock %}

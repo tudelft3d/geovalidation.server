@@ -113,10 +113,10 @@ def stats():
     totalsolids = query_db('select sum(noprimitives) from tasks', [], one=True)
     totalinvalidsolids = query_db('select sum(noinvalid) from tasks', [], one=True)
     percentage = int((float(totalinvalidsolids[0]) / float(totalsolids[0])) * 100)
-    last = query_db('select * from tasks order by timestamp desc limit 1;', [], one=True)
-    lasterrors = last['errors']
-    if lasterrors == "-1":
-      lasterrors = "--"
+    last5 = query_db('select * from tasks order by timestamp desc limit 5', [], one=False)
+    a = []
+    for each in last5:
+      a.append((each['timestamp'], each['noprimitives'], each['noinvalid'], each['errors']))
     allerrors = query_db('select errors from tasks where errors is not null and errors!=-1', [])
     myerr = copy.deepcopy(dErrors)
     for each in myerr:
@@ -137,12 +137,9 @@ def stats():
                            totalsolids="{:,}".format(totalsolids[0]),
                            totalinvalidsolids="{:,}".format(totalinvalidsolids[0]),
                            percentageinvalids=percentage,
-                           lastdate=last['timestamp'],
-                           lastprimitives="{:,}".format(last['noprimitives']),
                            mosterror=higherr,
                            mosterrordef=dErrors[higherr],
-                           lastinvalids="{:,}".format(last['noinvalid']),
-                           lasterrors=lasterrors
+                           last5=a
                           )
     
 
