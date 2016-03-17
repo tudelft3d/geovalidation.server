@@ -7,26 +7,37 @@
 
 <p>The validator, which uses the open-source project <a href="https://github.com/tudelft3d/val3dity">val3dity</a> in the background, checks whether the 3D primitives (<strong>Solids</strong>, <strong>CompositeSurfaces</strong>, or <strong>MultiSurfaces</strong>)  are <em>geometrically</em> valid according to the international standard <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO 19107:2003</a>. </p>
 
-<p>It accepts as input any GML files (or one of the formats built upon it, such as CityGML), OBJ, OFF, <a href="http://wias-berlin.de/software/tetgen/1.5/doc/manual/manual006.html#ff_poly">POLY</a>.
+<p>It accepts as input any GML files (or one of the formats built upon it, such as CityGML), OBJ, OFF, and <a href="http://wias-berlin.de/software/tetgen/1.5/doc/manual/manual006.html#ff_poly">POLY</a>.
 It simply scans the file looking for the 3D primitives and validates these according to the rules in ISO19107 (all the rest is ignored). </p>
 
 <p><img width='500' src="{{ url_for('static', filename='img/workflow.svg') }}" alt="" /></p>
 
 <p>For <strong>Solids</strong>, the validation is performed hierarchically, ie first every polygon (embedded in 3D) is validated (by projecting it to a 2D plane and using <a href="http://trac.osgeo.org/geos/">GEOS</a>), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. 
-This means that if a polygon of your solid is not valid, the validator will report that error but will <em>not</em> continue the validation (to avoid &#8220;cascading&#8221; errors). 
-For <strong>MultiSurfaces</strong>, only the validation of the polygons is performed, ie are they valid according to the 2D rules, and are they planar?
-For <strong>CompositeSurfaces</strong>, the surface formed by the polygons must be a 2-manifold.</p>
+This means that if a polygon of your solid is not valid, the validator will report that error but will <em>not</em> continue the validation (to avoid &#8220;cascading&#8221; errors). </p>
+
+<p>For <strong>MultiSurfaces</strong>, only the validation of the polygons is performed, ie are they valid according to the 2D rules, and are they planar?</p>
+
+<p>For <strong>CompositeSurfaces</strong>, the surface formed by the polygons must be a 2-manifold.</p>
+
+<p>More details are available in this <a href="https://3d.bk.tudelft.nl/hledoux/blog/your-solids-the-same/">blog post about 3D solids in GIS</a>.</p>
+
+<h3>Error codes</h3>
 
 <p>These <a href="{{  url_for("errors")  }}">errors</a> can be reported.</p>
 
-<p>Most of the details of the implementation are available in this scientific article:</p>
+<h3>Source code</h3>
+
+<p>The <a href="https://github.com/tudelft3d/val3dity">source code of the validator</a> is publicly available.
+The version used online is always the latest commit in master branch.</p>
+
+<h3>Acknowledgement</h3>
+
+<p>If you use val3dity for research-purposes and publish, please cite that scientific article (which contains all the details):</p>
 
 <blockquote>
   <p>Ledoux, Hugo (2013). On the validation of solids represented with the
   international standards for geographic information. <em>Computer-Aided Civil and Infrastructure Engineering</em>, 28(9):693-706. 
-  <a href="http://dx.doi.org/10.1111/mice.12043"><i class="fa fa-external-link"></i></a> <a href="http://3dgeoinfo.bk.tudelft.nl/hledoux/pdfs/13_cacaie.pdf"><i class="fa fa-file-pdf-o"></i></a></p>
+  <a href="http://dx.doi.org/10.1111/mice.12043"><i class="fa fa-external-link"></i></a> <a href="https://3d.bk.tudelft.nl/hledoux/pdfs/13_cacaie.pdf"><i class="fa fa-file-pdf-o"></i></a></p>
 </blockquote>
-
-<p>The <a href="https://github.com/tudelft3d/val3dity">source code of the validator</a> is publicly available.</p>
 
 {% endblock %}
