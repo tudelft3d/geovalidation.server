@@ -111,6 +111,9 @@ def stats():
     totalinvalidsolids = query_db('select sum(noinvalid) from tasks', [], one=True)
     percentage = int((float(totalinvalidsolids[0]) / float(totalsolids[0])) * 100)
     last = query_db('select * from tasks order by timestamp desc limit 1;', [], one=True)
+    lasterrors = last['errors']
+    if lasterrors == "-1":
+      lasterrors = "--"
     allerrors = query_db('select errors from tasks where errors is not null and errors!=-1', [])
     myerr = copy.deepcopy(dErrors)
     for each in myerr:
