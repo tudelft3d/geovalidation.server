@@ -38,13 +38,18 @@ def validate(jid, fin, primitives, snaptol, plantol, val3dityexefolder, reportsf
         dSummary['noinvalid'] = "0"
         dSummary['errors'] = "-1"
         return dSummary
-      else:
+      elif (re.find('@INVALID') != -1):
         i = re.find('@INVALID')
         s = re[i+9:]
         codes = s.split(" ")
         dSummary['noprimitives'] = codes[0]
         dSummary['noinvalid'] = codes[1]
         dSummary['errors'] = "-".join(codes[2:-1])
+        return dSummary
+      else:
+        dSummary['noprimitives'] = 0
+        dSummary['noinvalid'] = 0
+        dSummary['errors'] = "999"
         return dSummary
   return dSummary
 
