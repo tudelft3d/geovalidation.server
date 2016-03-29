@@ -52,10 +52,10 @@
         {% else %}
         <td>{{ each[3] }}</td>
         {% endif %}
-        {% if each[2] == 0 and each[1] > 0 %}
-        <td><i class="fa fa-thumbs-o-up"></i></td>
+        {{% if each[2] == 0 and each[1] > 0 %}
+        <td><i class="fa fa-check"></i></td>
         {% else %}
-        <td></td>
+        <td><i class="fa fa-times"></i></td>
         {% endif %}
 
       </tr>
