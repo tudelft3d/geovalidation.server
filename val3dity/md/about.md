@@ -3,11 +3,11 @@
     <h1>about</h1>
 </div>
 
-The validator, which uses the open-source project [val3dity](https://github.com/tudelft3d/val3dity) in the background, checks whether the 3D primitives (__Solids__, __CompositeSurfaces__, or __MultiSurfaces__)  are *geometrically* valid according to the international standard [ISO 19107:2003](http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012). 
+The validator, which uses the open-source project [val3dity](https://github.com/tudelft3d/val3dity) in the background, is maintained by [Hugo Ledoux](https://3d.bk.tudelft.nl/hledoux) and the [3D geoinformation group at TUDelft](https://3d.bk.tudelft.nl).
 
-If you encounter a bug, please report it on the [issue page](https://github.com/tudelft3d/val3dity/issues) or contact me (<a href="http://www.tudelft.nl/hledoux">Hugo Ledoux</a>) directly.
+It is used to verify whether 3D primitives are *geometrically* valid according to the international standard [ISO 19107:2003](http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012). 
 
-
+Its main aim is thus the 3D primitives of GML (__Solids__, __CompositeSurfaces__, or __MultiSurfaces__), but it can be used to validate any 3D primitives. 
 It accepts as input any GML files (or one of the formats built upon it, such as CityGML), OBJ, OFF, and [POLY](http://wias-berlin.de/software/tetgen/1.5/doc/manual/manual006.html#ff_poly).
 It simply scans the file looking for the 3D primitives and validates these according to the rules in ISO19107 (all the rest is ignored). 
 
@@ -25,6 +25,11 @@ More details are available in this [blog post about 3D solids in GIS](https://3d
 ### Error codes
 
 These <a href="{{  url_for("errors")  }}">errors</a> can be reported.
+
+### Bugs?
+
+If you encounter a bug, please report it on the [issue page](https://github.com/tudelft3d/val3dity/issues) or [contact me directly](mailto:h.ledoux@tudelft.nl).
+
 
 ### Source code
 

@@ -5,11 +5,12 @@
     <h1>about</h1>
 </div>
 
-<p>The validator, which uses the open-source project <a href="https://github.com/tudelft3d/val3dity">val3dity</a> in the background, checks whether the 3D primitives (<strong>Solids</strong>, <strong>CompositeSurfaces</strong>, or <strong>MultiSurfaces</strong>)  are <em>geometrically</em> valid according to the international standard <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO 19107:2003</a>. </p>
+<p>The validator, which uses the open-source project <a href="https://github.com/tudelft3d/val3dity">val3dity</a> in the background, is maintained by <a href="https://3d.bk.tudelft.nl/hledoux">Hugo Ledoux</a> and the <a href="https://3d.bk.tudelft.nl">3D geoinformation group at TUDelft</a>.</p>
 
-<p>If you encounter a bug, please report it on the <a href="https://github.com/tudelft3d/val3dity/issues">issue page</a> or contact me (<a href="http://www.tudelft.nl/hledoux">Hugo Ledoux</a>) directly.</p>
+<p>It is used to verify whether 3D primitives are <em>geometrically</em> valid according to the international standard <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO 19107:2003</a>. </p>
 
-<p>It accepts as input any GML files (or one of the formats built upon it, such as CityGML), OBJ, OFF, and <a href="http://wias-berlin.de/software/tetgen/1.5/doc/manual/manual006.html#ff_poly">POLY</a>.
+<p>Its main aim is thus the 3D primitives of GML (<strong>Solids</strong>, <strong>CompositeSurfaces</strong>, or <strong>MultiSurfaces</strong>), but it can be used to validate any 3D primitives. 
+It accepts as input any GML files (or one of the formats built upon it, such as CityGML), OBJ, OFF, and <a href="http://wias-berlin.de/software/tetgen/1.5/doc/manual/manual006.html#ff_poly">POLY</a>.
 It simply scans the file looking for the 3D primitives and validates these according to the rules in ISO19107 (all the rest is ignored). </p>
 
 <p><img width='500' src="{{ url_for('static', filename='img/workflow.svg') }}" alt="" /></p>
@@ -26,6 +27,10 @@ This means that if a polygon of your solid is not valid, the validator will repo
 <h3>Error codes</h3>
 
 <p>These <a href="{{  url_for("errors")  }}">errors</a> can be reported.</p>
+
+<h3>Bugs?</h3>
+
+<p>If you encounter a bug, please report it on the <a href="https://github.com/tudelft3d/val3dity/issues">issue page</a> or <a href="mailto:h.ledoux@tudelft.nl">contact me directly</a>.</p>
 
 <h3>Source code</h3>
 
