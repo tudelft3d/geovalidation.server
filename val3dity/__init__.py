@@ -5,6 +5,8 @@ from celery import Celery
 
 app = Flask(__name__, static_url_path='')
 
+# app.debug = True
+
 class default_settings(object):
     VAL3DITY_SERVER       = '/Users/hugo/www/geovalidation.server/val3dity/'
     VAL3DITYEXE_FOLDER    = '/Users/hugo/projects/val3dity/'
