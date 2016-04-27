@@ -10,6 +10,9 @@ import os
 import uuid
 import time
 import copy
+from geoip import geolite2
+
+TRUSTED_PROXIES = {'127.0.0.1'}  
 
 ALLOWED_EXTENSIONS = set(['gml', 'xml', 'obj', 'poly'])
 
@@ -112,7 +115,12 @@ def stats():
     last5 = query_db('select * from tasks order by timestamp desc limit 5', [], one=False)
     a = []
     for each in last5:
-      a.append((each['timestamp'].replace("T", " "), each['noprimitives'], each['noinvalid'], each['errors']))
+      ipcountry = 'unknown'
+      if (each['ip'] is not None): 
+        ipobj = geolite2.lookup(each['ip'])
+        if ipobj is not None:
+          ipcountry = ipobj.country
+      a.append((each['timestamp'].replace("T", " "), each['noprimitives'], each['noinvalid'], each['errors'], ipcountry))
     allerrors = query_db('select errors from tasks where errors is not null and errors!=-1', [])
     myerr = copy.deepcopy(dErrors)
     for each in myerr:
@@ -201,6 +209,8 @@ def index():
         f = request.files['file']
         if f:
             if allowed_file(f.filename):
+              route = request.access_route + [request.remote_addr]
+              clientip = next((addr for addr in reversed(route) if addr not in TRUSTED_PROXIES), request.remote_addr)
               fname = secure_filename(f.filename)
               f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
               primitives = request.form['primitives']
@@ -210,13 +220,14 @@ def index():
               celtask = validate.delay(app.config['UPLOAD_FOLDER']+fname, primitives, snaptol, plantol, uploadtime)    
               jid = celtask.id
               db = get_db()
-              db.execute('insert into tasks (jid, file, primitives, snaptol, plantol, timestamp) values (?, ?, ?, ?, ?, ?)',
+              db.execute('insert into tasks (jid, file, primitives, snaptol, plantol, timestamp, ip) values (?, ?, ?, ?, ?, ?, ?)',
                         [jid, 
                         fname, 
                         request.form['primitives'], 
                         snaptol, 
                         plantol, 
-                        uploadtime])
+                        uploadtime,
+                        clientip])
               db.commit()
               return redirect('/val3dity/reports/%s' % jid)
             else:

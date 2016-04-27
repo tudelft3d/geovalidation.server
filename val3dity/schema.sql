@@ -9,5 +9,6 @@ create table tasks (
   `noprimitives`  INTEGER,
   `noinvalid`  INTEGER,
   `errors`  TEXT,
+  `ip`  TEXT,
   PRIMARY KEY(jid)
 );
