@@ -1,0 +1,32 @@
+body {
+  font-family: 'Karla', sans-serif;
+  background-color: #b0dae5;
+  color: #333333;
+  padding-top: 50px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.well {
+  background: #A2C9D3;
+}
+
+.page-header {
+  border-bottom: 0px;
+}
+
+
+a {
+  font-size: 18px;
+}
+
+p {
+  font-size: 18px;
+  line-height: 120%;
+  text-align: left;
+  /*background-color: #fafafa;*/
+  /*font-color: #2df5dd;*/
+  /*text-align: left; */
+}
