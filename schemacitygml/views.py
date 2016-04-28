@@ -27,6 +27,7 @@ def index():
                 fname = secure_filename(f.filename)
                 f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
                 re = valxsdcitygml.validateonefile(app.config['UPLOAD_FOLDER']+fname, app.config['SCHEMAROOT'])
+                os.remove(app.config['UPLOAD_FOLDER']+fname)
                 if re == True:
                     return render_template("index.html", valid=True, fname=fname)           
                 else:
