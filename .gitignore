@@ -58,3 +58,4 @@ coverage.xml
 docs/_build/
 
 val3dity/val3dity.sqlite
+__init__.pyc
