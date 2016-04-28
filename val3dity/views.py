@@ -164,20 +164,6 @@ def addgmlids():
     return render_template("addgmlids.html")
 
 
-@app.route('/_problemfiles', methods=['GET', 'POST'])
-def problemfiles():
-    if request.method == 'POST':
-        f = request.files['file']
-        if f and allowed_file(f.filename):
-            fname = secure_filename(f.filename)
-            print fname
-            n = os.path.join(app.config['PROBLEMFILES_FOLDER'], fname)
-            print n
-            f.save(n)
-            return render_template("problemfiles.html", done=True)
-    return render_template("problemfiles.html")
-
-
 def get_db():
     """Opens a new database connection if there is none yet for the
     current application context.
