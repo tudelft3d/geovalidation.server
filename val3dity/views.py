@@ -154,13 +154,12 @@ def addgmlids():
         f = request.files['file']
         if f and allowed_file(f.filename):
             fname = secure_filename(f.filename)
-            print fname
+            print "fname", fname
             nin = os.path.join(app.config['TMP_FOLDER'], fname)
             f.save(nin)
             nout = nin[:-4] + ".id.gml"
             addids.addids(nin, nout)
-            # os.system("python addgmlids.py %s %s" % (n, nout))
-            return send_from_directory(app.config['TMP_FOLDER'], '%s.id.xml' % fname[:-4])
+            return send_from_directory(app.config['TMP_FOLDER'], '%s.id.gml' % fname[:-4])
         else:
             return render_template("status.html", success=False, info1='Uploaded file is not a GML file.')
     return render_template("addgmlids.html")
