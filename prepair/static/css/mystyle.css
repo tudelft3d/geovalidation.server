@@ -9,6 +9,10 @@ h1 {
   text-align: center;
 }
 
+.page-header {
+  border-bottom: 0px;
+}
+
 
 a {
   font-size: 18px;

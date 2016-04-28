@@ -6,11 +6,20 @@ body {
   text-align: left;
 }
 
-h2,h3 {
+h1,h2,h3 {
   text-align: center;
 }
+
+.page-header {
+  border-bottom: 0px;
+}
+
 
 .footer {
   text-align: center;
 }
 
+p,ul {
+  font-size: 18px;
+  line-height: 120%;
+}

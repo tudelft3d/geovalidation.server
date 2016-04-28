@@ -4,16 +4,23 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="validation of GIS datasets">
+    <meta name="description" content="val3dity: geometric validation of GML 3D primitives">
+    <meta name="keywords" content="validation,3D,GML,CityGML,quality,validate">
+    <meta name="author" content="Hugo Ledoux">
+    {% if refresh %}
+      <meta  http-equiv="refresh"  content="5">
+    {% endif %}
 
-    <title>Validation of 2D & 3D GIS datasets</title>
+    <title>val3dity: geometric validation of GML 3D primitives</title>
     
     <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/sticky-footer.css') }}" rel="stylesheet">
+    <!-- Jasny -->
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
     <link href="{{ url_for('static', filename='css/mystyle.css') }}" rel="stylesheet">
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 </head>
   <body>
     <div class="container">
@@ -22,7 +29,31 @@
   {% block body %} {% endblock %}
 
 
-    </div>
+  </div>
 
+  <div id="footer">
+    <div class="container">
+      <p>
+      <a class="text-muted" href="https://github.com/tudelft3d/geovalidation.server"><i class="fa fa-github"></i></a>
+      <a class="text-muted" href="{{ url_for('about') }}"><i class="fa fa-question-circle"></i></a>
+      </p> 
+    </div>
+  </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/myscript.js') }}"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-51257417-1', 'tudelft.nl');
+      ga('send', 'pageview');
+    </script>
   </body>
 </html>
