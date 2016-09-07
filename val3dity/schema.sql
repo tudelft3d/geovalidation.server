@@ -10,5 +10,8 @@ create table tasks (
   `noinvalid`  INTEGER,
   `errors`  TEXT,
   `ip`  TEXT,
+  `usebuildings`  INTEGER,
+  `nobuildings`  INTEGER,
+  `invalidbuildings`  INTEGER,
   PRIMARY KEY(jid)
 );
