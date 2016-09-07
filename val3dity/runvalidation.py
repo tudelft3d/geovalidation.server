@@ -22,7 +22,7 @@ def validate(jid, fin, primitives, snaptol, plantol, usebuildings, val3dityexefo
   cmd.append(str(snaptol))
   cmd.append("--unittests")
   if usebuildings == 1:
-  cmd.append("-B")
+    cmd.append("-B")
   print " ".join(cmd)
   op = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   R = op.poll()
@@ -38,6 +38,8 @@ def validate(jid, fin, primitives, snaptol, plantol, usebuildings, val3dityexefo
         codes = s.split(" ")
         dSummary['noprimitives'] = codes[0]
         dSummary['noinvalid'] = "0"
+        dSummary['nobuildings'] = codes[2]
+        dSummary['invalidbuildings'] = codes[3]
         dSummary['errors'] = "-1"
         return dSummary
       elif (re.find('@INVALID') != -1):
@@ -46,11 +48,15 @@ def validate(jid, fin, primitives, snaptol, plantol, usebuildings, val3dityexefo
         codes = s.split(" ")
         dSummary['noprimitives'] = codes[0]
         dSummary['noinvalid'] = codes[1]
-        dSummary['errors'] = "-".join(codes[2:-1])
+        dSummary['nobuildings'] = codes[2]
+        dSummary['invalidbuildings'] = codes[3]
+        dSummary['errors'] = "-".join(codes[4:-1])
         return dSummary
       else:
         dSummary['noprimitives'] = 0
         dSummary['noinvalid'] = 0
+        dSummary['nobuildings'] = 0
+        dSummary['invalidbuildings'] = 0
         dSummary['errors'] = "999"
         return dSummary
   return dSummary

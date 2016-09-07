@@ -64,11 +64,14 @@ def validate(fname, primitives, snaptol, plantol, uploadtime, usebuildings):
                                      app.config['VAL3DITYEXE_FOLDER'],    
                                      app.config['REPORTS_FOLDER'])    
     #-- write summary to database
+    print summary
     db = sqlite3.connect(app.config['DATABASE'])
     db.row_factory = sqlite3.Row
-    db.execute('update tasks set noprimitives=?, noinvalid=?, errors=? where jid=?',
+    db.execute('update tasks set noprimitives=?, noinvalid=?, nobuildings=?, invalidbuildings=?, errors=? where jid=?',
                [summary['noprimitives'], 
                summary['noinvalid'], 
+               summary['nobuildings'], 
+               summary['invalidbuildings'], 
                summary['errors'], 
                validate.request.id])
     db.commit()
@@ -253,6 +256,8 @@ def reports(jobid):
                               noprimitives=0, 
                               primitives=j['primitives'],
                               noinvalid=0,
+                              nobuildings=j['nobuildings'],
+                              invalidbuildings=j['invalidbuildings'],
                               zeroprimitives=False,
                               badinput=True,
                               welldone=False 
@@ -264,6 +269,8 @@ def reports(jobid):
                               noprimitives=0, 
                               primitives=j['primitives'],
                               noinvalid=0,
+                              nobuildings=j['nobuildings'],
+                              invalidbuildings=j['invalidbuildings'],
                               zeroprimitives=True,
                               welldone=False 
                               )
@@ -274,6 +281,8 @@ def reports(jobid):
                                noprimitives=j['noprimitives'], 
                                primitives=j['primitives'],
                                noinvalid=0, 
+                               nobuildings=j['nobuildings'],
+                               invalidbuildings=j['invalidbuildings'],
                                zeroprimitives=False, 
                                welldone=True) 
     else:
@@ -293,6 +302,8 @@ def reports(jobid):
                               noprimitives=j['noprimitives'], 
                               primitives=j['primitives'],
                               noinvalid=j['noinvalid'],
+                              nobuildings=j['nobuildings'],
+                              invalidbuildings=j['invalidbuildings'],
                               zeroprimitives=False,
                               errors=lserrors,
                               welldone=False 
