@@ -54,20 +54,24 @@ dErrors = {
 
 
 @celery.task
-def validate(fname, primitives, snaptol, plantol, uploadtime):
+def validate(fname, primitives, snaptol, plantol, uploadtime, usebuildings):
     summary = runvalidation.validate(validate.request.id, 
                                      fname,
                                      primitives,
                                      snaptol,
                                      plantol,
+                                     usebuildings,
                                      app.config['VAL3DITYEXE_FOLDER'],    
                                      app.config['REPORTS_FOLDER'])    
     #-- write summary to database
+    print summary
     db = sqlite3.connect(app.config['DATABASE'])
     db.row_factory = sqlite3.Row
-    db.execute('update tasks set noprimitives=?, noinvalid=?, errors=? where jid=?',
+    db.execute('update tasks set noprimitives=?, noinvalid=?, nobuildings=?, invalidbuildings=?, errors=? where jid=?',
                [summary['noprimitives'], 
                summary['noinvalid'], 
+               summary['nobuildings'], 
+               summary['invalidbuildings'], 
                summary['errors'], 
                validate.request.id])
     db.commit()
@@ -202,20 +206,26 @@ def index():
               fname = secure_filename(f.filename)
               f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
               primitives = request.form['primitives']
+              b = 'usebuildings' in request.form
+              if b == True:
+                usebuildings = 1
+              else:
+                usebuildings = 0
               snaptol = verify_tolerance(request.form['snaptol'], '1e-3')
               plantol = verify_tolerance(request.form['plantol'], '1e-2')
               uploadtime = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())
-              celtask = validate.delay(app.config['UPLOAD_FOLDER']+fname, primitives, snaptol, plantol, uploadtime)    
+              celtask = validate.delay(app.config['UPLOAD_FOLDER']+fname, primitives, snaptol, plantol, uploadtime, usebuildings)    
               jid = celtask.id
               db = get_db()
-              db.execute('insert into tasks (jid, file, primitives, snaptol, plantol, timestamp, ip) values (?, ?, ?, ?, ?, ?, ?)',
+              db.execute('insert into tasks (jid, file, primitives, snaptol, plantol, timestamp, ip, usebuildings) values (?, ?, ?, ?, ?, ?, ?, ?)',
                         [jid, 
                         fname, 
                         request.form['primitives'], 
                         snaptol, 
                         plantol, 
                         uploadtime,
-                        clientip])
+                        clientip,
+                        usebuildings])
               db.commit()
               return redirect('/val3dity/reports/%s' % jid)
             else:
@@ -246,6 +256,8 @@ def reports(jobid):
                               noprimitives=0, 
                               primitives=j['primitives'],
                               noinvalid=0,
+                              nobuildings=j['nobuildings'],
+                              invalidbuildings=j['invalidbuildings'],
                               zeroprimitives=False,
                               badinput=True,
                               welldone=False 
@@ -257,6 +269,8 @@ def reports(jobid):
                               noprimitives=0, 
                               primitives=j['primitives'],
                               noinvalid=0,
+                              nobuildings=j['nobuildings'],
+                              invalidbuildings=j['invalidbuildings'],
                               zeroprimitives=True,
                               welldone=False 
                               )
@@ -267,6 +281,8 @@ def reports(jobid):
                                noprimitives=j['noprimitives'], 
                                primitives=j['primitives'],
                                noinvalid=0, 
+                               nobuildings=j['nobuildings'],
+                               invalidbuildings=j['invalidbuildings'],
                                zeroprimitives=False, 
                                welldone=True) 
     else:
@@ -286,6 +302,8 @@ def reports(jobid):
                               noprimitives=j['noprimitives'], 
                               primitives=j['primitives'],
                               noinvalid=j['noinvalid'],
+                              nobuildings=j['nobuildings'],
+                              invalidbuildings=j['invalidbuildings'],
                               zeroprimitives=False,
                               errors=lserrors,
                               welldone=False 
