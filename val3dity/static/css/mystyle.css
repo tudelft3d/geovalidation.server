@@ -18,7 +18,16 @@ h1, h2 {
   text-align: center;
 }
 
-p,ul {
+p, ul {
   font-size: 18px;
   line-height: 120%;
+}
+
+.version {
+  font-size: 70%;
+  text-align: right;
+}
+
+.version > a {
+  color: #87898B;
 }
