@@ -33,8 +33,6 @@ The solid with ID #68 is invalid its exterior shell (ID #0) has holes (2 of them
 
 Geometries modelled in GML store amazingly very little topological relationships. A cube is for instance represented with 6 surfaces, all stored independently. This means that the coordinates xyz of a single vertex (where 3 surfaces "meet") is stored 3 times. It is possible that these 3 vertices are not exactly at the same location (eg (0.01, 0.5, 1.0), (0.011, 0.49999, 1.00004) and (0.01002, 0.5002, 1.0007)), and that would create problems when validating since there would for example be holes in the cube. The snap tolerance basically gives a threshold that says: "if 2 points are closer then *X*, then we assume that they are the same". It's setup by default to be 1mm. 
 
-If the input file is OBJ or OFF, then this doesn't apply.
-
 - - -
 
 ### I don't see all the errors in my solid.
