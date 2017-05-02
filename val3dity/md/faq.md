@@ -35,6 +35,26 @@ Geometries modelled in GML store amazingly very little topological relationships
 
 - - -
 
+### I get many errors 203 and 204, but my planes look planar to me. Why is that?
+
+This is a very common error, actually 203 is <a href="{{  url_for("stats")  }}">the most common error for all the files so far uploaded</a>.
+
+__203: NON\_PLANAR\_POLYGON\_DISTANCE\_PLANE__
+
+A polygon must be planar, ie all its points (used for both the exterior and interior rings) must lie on a plane. To verify this, we must ensure that the the distance between every point and a plane is less than a given *tolerance* (eg 1cm). In the validator, this plane is fitted with least-square adjustment, and then the distance between each of the point to the plane is calculated. If it is larger than the given threshold (0.01unit by default; can be changed as a parameter) then an error is reported. The distance to the plane, if larger than the threshold, is also reported in the report.
+
+__204: NON\_PLANAR\_POLYGON\_NORMALS\_DEVIATION__
+
+To ensure that cases such as that below are detected, error 204 is introduced. In the solid, the top surface containining 8 vertices (*abcdefgh*) is clearly non-planar since there is a vertical "fold" in the middle. The normal of the sub-surface *abgh* points upwards, while that of *bcfg* is perpendicular to it. But this surface would not be detected the error 203 test and a tolerance of 1cm for instance, since all the vertices are within that thresfold. Thus, another requirement is necessary: the distance between every point forming a polygon and *all* the planes defined by all possible combinaisons of 3 non-colinear points is less than a given tolerance. In practice it can be implemented with a triangulation of the polygon (any triangulation): the orientation of the normal of each triangle must not deviate more than than a certain usef-defined tolerance; this tolerance is in val3dity set to 1 degree, but can be defined (not in the web-version), but in the executable.
+
+A surface is first check for error 203, if valid then error 204 is checked. By definition, if an error 204 is reported then all the vertices are within 1cm (tolerance you used), thus you wouldn’t be able to visualise them. 
+That usually means that you have vertices that are very close (say 0.1mm) and thus it’s easy to get a large deviation (say 80degree; the report contains the deviation).  
+
+<p><img width='500' src="{{ url_for('static', filename='img/204.png') }}" alt="" /></p>
+
+
+- - -
+
 ### I don't see all the errors in my solid.
 
 It's normal: as shown in the figure below, a solid is validated *hierarchically*, ie first every surface (a polygon embedded in 3D) is validated in 2D (by projecting it to a plane), then every shell is validated, and finally the interactions between the shells are analysed to verify whether the solid is valid. 

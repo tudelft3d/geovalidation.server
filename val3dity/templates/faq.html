@@ -9,6 +9,7 @@
   <li><a href="#what-do-you-do-with-my-uploaded-file">What do you do with my uploaded file?</a></li>
   <li><a href="#how-should-i-interpret-the-report">How should I interpret the report?</a></li>
   <li><a href="#what-is-the-snap-tolerance-i-need-to-setup-when-i-upload-a-file">What is the snap tolerance I need to setup when I upload a file?</a></li>
+  <li><a href="#i-get-many-errors-203-and-204-but-my-planes-look-planar-to-me-why-is-that">I get many errors 203 and 204, but my planes look planar to me. Why is that?</a></li>
   <li><a href="#i-dont-see-all-the-errors-in-my-solid">I don&#8217;t see all the errors in my solid.</a></li>
   <li><a href="#im-sure-my-solid-is-valid-but-the-validator-says-that-something-is-wrong">I&#8217;m sure my solid is valid, but the validator says that something is wrong.</a></li>
   <li><a href="#the-validation-report-says-that-there-are-no-solids-in-my-file-but-i-can-see-the-buildings-with-my-viewer">The validation report says that there are no solids in my file, but I can see the buildings with my viewer!</a></li>
@@ -47,6 +48,25 @@ The solid with ID #68 is invalid its exterior shell (ID #0) has holes (2 of them
 <h3 id="what-is-the-snap-tolerance-i-need-to-setup-when-i-upload-a-file">What is the snap tolerance I need to setup when I upload a file?</h3>
 
 <p>Geometries modelled in GML store amazingly very little topological relationships. A cube is for instance represented with 6 surfaces, all stored independently. This means that the coordinates xyz of a single vertex (where 3 surfaces &#8220;meet") is stored 3 times. It is possible that these 3 vertices are not exactly at the same location (eg (0.01, 0.5, 1.0), (0.011, 0.49999, 1.00004) and (0.01002, 0.5002, 1.0007)), and that would create problems when validating since there would for example be holes in the cube. The snap tolerance basically gives a threshold that says: &#8220;if 2 points are closer then <em>X</em>, then we assume that they are the same&#8221;. It&#8217;s setup by default to be 1mm. </p>
+
+<hr />
+
+<h3 id="i-get-many-errors-203-and-204-but-my-planes-look-planar-to-me-why-is-that">I get many errors 203 and 204, but my planes look planar to me. Why is that?</h3>
+
+<p>This is a very common error, actually 203 is <a href="{{  url_for("stats")  }}">the most common error for all the files so far uploaded</a>.</p>
+
+<p><strong>203: NON_PLANAR_POLYGON_DISTANCE_PLANE</strong></p>
+
+<p>A polygon must be planar, ie all its points (used for both the exterior and interior rings) must lie on a plane. To verify this, we must ensure that the the distance between every point and a plane is less than a given <em>tolerance</em> (eg 1cm). In the validator, this plane is fitted with least-square adjustment, and then the distance between each of the point to the plane is calculated. If it is larger than the given threshold (0.01unit by default; can be changed as a parameter) then an error is reported. The distance to the plane, if larger than the threshold, is also reported in the report.</p>
+
+<p><strong>204: NON_PLANAR_POLYGON_NORMALS_DEVIATION</strong></p>
+
+<p>To ensure that cases such as that below are detected, error 204 is introduced. In the solid, the top surface containining 8 vertices (<em>abcdefgh</em>) is clearly non-planar since there is a vertical &#8220;fold&#8221; in the middle. The normal of the sub-surface <em>abgh</em> points upwards, while that of <em>bcfg</em> is perpendicular to it. But this surface would not be detected the error 203 test and a tolerance of 1cm for instance, since all the vertices are within that thresfold. Thus, another requirement is necessary: the distance between every point forming a polygon and <em>all</em> the planes defined by all possible combinaisons of 3 non-colinear points is less than a given tolerance. In practice it can be implemented with a triangulation of the polygon (any triangulation): the orientation of the normal of each triangle must not deviate more than than a certain usef-defined tolerance; this tolerance is in val3dity set to 1 degree, but can be defined (not in the web-version), but in the executable.</p>
+
+<p>A surface is first check for error 203, if valid then error 204 is checked. By definition, if an error 204 is reported then all the vertices are within 1cm (tolerance you used), thus you wouldn’t be able to visualise them. 
+That usually means that you have vertices that are very close (say 0.1mm) and thus it’s easy to get a large deviation (say 80degree; the report contains the deviation).  </p>
+
+<p><img width='500' src="{{ url_for('static', filename='img/204.png') }}" alt="" /></p>
 
 <hr />
 
