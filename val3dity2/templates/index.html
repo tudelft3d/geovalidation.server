@@ -8,7 +8,7 @@
   <div class="well">
   <form class="form-horizontal" role="form" action="" method=post enctype=multipart/form-data>
     <div class="form-group">
-      <label class="col-sm-4 control-label">Input file <i class="fa fa-question-circle" data-toggle="tooltip" title="formats accepted: GML, OBJ, POLY" ></i></label>
+      <label class="col-sm-4 control-label">Input file <i class="fa fa-question-circle" data-toggle="tooltip" title="formats accepted: GML, CityJSON, OBJ, OFF, POLY" ></i></label>
       <div class="col-sm-8">
           <div class="fileinput fileinput-new" data-provides="fileinput">
           <span class="btn btn-default btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" name="file"></span>
@@ -16,7 +16,29 @@
           <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
         </div>
       </div>
-    </div>  
+    </div> 
+
+    <div class="form-group">
+      <label class="col-sm-4 control-label">Snap tolerance <i class="fa fa-question-circle" data-toggle="tooltip" title="if 2 points are closer than this value then we assume they are the same" ></i></label>
+      <div class="col-sm-8">
+        <input name="snap_tol" type="text" class="form-control" value="0.001">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-4 control-label">Planarity tolerance <i class="fa fa-question-circle" data-toggle="tooltip" title="maximum distance between a point and a fitted plane" ></i></label>
+      <div class="col-sm-8">
+        <input name="planarity_d2p_tol" type="text" class="form-control" value="0.01">
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label class="col-sm-4 control-label">Overlap tolerance <i class="fa fa-question-circle" data-toggle="tooltip" title="tolerance used to validate CompositeSolids and BuildingParts; -1 is disabled" ></i></label>
+      <div class="col-sm-8">
+        <input name="overlap_tol" type="text" class="form-control" value="-1">
+      </div>
+    </div>
+ 
 
     <div class="form-group">
       <label class="col-sm-4 control-label">3D primitives <i class="fa fa-question-circle" data-toggle="tooltip" title="which 3D primitives to validate?" ></i></label>
@@ -36,30 +58,26 @@
     </div> 
 
     <div class="form-group">
-      <label class="col-sm-4 control-label">CityGML Buildings only <i class="fa fa-question-circle" data-toggle="tooltip" title="only validate CityGML Buildings and include their ID in the report" ></i></label>
+      <label class="col-sm-4 control-label">ignore error 204 <a href="http://val3dity.readthedocs.io/"><i class="fa fa-question-circle" data-toggle="tooltip" title="ignore error 204" ></i></a></label>
       <div class="col-sm-8">
         <div class="checkbox">
           <label>
-            <input name="usebuildings" type="checkbox" value="">
+            <input name="ignore204" type="checkbox" value="">
           </label>
         </div>
       </div>
     </div>
 
     <div class="form-group">
-      <label class="col-sm-4 control-label">Snap tolerance <i class="fa fa-question-circle" data-toggle="tooltip" title="if 2 points are closer than this value then we assume they are the same" ></i></label>
+      <label class="col-sm-4 control-label">only semantic surfaces <i class="fa fa-question-circle" data-toggle="tooltip" title="use only semantic surfaces" ></i></label>
       <div class="col-sm-8">
-        <input name="snaptol" type="text" class="form-control" value="0.001">
+        <div class="checkbox">
+          <label>
+            <input name="geom_is_sem_surfaces" type="checkbox" value="">
+          </label>
+        </div>
       </div>
     </div>
-
-    <div class="form-group">
-      <label class="col-sm-4 control-label">Planarity tolerance <i class="fa fa-question-circle" data-toggle="tooltip" title="maximum distance between a point and a fitted plane" ></i></label>
-      <div class="col-sm-8">
-        <input name="plantol" type="text" class="form-control" value="0.01">
-      </div>
-    </div>
-    
 
     <div class="form-group">
       <div class="col-sm-offset-4 col-sm-8">
