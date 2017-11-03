@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <div class="page-header">
+    <h1>{{ filename }}</h1>
+  </div>
+
+{% if welldone %}
+  <div class="panel panel-success">
+    <div class="panel-heading">Summary: all 3D primitives are valid</div>
+{% else %}
+  {% if zeroprimitives %}
+  <div class="panel panel-danger">
+    <div class="panel-heading">Summary: no 3D primitives found in the input file.</div>
+  {% elif badinput %}
+  <div class="panel panel-danger">
+    <div class="panel-heading">Summary: wrong XML input.</div>
+  {% else %}
+  <div class="panel panel-danger">
+    <div class="panel-heading">Summary: not all 3D primitives are valid</div>
+  {% endif %}
+{% endif %}
+      <div class="panel-body">
+        <p>Primitives validated: {{ primitives }}</p>
+        <p>Number of primitives: {{ noprimitives }}</p>
+        <p>Number of invalid primitives: {{ noinvalid }}</p>
+        {% if nobuildings > 0 %}
+          <hr>
+          <p>Number of Buildings: {{ nobuildings }}</p>
+          <p>Number of invalid Buildings: {{ invalidbuildings }}</p>
+          <hr>
+        {% endif %}  
+        {% if welldone %}
+          <img src="{{ url_for('static', filename='img/welldone.png') }}" width="120" alt="">
+        {% elif not zeroprimitives %}
+          <p>Errors present: (<a href="{{ url_for('errors') }}">overview of the possible errors</a>)</p>
+          <ul>
+          {% for error in errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}  
+    </div>
+  </div>  
+
+  <div class="well">  
+    <p>Download the report detailing the errors: <a href="{{ url_for('index') }}reports/download/{{ jid }}">report.xml</a></p>
+    <p>(<a href="{{ url_for('index') }}faq#how-should-i-interpret-the-report">how to interpret the report?</a>)</p>
+  </div>
+
+  <a href="{{ url_for('index') }}"><button type="button" class="btn btn-default"><i class="fa fa-long-arrow-left"></i> Validate another file</button></a>
+{% endblock %}

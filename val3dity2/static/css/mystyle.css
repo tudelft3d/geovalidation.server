@@ -1,0 +1,33 @@
+body {
+  font-family: 'Inconsolata', null;
+  background-color: #fafafa;
+  font-color: #2df5dd;
+  padding-top: 50px;
+}
+
+h1, h2 {
+  text-align: center;
+
+}
+
+.page-header {
+  border-bottom: 0px;
+}
+
+.alert {
+  text-align: center;
+}
+
+p, ul {
+  font-size: 18px;
+  line-height: 120%;
+}
+
+.version {
+  font-size: 70%;
+  text-align: right;
+}
+
+.version > a {
+  color: #87898B;
+}
