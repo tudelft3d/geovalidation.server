@@ -8,8 +8,8 @@ app = Flask(__name__, static_url_path='')
 app.debug = True
 
 class default_settings(object):
-    VAL3DITY_SERVER       = '/Users/hugo/www/geovalidation.server/val3dity/'
-    VAL3DITYEXE_FOLDER    = '/Users/hugo/projects/val3dity/'
+    VAL3DITY_SERVER       = '/Users/hugo/www/geovalidation.server/val3dity2/'
+    VAL3DITYEXE_FOLDER    = '/Users/hugo/projects/val3dity/build/'
     CELERY_BROKER_URL      = 'redis://localhost:6379/0'
     CELERY_RESULT_BACKEND  = 'redis://localhost:6379/0'
 

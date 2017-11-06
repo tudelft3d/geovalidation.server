@@ -49,9 +49,9 @@ def validate(jid,
   
   dSummary = {}
   dSummary['total_cityobjects'] = j["total_cityobjects"]
-  dSummary['invalid_cityobjects'] = j["total_cityobjects"] - j["valid_cityobjects"]
+  dSummary['invalid_cityobjects'] = j["invalid_cityobjects"]
   dSummary['total_primitives'] = j["total_primitives"]
-  dSummary['invalid_primitives'] = j["total_primitives"] - j["valid_primitives"]
+  dSummary['invalid_primitives'] = j["invalid_primitives"]
   if (j["overview_errors"] == None):
     dSummary['errors'] = "-1"
   else:
@@ -63,6 +63,7 @@ if __name__ == '__main__':
   r = validate("myjid", 
                "/Users/hugo/data/val3dity/Munchen/LOD2_4424_5482_solid.gml", 
                # "/Users/hugo/projects/val3dity/data/cityjson/cube.json", 
+               # "/Users/hugo/projects/val3dity/data/poly/cube5.off", 
                "0.001",
                "0.01", 
                "-1", 

@@ -19,7 +19,14 @@ ALLOWED_EXTENSIONS = set(['gml', 'xml', 'obj', 'poly', 'json', 'off'])
 
 
 @celery.task
-def validate(fname, snap_tol, planarity_d2p_tol, overlap_tol, prim3d, ignore204, geom_is_sem_surfaces, uploadtime):
+def validate(fname, 
+             snap_tol, 
+             planarity_d2p_tol, 
+             overlap_tol, 
+             prim3d, 
+             ignore204, 
+             geom_is_sem_surfaces, 
+             uploadtime):
     summary = runvalidation.validate(validate.request.id, 
                                      fin, 
                                      snap_tol, 
@@ -34,11 +41,11 @@ def validate(fname, snap_tol, planarity_d2p_tol, overlap_tol, prim3d, ignore204,
     print summary
     db = sqlite3.connect(app.config['DATABASE'])
     db.row_factory = sqlite3.Row
-    db.execute('update tasks set noprimitives=?, noinvalid=?, nobuildings=?, invalidbuildings=?, errors=? where jid=?',
-               [summary['noprimitives'], 
-               summary['noinvalid'], 
-               summary['nobuildings'], 
-               summary['invalidbuildings'], 
+    db.execute('update tasks set total_primitives=?, invalid_primitives=?, total_cityobjects=?, invalid_cityobjects=?, errors=? where jid=?',
+               [summary['total_primitives'], 
+               summary['invalid_primitives'], 
+               summary['total_cityobjects'], 
+               summary['invalid_cityobjects'], 
                summary['errors'], 
                validate.request.id])
     db.commit()
@@ -162,28 +169,29 @@ def index():
               f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
               snap_tol = verify_tolerance(request.form['snap_tol'], '1e-3')
               planarity_d2p_tol = verify_tolerance(request.form['planarity_d2p_tol'], '1e-2')
-              overlap_told = verify_tolerance(request.form['overlap_told'], '-1')
+              overlap_tol = verify_tolerance(request.form['overlap_tol'], '-1')
               prim3d = request.form['prim3d']
               ignore204 = 'ignore204' in request.form
               geom_is_sem_surfaces = 'geom_is_sem_surfaces' in request.form
               uploadtime = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())
               celtask = validate.delay(app.config['UPLOAD_FOLDER']+fname, 
-                                       snaptol, 
-                                       plantol, 
-                                       uploadtime)    
+                                       snap_tol, 
+                                       planarity_d2p_tol, 
+                                       overlap_tol, 
+                                       prim3d, 
+                                       ignore204, 
+                                       geom_is_sem_surfaces, 
+                                       uploadtime)
+
               jid = celtask.id
               db = get_db()
-              db.execute('insert into tasks (jid, file, primitives, snaptol, plantol, timestamp, ip, usebuildings) values (?, ?, ?, ?, ?, ?, ?, ?)',
+              db.execute('insert into tasks (jid, file, timestamp, ip) values (?, ?, ?, ?)',
                         [jid, 
                         fname, 
-                        request.form['primitives'], 
-                        snaptol, 
-                        plantol, 
                         uploadtime,
-                        clientip,
-                        usebuildings])
+                        clientip])
               db.commit()
-              return redirect('/val3dity/reports/%s' % jid)
+              return redirect('/val3dity2/reports/%s' % jid)
             else:
               return render_template("index.html", problem='Uploaded file is not a valid file.')
         else:
