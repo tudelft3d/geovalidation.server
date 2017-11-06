@@ -250,5 +250,19 @@ def reports_overview(jobid):
             print "task not finished."
             return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
     j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
-    return render_template("report_overview.html", thereport=j) 
+    return render_template("report_overview.html", thereport=j, myjobid=jobid) 
 
+@app.route('/reports/cityobjects/<jobid>')
+def reports_cityobjects(jobid):
+    #-- check if job is in the database
+    db = query_db('select * from tasks where jid = ?', [jobid], one=True)
+    if db is None:
+        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
+    #-- it exists
+    if (db['validated'] == 0):
+        celtask = celery.AsyncResult(jobid)
+        if (celtask.ready() == False):
+            print "task not finished."
+            return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
+    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
+    return render_template("report_CityObjects.html", thereport=j) 
