@@ -28,7 +28,7 @@ def validate(fname,
              geom_is_sem_surfaces, 
              uploadtime):
     summary = runvalidation.validate(validate.request.id, 
-                                     fin, 
+                                     fname, 
                                      snap_tol, 
                                      planarity_d2p_tol, 
                                      overlap_tol, 
@@ -41,8 +41,10 @@ def validate(fname,
     print summary
     db = sqlite3.connect(app.config['DATABASE'])
     db.row_factory = sqlite3.Row
-    db.execute('update tasks set total_primitives=?, invalid_primitives=?, total_cityobjects=?, invalid_cityobjects=?, errors=? where jid=?',
-               [summary['total_primitives'], 
+    db.execute('update tasks set validated=?, total_primitives=?, invalid_primitives=?, total_cityobjects=?, invalid_cityobjects=?, errors=? where jid=?',
+               [
+               1,
+               summary['total_primitives'], 
                summary['invalid_primitives'], 
                summary['total_cityobjects'], 
                summary['invalid_cityobjects'], 
@@ -185,11 +187,12 @@ def index():
 
               jid = celtask.id
               db = get_db()
-              db.execute('insert into tasks (jid, file, timestamp, ip) values (?, ?, ?, ?)',
+              db.execute('insert into tasks (jid, file, timestamp, ip, validated) values (?, ?, ?, ?, ?)',
                         [jid, 
                         fname, 
                         uploadtime,
-                        clientip])
+                        clientip,
+                        0])
               db.commit()
               return redirect('/val3dity2/reports/%s' % jid)
             else:
@@ -208,7 +211,7 @@ def reports(jobid):
     #-- it exists
     fname = j['file']
     print fname
-    if j['noprimitives'] is None:
+    if j['total_primitives'] is None:
         celtask = celery.AsyncResult(jobid)
         if (celtask.ready() == False):
             print "task not finished."
