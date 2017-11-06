@@ -307,7 +307,7 @@ function idx_validation_summary(){
         a.appendChild(linkText);
         a.title = "CityObjects";
         a.href = "CityObjects.html";
-        a.id = "joidlink";
+        a.id = "jobid_co";
         td0.appendChild(a);
         // cell Total
         var td_t = tr.insertCell(1);
@@ -334,7 +334,7 @@ function idx_validation_summary(){
         a.appendChild(linkText);
         a.title = "Primitives";
         a.href = "Primitives.html";
-        a.id = "joidlink";
+        a.id = "jobid_p";
         td0.appendChild(a);
         // cell Total
         var td_t = tr.insertCell(1);
