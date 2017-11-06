@@ -18,49 +18,16 @@ TRUSTED_PROXIES = {'127.0.0.1'}
 ALLOWED_EXTENSIONS = set(['gml', 'xml', 'obj', 'poly', 'json', 'off'])
 
 
-dErrors = {
-  101: "TOO_FEW_POINTS",
-  102: "CONSECUTIVE_POINTS_SAME",
-  103: "RING_NOT_CLOSED",
-  104: "RING_SELF_INTERSECTION",
-  105: "RING_COLLAPSED",
-  201: "INTERSECTION_RINGS",
-  202: "DUPLICATED_RINGS",
-  203: "NON_PLANAR_POLYGON_DISTANCE_PLANE",
-  204: "NON_PLANAR_POLYGON_NORMALS_DEVIATION",
-  205: "POLYGON_INTERIOR_DISCONNECTED",
-  206: "INNER_RING_OUTSIDE",
-  207: "INNER_RINGS_NESTED",
-  208: "ORIENTATION_RINGS_SAME",
-  300: "NOT_VALID_2_MANIFOLD",
-  301: "TOO_FEW_POLYGONS",
-  302: "NOT_CLOSED",
-  303: "NON_MANIFOLD_VERTEX",
-  304: "NON_MANIFOLD_EDGE ",
-  305: "SEPARATE_PARTS",
-  306: "SELF_INTERSECTION",
-  307: "POLYGON_WRONG_ORIENTATION",
-  309: "VERTICES_NOT_USED ",
-  401: "INTERSECTION_SHELLS",
-  402: "DUPLICATED_SHELLS",
-  403: "INNER_SHELL_OUTSIDE",
-  404: "INTERIOR_DISCONNECTED",
-  405: "WRONG_ORIENTATION_SHELL",
-  901: "INVALID_INPUT_FILE",
-  902: "EMPTY_PRIMITIVE",
-  999: "UNKNOWN_ERROR",
-  308: "WRONG_ORIENTATION_SHELL",
-}
-
-
 @celery.task
-def validate(fname, primitives, snaptol, plantol, uploadtime, usebuildings):
+def validate(fname, snap_tol, planarity_d2p_tol, overlap_tol, prim3d, ignore204, geom_is_sem_surfaces, uploadtime):
     summary = runvalidation.validate(validate.request.id, 
-                                     fname,
-                                     primitives,
-                                     snaptol,
-                                     plantol,
-                                     usebuildings,
+                                     fin, 
+                                     snap_tol, 
+                                     planarity_d2p_tol, 
+                                     overlap_tol, 
+                                     prim3d,
+                                     ignore204,
+                                     geom_is_sem_surfaces, 
                                      app.config['VAL3DITYEXE_FOLDER'],    
                                      app.config['REPORTS_FOLDER'])    
     #-- write summary to database
@@ -193,16 +160,17 @@ def index():
               clientip = next((addr for addr in reversed(route) if addr not in TRUSTED_PROXIES), request.remote_addr)
               fname = secure_filename(f.filename)
               f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-              primitives = request.form['primitives']
-              b = 'usebuildings' in request.form
-              if b == True:
-                usebuildings = 1
-              else:
-                usebuildings = 0
-              snaptol = verify_tolerance(request.form['snaptol'], '1e-3')
-              plantol = verify_tolerance(request.form['plantol'], '1e-2')
+              snap_tol = verify_tolerance(request.form['snap_tol'], '1e-3')
+              planarity_d2p_tol = verify_tolerance(request.form['planarity_d2p_tol'], '1e-2')
+              overlap_told = verify_tolerance(request.form['overlap_told'], '-1')
+              prim3d = request.form['prim3d']
+              ignore204 = 'ignore204' in request.form
+              geom_is_sem_surfaces = 'geom_is_sem_surfaces' in request.form
               uploadtime = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())
-              celtask = validate.delay(app.config['UPLOAD_FOLDER']+fname, primitives, snaptol, plantol, uploadtime, usebuildings)    
+              celtask = validate.delay(app.config['UPLOAD_FOLDER']+fname, 
+                                       snaptol, 
+                                       plantol, 
+                                       uploadtime)    
               jid = celtask.id
               db = get_db()
               db.execute('insert into tasks (jid, file, primitives, snaptol, plantol, timestamp, ip, usebuildings) values (?, ?, ?, ?, ?, ?, ?, ?)',
