@@ -146,17 +146,6 @@ def query_db(query, args=(), one=False):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    os.chdir("/Users/hugo/projects/val3dity")
-    cmd = []
-    cmd.append("git")
-    cmd.append("rev-parse")
-    cmd.append("HEAD")
-    op = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    R = op.poll()
-    if R:
-      res = op.communicate()
-      raise ValueError(res[1])
-    gitcommit = "https://github.com/tudelft3d/val3dity/commit/" + op.communicate()[0]
     if request.method == 'POST':
         f = request.files['file']
         if f:
@@ -195,7 +184,7 @@ def index():
               return render_template("index.html", problem='Uploaded file is not a valid file.')
         else:
             return render_template("index.html", problem='No file selected.')
-    return render_template("index.html", version=gitcommit)
+    return render_template("index.html")
 
 
 @app.route('/reports/<jobid>')

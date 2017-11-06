@@ -5,30 +5,37 @@
 
 The validator, which uses the open-source project [val3dity](https://github.com/tudelft3d/val3dity) in the background, is maintained by [Hugo Ledoux](https://3d.bk.tudelft.nl/hledoux) and the [3D geoinformation group at TUDelft](https://3d.bk.tudelft.nl).
 
-It is used to verify whether 3D primitives are *geometrically* valid according to the international standard [ISO 19107:2003](http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012). 
+It allows us to validate 3D primitives according to the international standard ISO19107.
+Think of it as [PostGIS ST_IsValid](http://postgis.net/docs/ST_IsValid.html), but for 3D primitives (PostGIS only validates 2D primitives).
 
-Its main aim is thus the 3D primitives of GML (__Solids__, __CompositeSurfaces__, or __MultiSurfaces__), but it can be used to validate any 3D primitives. 
-It accepts as input any GML files (or one of the formats built upon it, such as CityGML), OBJ, OFF, and [POLY](http://wias-berlin.de/software/tetgen/1.5/doc/manual/manual006.html#ff_poly).
-It simply scans the file looking for the 3D primitives and validates these according to the rules in ISO19107 (all the rest is ignored). 
+In short, it verifies whether a 3D primitive respects the definition as given in [ISO19107](http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012) and GML/CityGML.
+All the 3D primitives of GML are supported:
 
-<p><img width='500' src="{{ url_for('static', filename='img/workflow.svg') }}" alt="" /></p>
+  - `<gml:MultiSurface>`
+  - `<gml:CompositeSurface>` 
+  - `<gml:Solid>`
+  - `<gml:MultiSolid>`
+  - `<gml:CompositeSolid>`
 
-For __Solids__, the validation is performed hierarchically, ie first every polygon (embedded in 3D) is validated (by projecting it to a 2D plane and using [GEOS](http://trac.osgeo.org/geos/)), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. 
-This means that if a polygon of your solid is not valid, the validator will report that error but will *not* continue the validation (to avoid "cascading" errors). 
+Unlike many other validation tools in 3D GIS, inner rings in polygons/surfaces are supported and so are cavities in solids (also called voids or inner shells).
+However, as is the case for CityGML, only planar and linear primitives are allowed: no curves or spheres or other parametrically-modelled primitives are supported. There is no plan to support these geometries, because val3dity is developed with 3D city models in focus.
 
-For __MultiSurfaces__, only the validation of the polygons is performed, ie are they valid according to the 2D rules, and are they planar?
+val3dity accepts as input:
 
-For __CompositeSurfaces__, the surface formed by the polygons must be a 2-manifold.
+  - [CityGML](https://www.citygml.org)) 
+  - [CityJSON](http://www.cityjson.org))
+  - any [GML files](https://en.wikipedia.org/wiki/Geography_Markup_Language) 
+  - [OBJ](https://en.wikipedia.org/wiki/Wavefront_.obj_file)
+  - [OFF](https://en.wikipedia.org/wiki/OFF_(file_format))
 
-More details are available in this [blog post about 3D solids in GIS](https://3d.bk.tudelft.nl/hledoux/blog/your-solids-the-same/).
 
-### Error codes
+### Documentation
 
-These <a href="{{  url_for("errors")  }}">errors</a> can be reported.
+val3dity has a fairly [extensive documentation](http://geovalidation.bk.tudelft.nl/val3dity/docs/).
 
 ### Bugs?
 
-If you encounter a bug, please report it on the [issue page](https://github.com/tudelft3d/val3dity/issues) or [contact me directly](mailto:h.ledoux@tudelft.nl).
+If you encounter a bug, please report it on the [issue page](https://github.com/tudelft3d/val3dity/issues).
 
 
 ### Source code
