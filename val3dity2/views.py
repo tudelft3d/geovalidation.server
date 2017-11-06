@@ -67,14 +67,9 @@ def verify_tolerance(t, defaultval):
     except:
       return d
 
-@app.route('/errors')
-def errors():
-    return render_template("errors.html")
-
 @app.route('/about')
 def about():
     return render_template("about.html")
-
     
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
@@ -205,80 +200,39 @@ def index():
 @app.route('/reports/<jobid>')
 def reports(jobid):
     #-- check if job is in the database
-    j = query_db('select * from tasks where jid = ?', [jobid], one=True)
-    if j is None:
+    db = query_db('select * from tasks where jid = ?', [jobid], one=True)
+    if db is None:
         return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
     #-- it exists
-    fname = j['file']
+    fname = db['file']
     print fname
-    if j['total_primitives'] is None:
+    if (db['validated'] == 0):
         celtask = celery.AsyncResult(jobid)
         if (celtask.ready() == False):
             print "task not finished."
             return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
-    if (j['errors'] == '901'):
-        return render_template("report.html", 
-                              filename=fname,
-                              jid=jobid,
-                              noprimitives=0, 
-                              primitives=j['primitives'],
-                              noinvalid=0,
-                              nobuildings=j['nobuildings'],
-                              invalidbuildings=j['invalidbuildings'],
-                              zeroprimitives=False,
-                              badinput=True,
-                              welldone=False 
-                              )    
-    if (j['noprimitives'] == 0):
-        return render_template("report.html", 
-                              filename=fname,
-                              jid=jobid,
-                              noprimitives=0, 
-                              primitives=j['primitives'],
-                              noinvalid=0,
-                              nobuildings=j['nobuildings'],
-                              invalidbuildings=j['invalidbuildings'],
-                              zeroprimitives=True,
-                              welldone=False 
-                              )
-    if (j['noprimitives'] > 0) and (j['noinvalid'] == 0):
+    if (db['total_primitives'] > 0) and (db['invalid_primitives'] == 0):
         return render_template("report.html", 
                                filename=fname, 
                                jid=jobid, 
-                               noprimitives=j['noprimitives'], 
-                               primitives=j['primitives'],
-                               noinvalid=0, 
-                               nobuildings=j['nobuildings'],
-                               invalidbuildings=j['invalidbuildings'],
-                               zeroprimitives=False, 
+                               total_primitives=db["total_primitives"], 
+                               invalid_primitives=db["invalid_primitives"], 
+                               total_cityobjects=db["total_cityobjects"], 
+                               invalid_cityobjects=db["invalid_cityobjects"], 
                                welldone=True) 
     else:
-        s = j['errors'].split('-')
-        errors = map(int, s)
-        errors.sort()
-        lserrors = [] 
-        for e in errors:
-            description = dErrors[e]
-            errors = str(e) + " -- " + description
-            lserrors.append(errors)
-        print lserrors
-
-        return render_template("report.html", 
-                              filename=fname,
-                              jid=jobid,
-                              noprimitives=j['noprimitives'], 
-                              primitives=j['primitives'],
-                              noinvalid=j['noinvalid'],
-                              nobuildings=j['nobuildings'],
-                              invalidbuildings=j['invalidbuildings'],
-                              zeroprimitives=False,
-                              errors=lserrors,
-                              welldone=False 
-                              )
-
+          return render_template("report.html", 
+                               filename=fname, 
+                               jid=jobid, 
+                               total_primitives=db["total_primitives"], 
+                               invalid_primitives=db["invalid_primitives"], 
+                               total_cityobjects=db["total_cityobjects"], 
+                               invalid_cityobjects=db["invalid_cityobjects"], 
+                               welldone=False)
+        
 
 @app.route('/reports/download/<jobid>')
 def reports_download(jobid):
-    return send_from_directory(app.config['REPORTS_FOLDER'], '%s.xml' % jobid)
+    return send_from_directory(app.config['REPORTS_FOLDER'], '%s.json' % jobid)
 
 
