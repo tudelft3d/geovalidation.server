@@ -10,6 +10,7 @@ import os
 import subprocess
 import uuid
 import time
+import json
 import copy
 from geoip import geolite2
 
@@ -235,4 +236,19 @@ def reports(jobid):
 def reports_download(jobid):
     return send_from_directory(app.config['REPORTS_FOLDER'], '%s.json' % jobid)
 
+
+@app.route('/reports/overview/<jobid>')
+def reports_overview(jobid):
+    #-- check if job is in the database
+    db = query_db('select * from tasks where jid = ?', [jobid], one=True)
+    if db is None:
+        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
+    #-- it exists
+    if (db['validated'] == 0):
+        celtask = celery.AsyncResult(jobid)
+        if (celtask.ready() == False):
+            print "task not finished."
+            return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
+    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
+    return render_template("report_overview.html", thereport=j) 
 
