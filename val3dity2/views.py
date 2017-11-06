@@ -82,8 +82,8 @@ def not_found(error):
 @app.route('/stats')
 def stats():
     totaljobs   = query_db('select count(*) from tasks', [], one=True)
-    totalsolids = query_db('select sum(noprimitives) from tasks', [], one=True)
-    totalinvalidsolids = query_db('select sum(noinvalid) from tasks', [], one=True)
+    totalsolids = query_db('select sum(total_primitives) from tasks', [], one=True)
+    totalinvalidsolids = query_db('select sum(invalid_primitives) from tasks', [], one=True)
     percentage = int((float(totalinvalidsolids[0]) / float(totalsolids[0])) * 100)
     last5 = query_db('select * from tasks order by timestamp desc limit 5', [], one=False)
     a = []
@@ -93,16 +93,17 @@ def stats():
         ipobj = geolite2.lookup(each['ip'])
         if ipobj is not None:
           ipcountry = ipobj.country
-      a.append((each['timestamp'].replace("T", " "), each['noprimitives'], each['noinvalid'], each['errors'], ipcountry))
+      a.append((each['timestamp'].replace("T", " "), each['total_primitives'], each['invalid_primitives'], each['errors'], ipcountry))
     allerrors = query_db('select errors from tasks where errors is not null and errors!=-1', [])
-    myerr = copy.deepcopy(dErrors)
-    for each in myerr:
-      myerr[each] = 0;
+    myerr = {}
     for es in allerrors:
       tmp = es[0].split("-")
       ei = map(int, tmp)
       for e in ei:
-        myerr[e] += 1
+        if e not in myerr:
+          myerr[e] = 1
+        else:
+          myerr[e] += 1
     higherr = 100;
     highest = 0;
     for e in myerr:
@@ -115,7 +116,6 @@ def stats():
                            totalinvalidsolids="{:,}".format(totalinvalidsolids[0]),
                            percentageinvalids=percentage,
                            mosterror=higherr,
-                           mosterrordef=dErrors[higherr],
                            last5=a
                           )
     
