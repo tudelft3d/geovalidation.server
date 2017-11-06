@@ -24,7 +24,8 @@
   </div>  
 
   <div class="well">  
-    <p>Download the report detailing the errors: <a href="{{ url_for('index') }}reports/download/{{ jid }}">report.json</a></p>
+    <p><a href="{{ url_for('index') }}reportshtml/{{ jid }}">See the full report online</a></p>
+    <p><a href="{{ url_for('index') }}reports/download/{{ jid }}">Download the JSON report</a></p>
   </div>
 
   <a href="{{ url_for('index') }}"><button type="button" class="btn btn-default"><i class="fa fa-long-arrow-left"></i> Validate another file</button></a>

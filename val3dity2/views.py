@@ -211,7 +211,7 @@ def reports(jobid):
         if (celtask.ready() == False):
             print "task not finished."
             return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
-    if (db['total_primitives'] > 0) and (db['invalid_primitives'] == 0):
+    if (db['total_primitives'] > 0) and (db['invalid_primitives'] == 0) and (db['total_cityobjects'] > 0) and (db['invalid_cityobjects'] == 0) :
         return render_template("report.html", 
                                filename=fname, 
                                jid=jobid, 
@@ -221,14 +221,14 @@ def reports(jobid):
                                invalid_cityobjects=db["invalid_cityobjects"], 
                                welldone=True) 
     else:
-          return render_template("report.html", 
-                               filename=fname, 
-                               jid=jobid, 
-                               total_primitives=db["total_primitives"], 
-                               invalid_primitives=db["invalid_primitives"], 
-                               total_cityobjects=db["total_cityobjects"], 
-                               invalid_cityobjects=db["invalid_cityobjects"], 
-                               welldone=False)
+        return render_template("report.html", 
+                             filename=fname, 
+                             jid=jobid, 
+                             total_primitives=db["total_primitives"], 
+                             invalid_primitives=db["invalid_primitives"], 
+                             total_cityobjects=db["total_cityobjects"], 
+                             invalid_cityobjects=db["invalid_cityobjects"], 
+                             welldone=False)
         
 
 @app.route('/reports/download/<jobid>')
