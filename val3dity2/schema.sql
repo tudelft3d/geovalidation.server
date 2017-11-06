@@ -9,5 +9,6 @@ create table tasks (
   `total_cityobjects`  INTEGER,
   `invalid_cityobjects`  INTEGER,
   `errors`  TEXT,
+  `validated` INTEGER,
   PRIMARY KEY(jid)
 );
