@@ -4,25 +4,39 @@ import sys
 import shutil
 import glob
 import subprocess
+import json
 from lxml import etree
 from StringIO import StringIO
 
 
-def validate(jid, fin, primitives, snaptol, plantol, usebuildings, val3dityexefolder, reportsfolder):
+def validate(jid, 
+             fin, 
+             snap_tol, 
+             planarity_d2p_tol, 
+             overlap_tol, 
+             prim3d, 
+             ignore204, 
+             geom_is_sem_surfaces, 
+             val3dityexefolder, 
+             reportsfolder):
   cmd = []
   cmd.append(val3dityexefolder + "val3dity")
   cmd.append(fin)
+  cmd.append("--snap_tol")
+  cmd.append(str(snap_tol))
+  cmd.append("--planarity_d2p_tol")
+  cmd.append(str(planarity_d2p_tol))
+  cmd.append("--overlap_tol")
+  cmd.append(str(overlap_tol))
   cmd.append("-p")
-  cmd.append(primitives)
-  cmd.append("-r")
-  cmd.append(reportsfolder + jid + ".xml")
-  cmd.append("--planarity_d2p")
-  cmd.append(str(plantol))
-  cmd.append("--snap_tolerance")
-  cmd.append(str(snaptol))
-  cmd.append("--unittests")
-  if usebuildings == 1:
-    cmd.append("-B")
+  cmd.append(prim3d)
+  if (ignore204 == True):
+    cmd.append("--ignore204")
+  if (geom_is_sem_surfaces == True):
+    cmd.append("--geom_is_sem_surfaces")
+  cmd.append("--report_json")
+  finfull = reportsfolder + jid + ".json"
+  cmd.append(finfull)
   print " ".join(cmd)
   op = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   R = op.poll()
@@ -30,45 +44,31 @@ def validate(jid, fin, primitives, snaptol, plantol, usebuildings, val3dityexefo
     res = op.communicate()
     raise ValueError(res[1])
   re =  op.communicate()[0]
+  #-- read json report
+  j = json.loads(open(finfull).read())
+  
   dSummary = {}
-  if (re != ''):
-      if (re.find('@VALID') != -1):
-        i = re.find('@VALID')
-        s = re[i+7:]
-        codes = s.split(" ")
-        dSummary['noprimitives'] = codes[0]
-        dSummary['noinvalid'] = "0"
-        dSummary['nobuildings'] = codes[2]
-        dSummary['invalidbuildings'] = codes[3]
-        dSummary['errors'] = "-1"
-        return dSummary
-      elif (re.find('@INVALID') != -1):
-        i = re.find('@INVALID')
-        s = re[i+9:]
-        codes = s.split(" ")
-        dSummary['noprimitives'] = codes[0]
-        dSummary['noinvalid'] = codes[1]
-        dSummary['nobuildings'] = codes[2]
-        dSummary['invalidbuildings'] = codes[3]
-        dSummary['errors'] = "-".join(codes[4:-1])
-        return dSummary
-      else:
-        dSummary['noprimitives'] = 0
-        dSummary['noinvalid'] = 0
-        dSummary['nobuildings'] = 0
-        dSummary['invalidbuildings'] = 0
-        dSummary['errors'] = "999"
-        return dSummary
+  dSummary['total_cityobjects'] = j["total_cityobjects"]
+  dSummary['invalid_cityobjects'] = j["total_cityobjects"] - j["valid_cityobjects"]
+  dSummary['total_primitives'] = j["total_primitives"]
+  dSummary['invalid_primitives'] = j["total_primitives"] - j["valid_primitives"]
+  if (j["overview_errors"] == None):
+    dSummary['errors'] = "-1"
+  else:
+    dSummary['errors'] = "-".join(map(str, j["overview_errors"]))
   return dSummary
 
 
 if __name__ == '__main__':
   r = validate("myjid", 
                "/Users/hugo/data/val3dity/Munchen/LOD2_4424_5482_solid.gml", 
-               # "/Users/hugo/projects/val3dity/data/poly/cube.poly", 
-               "S", 
-               "0.001", 
+               # "/Users/hugo/projects/val3dity/data/cityjson/cube.json", 
+               "0.001",
                "0.01", 
-               "/Users/hugo/projects/val3dity/",
+               "-1", 
+               "Solid",
+               False,
+               False,
+               "/Users/hugo/projects/val3dity/build/",
                "/Users/hugo/temp/reports/")
   print r
