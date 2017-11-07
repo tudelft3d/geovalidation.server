@@ -202,7 +202,7 @@ def reports(jobid):
             print "task not finished."
             return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
     success = True
-    if (db['invalid_cityobjects'] > 0) or (db['invalid_primitives'] > 0):
+    if (db['errors'] != "-1"):
       success = False
     return render_template("report.html", 
                            filename=fname, 
