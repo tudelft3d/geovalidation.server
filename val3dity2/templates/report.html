@@ -2,7 +2,7 @@
 {% block body %}
 
   <div class="page-header">
-    <h1>{{ filename }}</h1>
+    <h1>{{ filename }} </h1>
   </div>
 
 {% if welldone %}
@@ -12,16 +12,32 @@
   <div class="panel panel-danger">
     <div class="panel-heading">Summary: there are errors</div>
 {% endif %}
-      <div class="panel-body">
-        <p>Number of 3D primitives: {{ total_primitives }}</p>
-        <p>Number of invalid 3D primitives: {{ invalid_primitives }}</p>
-        <p>Number of City Objects: {{ total_cityobjects }}</p>
-        <p>Number of invalid City Objects: {{ invalid_cityobjects }}</p>
-        {% if welldone %}
-          <img src="{{ url_for('static', filename='img/welldone.png') }}" width="120" alt="">
-        {% endif %}  
-    </div>
-  </div>  
+    <ul class="list-group">
+    <li class="list-group-item">
+      <span class="badge"> {{ total_primitives }}</span>
+      Number of 3D primitives
+    </li>
+    <li class="list-group-item">
+      <span class="badge">{{ invalid_primitives }}</span>
+      Number of invalid 3D primitives
+    </li>  
+    <li class="list-group-item">
+      <span class="badge">{{ total_cityobjects }}</span>
+      Number of City Objects
+    </li>
+    <li class="list-group-item">
+      <span class="badge">{{ invalid_cityobjects }} </span>
+      Number of invalid City Objects
+    </li>
+    </ul>
+  </div>
+
+  {% if welldone %}
+    <img src="{{ url_for('static', filename='img/welldone.png') }}" width="120" alt="">
+    <br>
+    <br>
+  {% endif %}
+
 
   <div class="well">  
     <p><a href="{{ url_for('index') }}reports/overview/{{ jid }}">See the full report online</a></p>
