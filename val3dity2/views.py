@@ -36,7 +36,7 @@ def validate(fname,
                                      prim3d,
                                      ignore204,
                                      geom_is_sem_surfaces, 
-                                     app.config['VAL3DITYEXE_FOLDER'],    
+                                     app.config['VAL3DITYEXE2_FOLDER'],    
                                      app.config['REPORTS_FOLDER'])    
     #-- write summary to database
     print summary
