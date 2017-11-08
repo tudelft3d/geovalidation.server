@@ -7,30 +7,40 @@
 
 <p>The validator, which uses the open-source project <a href="https://github.com/tudelft3d/val3dity">val3dity</a> in the background, is maintained by <a href="https://3d.bk.tudelft.nl/hledoux">Hugo Ledoux</a> and the <a href="https://3d.bk.tudelft.nl">3D geoinformation group at TUDelft</a>.</p>
 
-<p>It is used to verify whether 3D primitives are <em>geometrically</em> valid according to the international standard <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO 19107:2003</a>. </p>
+<p>It allows us to validate 3D primitives according to the international standard ISO19107.
+Think of it as <a href="http://postgis.net/docs/ST_IsValid.html">PostGIS ST_IsValid</a>, but for 3D primitives (PostGIS only validates 2D primitives).</p>
 
-<p>Its main aim is thus the 3D primitives of GML (<strong>Solids</strong>, <strong>CompositeSurfaces</strong>, or <strong>MultiSurfaces</strong>), but it can be used to validate any 3D primitives. 
-It accepts as input any GML files (or one of the formats built upon it, such as CityGML), OBJ, OFF, and <a href="http://wias-berlin.de/software/tetgen/1.5/doc/manual/manual006.html#ff_poly">POLY</a>.
-It simply scans the file looking for the 3D primitives and validates these according to the rules in ISO19107 (all the rest is ignored). </p>
+<p>In short, it verifies whether a 3D primitive respects the definition as given in <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO19107</a> and GML/CityGML.
+All the 3D primitives of GML are supported:</p>
 
-<p><img width='500' src="{{ url_for('static', filename='img/workflow.svg') }}" alt="" /></p>
+<ul>
+<li><code>&lt;gml:MultiSurface&gt;</code></li>
+<li><code>&lt;gml:CompositeSurface&gt;</code> </li>
+<li><code>&lt;gml:Solid&gt;</code></li>
+<li><code>&lt;gml:MultiSolid&gt;</code></li>
+<li><code>&lt;gml:CompositeSolid&gt;</code></li>
+</ul>
 
-<p>For <strong>Solids</strong>, the validation is performed hierarchically, ie first every polygon (embedded in 3D) is validated (by projecting it to a 2D plane and using <a href="http://trac.osgeo.org/geos/">GEOS</a>), then every shell is validated (must be watertight, no self-intersections, orientation of the normals must be consistent and pointing outwards, etc), and finally the interactions between the shells are analysed. 
-This means that if a polygon of your solid is not valid, the validator will report that error but will <em>not</em> continue the validation (to avoid &#8220;cascading&#8221; errors). </p>
+<p>Unlike many other validation tools in 3D GIS, inner rings in polygons/surfaces are supported and so are cavities in solids (also called voids or inner shells).
+However, as is the case for CityGML, only planar and linear primitives are allowed: no curves or spheres or other parametrically-modelled primitives are supported. There is no plan to support these geometries, because val3dity is developed with 3D city models in focus.</p>
 
-<p>For <strong>MultiSurfaces</strong>, only the validation of the polygons is performed, ie are they valid according to the 2D rules, and are they planar?</p>
+<p>val3dity accepts as input:</p>
 
-<p>For <strong>CompositeSurfaces</strong>, the surface formed by the polygons must be a 2-manifold.</p>
+<ul>
+<li><a href="https://www.citygml.org">CityGML</a></li>
+<li><a href="http://www.cityjson.org">CityJSON</a></li>
+<li>any <a href="https://en.wikipedia.org/wiki/Geography_Markup_Language">GML files</a> </li>
+<li><a href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">OBJ</a></li>
+<li><a href="https://en.wikipedia.org/wiki/OFF_(file_format)">OFF</a></li>
+</ul>
 
-<p>More details are available in this <a href="https://3d.bk.tudelft.nl/hledoux/blog/your-solids-the-same/">blog post about 3D solids in GIS</a>.</p>
+<h3>Documentation</h3>
 
-<h3>Error codes</h3>
-
-<p>These <a href="{{  url_for("errors")  }}">errors</a> can be reported.</p>
+<p>val3dity has a fairly <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/">extensive documentation</a>.</p>
 
 <h3>Bugs?</h3>
 
-<p>If you encounter a bug, please report it on the <a href="https://github.com/tudelft3d/val3dity/issues">issue page</a> or <a href="mailto:h.ledoux@tudelft.nl">contact me directly</a>.</p>
+<p>If you encounter a bug, please report it on the <a href="https://github.com/tudelft3d/val3dity/issues">issue page</a>.</p>
 
 <h3>Source code</h3>
 

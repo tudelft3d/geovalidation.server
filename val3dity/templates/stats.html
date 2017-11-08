@@ -10,23 +10,23 @@
     <ul class="list-group">
     <li class="list-group-item">
       <span class="badge"> {{ totalsolids }}</span>
-      Total number of solids validated 
+      Total number of 3D primitives validated 
     </li>
     <li class="list-group-item">
       <span class="badge">{{ totalinvalidsolids }}</span>
-      Total number of invalid solids
+      Total number of invalid 3D primitives
     </li>  
     <li class="list-group-item">
       <span class="badge">{{ percentageinvalids }}%</span>
-      Percentage of invalid solids
+      Percentage of invalid 3D primitives
     </li>
     <li class="list-group-item">
       <span class="badge">{{ totaljobs }} </span>
       Total number uploaded files
     </li>
     <li class="list-group-item">
-      <span class="badge"> {{ mosterror }} -- {{ mosterrordef }} </span>
-      Most common <a href="{{  url_for("errors")  }}">error code</a>
+      <span class="badge"> {{ mosterror }} </span>
+      Most common <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/errors/">error code</a>
     </li>
     </ul>
   </div>
@@ -39,7 +39,7 @@
         <th>date</th>
         <th># solids</th> 
         <th># invalid</th>
-        <th><a href="{{  url_for("errors")  }}">error codes</a></th>
+        <th><a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/errors/">error codes</a></th>
         <th>country</th>
         <th></th>
       </tr>

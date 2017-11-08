@@ -2,7 +2,6 @@ from werkzeug.serving import run_simple
 from werkzeug.wsgi import DispatcherMiddleware
 
 from val3dity       import app as val3dity_app
-from val3dity2      import app as val3dity2_app
 from prepair        import app as prepair_app
 from schemacitygml  import app as schemacitygml_app
 from welcome        import app as welcome_app
@@ -10,7 +9,6 @@ from welcome        import app as welcome_app
 application = DispatcherMiddleware( 
     welcome_app, {
     '/val3dity':        val3dity_app,
-    '/val3dity2':       val3dity2_app,
     '/schemacitygml':   schemacitygml_app,
     '/prepair':         prepair_app
     }
