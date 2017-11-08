@@ -31,3 +31,7 @@ p, ul {
 .version > a {
   color: #87898B;
 }
+
+label > a {
+  color: #2C2B37
+}

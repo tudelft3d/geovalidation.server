@@ -2,7 +2,6 @@ from val3dity import app
 from val3dity import celery
 
 import runvalidation
-import addids
 
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, render_template, request, flash, redirect, url_for, send_from_directory, _app_ctx_stack
@@ -11,68 +10,45 @@ import os
 import subprocess
 import uuid
 import time
+import json
 import copy
 from geoip import geolite2
 
 TRUSTED_PROXIES = {'127.0.0.1'}  
 
-ALLOWED_EXTENSIONS = set(['gml', 'xml', 'obj', 'poly'])
-
-
-dErrors = {
-  101: "TOO_FEW_POINTS",
-  102: "CONSECUTIVE_POINTS_SAME",
-  103: "RING_NOT_CLOSED",
-  104: "RING_SELF_INTERSECTION",
-  105: "RING_COLLAPSED",
-  201: "INTERSECTION_RINGS",
-  202: "DUPLICATED_RINGS",
-  203: "NON_PLANAR_POLYGON_DISTANCE_PLANE",
-  204: "NON_PLANAR_POLYGON_NORMALS_DEVIATION",
-  205: "POLYGON_INTERIOR_DISCONNECTED",
-  206: "INNER_RING_OUTSIDE",
-  207: "INNER_RINGS_NESTED",
-  208: "ORIENTATION_RINGS_SAME",
-  300: "NOT_VALID_2_MANIFOLD",
-  301: "TOO_FEW_POLYGONS",
-  302: "NOT_CLOSED",
-  303: "NON_MANIFOLD_VERTEX",
-  304: "NON_MANIFOLD_EDGE ",
-  305: "SEPARATE_PARTS",
-  306: "SELF_INTERSECTION",
-  307: "POLYGON_WRONG_ORIENTATION",
-  309: "VERTICES_NOT_USED ",
-  401: "INTERSECTION_SHELLS",
-  402: "DUPLICATED_SHELLS",
-  403: "INNER_SHELL_OUTSIDE",
-  404: "INTERIOR_DISCONNECTED",
-  405: "WRONG_ORIENTATION_SHELL",
-  901: "INVALID_INPUT_FILE",
-  902: "EMPTY_PRIMITIVE",
-  999: "UNKNOWN_ERROR",
-  308: "WRONG_ORIENTATION_SHELL",
-}
+ALLOWED_EXTENSIONS = set(['gml', 'xml', 'obj', 'poly', 'json', 'off'])
 
 
 @celery.task
-def validate(fname, primitives, snaptol, plantol, uploadtime, usebuildings):
+def validate(fname, 
+             snap_tol, 
+             planarity_d2p_tol, 
+             overlap_tol, 
+             prim3d, 
+             ignore204, 
+             geom_is_sem_surfaces, 
+             uploadtime):
     summary = runvalidation.validate(validate.request.id, 
-                                     fname,
-                                     primitives,
-                                     snaptol,
-                                     plantol,
-                                     usebuildings,
+                                     fname, 
+                                     snap_tol, 
+                                     planarity_d2p_tol, 
+                                     overlap_tol, 
+                                     prim3d,
+                                     ignore204,
+                                     geom_is_sem_surfaces, 
                                      app.config['VAL3DITYEXE_FOLDER'],    
                                      app.config['REPORTS_FOLDER'])    
     #-- write summary to database
     print summary
     db = sqlite3.connect(app.config['DATABASE'])
     db.row_factory = sqlite3.Row
-    db.execute('update tasks set noprimitives=?, noinvalid=?, nobuildings=?, invalidbuildings=?, errors=? where jid=?',
-               [summary['noprimitives'], 
-               summary['noinvalid'], 
-               summary['nobuildings'], 
-               summary['invalidbuildings'], 
+    db.execute('update tasks set validated=?, total_primitives=?, invalid_primitives=?, total_cityobjects=?, invalid_cityobjects=?, errors=? where jid=?',
+               [
+               1,
+               summary['total_primitives'], 
+               summary['invalid_primitives'], 
+               summary['total_cityobjects'], 
+               summary['invalid_cityobjects'], 
                summary['errors'], 
                validate.request.id])
     db.commit()
@@ -92,20 +68,10 @@ def verify_tolerance(t, defaultval):
     except:
       return d
 
-@app.route('/errors')
-def errors():
-    return render_template("errors.html")
-
 @app.route('/about')
 def about():
     return render_template("about.html")
-
     
-@app.route('/faq')
-def faq():
-    return render_template("faq.html")
-
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
@@ -116,8 +82,8 @@ def not_found(error):
 @app.route('/stats')
 def stats():
     totaljobs   = query_db('select count(*) from tasks', [], one=True)
-    totalsolids = query_db('select sum(noprimitives) from tasks', [], one=True)
-    totalinvalidsolids = query_db('select sum(noinvalid) from tasks', [], one=True)
+    totalsolids = query_db('select sum(total_primitives) from tasks', [], one=True)
+    totalinvalidsolids = query_db('select sum(invalid_primitives) from tasks', [], one=True)
     percentage = int((float(totalinvalidsolids[0]) / float(totalsolids[0])) * 100)
     last5 = query_db('select * from tasks order by timestamp desc limit 5', [], one=False)
     a = []
@@ -127,16 +93,17 @@ def stats():
         ipobj = geolite2.lookup(each['ip'])
         if ipobj is not None:
           ipcountry = ipobj.country
-      a.append((each['timestamp'].replace("T", " "), each['noprimitives'], each['noinvalid'], each['errors'], ipcountry))
+      a.append((each['timestamp'].replace("T", " "), each['total_primitives'], each['invalid_primitives'], each['errors'], ipcountry))
     allerrors = query_db('select errors from tasks where errors is not null and errors!=-1', [])
-    myerr = copy.deepcopy(dErrors)
-    for each in myerr:
-      myerr[each] = 0;
+    myerr = {}
     for es in allerrors:
       tmp = es[0].split("-")
       ei = map(int, tmp)
       for e in ei:
-        myerr[e] += 1
+        if e not in myerr:
+          myerr[e] = 1
+        else:
+          myerr[e] += 1
     higherr = 100;
     highest = 0;
     for e in myerr:
@@ -149,28 +116,9 @@ def stats():
                            totalinvalidsolids="{:,}".format(totalinvalidsolids[0]),
                            percentageinvalids=percentage,
                            mosterror=higherr,
-                           mosterrordef=dErrors[higherr],
                            last5=a
                           )
     
-
-@app.route('/addgmlids', methods=['GET', 'POST'])
-def addgmlids():
-    if request.method == 'POST':
-        f = request.files['file']
-        if f and allowed_file(f.filename):
-            fname = secure_filename(f.filename)
-            print "fname", fname
-            nin = os.path.join(app.config['TMP_FOLDER'], fname)
-            f.save(nin)
-            nout = nin[:-4] + ".id.gml"
-            addids.addids(nin, nout)
-            return send_from_directory(app.config['TMP_FOLDER'], '%s.id.gml' % fname[:-4])
-        else:
-            return render_template("status.html", success=False, info1='Uploaded file is not a GML file.')
-    return render_template("addgmlids.html")
-
-
 def get_db():
     """Opens a new database connection if there is none yet for the
     current application context.
@@ -198,17 +146,6 @@ def query_db(query, args=(), one=False):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    os.chdir("/Users/hugo/projects/val3dity")
-    cmd = []
-    cmd.append("git")
-    cmd.append("rev-parse")
-    cmd.append("HEAD")
-    op = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    R = op.poll()
-    if R:
-      res = op.communicate()
-      raise ValueError(res[1])
-    gitcommit = "https://github.com/tudelft3d/val3dity/commit/" + op.communicate()[0]
     if request.method == 'POST':
         f = request.files['file']
         if f:
@@ -217,113 +154,114 @@ def index():
               clientip = next((addr for addr in reversed(route) if addr not in TRUSTED_PROXIES), request.remote_addr)
               fname = secure_filename(f.filename)
               f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-              primitives = request.form['primitives']
-              b = 'usebuildings' in request.form
-              if b == True:
-                usebuildings = 1
-              else:
-                usebuildings = 0
-              snaptol = verify_tolerance(request.form['snaptol'], '1e-3')
-              plantol = verify_tolerance(request.form['plantol'], '1e-2')
+              snap_tol = verify_tolerance(request.form['snap_tol'], '1e-3')
+              planarity_d2p_tol = verify_tolerance(request.form['planarity_d2p_tol'], '1e-2')
+              overlap_tol = verify_tolerance(request.form['overlap_tol'], '-1')
+              prim3d = request.form['prim3d']
+              ignore204 = 'ignore204' in request.form
+              geom_is_sem_surfaces = 'geom_is_sem_surfaces' in request.form
               uploadtime = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())
-              celtask = validate.delay(app.config['UPLOAD_FOLDER']+fname, primitives, snaptol, plantol, uploadtime, usebuildings)    
+              celtask = validate.delay(app.config['UPLOAD_FOLDER']+fname, 
+                                       snap_tol, 
+                                       planarity_d2p_tol, 
+                                       overlap_tol, 
+                                       prim3d, 
+                                       ignore204, 
+                                       geom_is_sem_surfaces, 
+                                       uploadtime)
+
               jid = celtask.id
               db = get_db()
-              db.execute('insert into tasks (jid, file, primitives, snaptol, plantol, timestamp, ip, usebuildings) values (?, ?, ?, ?, ?, ?, ?, ?)',
+              db.execute('insert into tasks (jid, file, timestamp, ip, validated) values (?, ?, ?, ?, ?)',
                         [jid, 
                         fname, 
-                        request.form['primitives'], 
-                        snaptol, 
-                        plantol, 
                         uploadtime,
                         clientip,
-                        usebuildings])
+                        0])
               db.commit()
               return redirect('/val3dity/reports/%s' % jid)
             else:
               return render_template("index.html", problem='Uploaded file is not a valid file.')
         else:
             return render_template("index.html", problem='No file selected.')
-    return render_template("index.html", version=gitcommit)
+    return render_template("index.html")
 
 
 @app.route('/reports/<jobid>')
 def reports(jobid):
     #-- check if job is in the database
-    j = query_db('select * from tasks where jid = ?', [jobid], one=True)
-    if j is None:
+    db = query_db('select * from tasks where jid = ?', [jobid], one=True)
+    if db is None:
         return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
     #-- it exists
-    fname = j['file']
+    fname = db['file']
     print fname
-    if j['noprimitives'] is None:
+    if (db['validated'] == 0):
         celtask = celery.AsyncResult(jobid)
         if (celtask.ready() == False):
             print "task not finished."
             return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
-    if (j['errors'] == '901'):
-        return render_template("report.html", 
-                              filename=fname,
-                              jid=jobid,
-                              noprimitives=0, 
-                              primitives=j['primitives'],
-                              noinvalid=0,
-                              nobuildings=j['nobuildings'],
-                              invalidbuildings=j['invalidbuildings'],
-                              zeroprimitives=False,
-                              badinput=True,
-                              welldone=False 
-                              )    
-    if (j['noprimitives'] == 0):
-        return render_template("report.html", 
-                              filename=fname,
-                              jid=jobid,
-                              noprimitives=0, 
-                              primitives=j['primitives'],
-                              noinvalid=0,
-                              nobuildings=j['nobuildings'],
-                              invalidbuildings=j['invalidbuildings'],
-                              zeroprimitives=True,
-                              welldone=False 
-                              )
-    if (j['noprimitives'] > 0) and (j['noinvalid'] == 0):
-        return render_template("report.html", 
-                               filename=fname, 
-                               jid=jobid, 
-                               noprimitives=j['noprimitives'], 
-                               primitives=j['primitives'],
-                               noinvalid=0, 
-                               nobuildings=j['nobuildings'],
-                               invalidbuildings=j['invalidbuildings'],
-                               zeroprimitives=False, 
-                               welldone=True) 
-    else:
-        s = j['errors'].split('-')
-        errors = map(int, s)
-        errors.sort()
-        lserrors = [] 
-        for e in errors:
-            description = dErrors[e]
-            errors = str(e) + " -- " + description
-            lserrors.append(errors)
-        print lserrors
-
-        return render_template("report.html", 
-                              filename=fname,
-                              jid=jobid,
-                              noprimitives=j['noprimitives'], 
-                              primitives=j['primitives'],
-                              noinvalid=j['noinvalid'],
-                              nobuildings=j['nobuildings'],
-                              invalidbuildings=j['invalidbuildings'],
-                              zeroprimitives=False,
-                              errors=lserrors,
-                              welldone=False 
-                              )
-
+    success = True
+    if (db['errors'] != "-1"):
+      success = False
+    return render_template("report.html", 
+                           filename=fname, 
+                           jid=jobid, 
+                           total_primitives=db["total_primitives"], 
+                           invalid_primitives=db["invalid_primitives"], 
+                           total_cityobjects=db["total_cityobjects"], 
+                           invalid_cityobjects=db["invalid_cityobjects"], 
+                           welldone=success) 
+    
 
 @app.route('/reports/download/<jobid>')
 def reports_download(jobid):
-    return send_from_directory(app.config['REPORTS_FOLDER'], '%s.xml' % jobid)
+    return send_from_directory(app.config['REPORTS_FOLDER'], '%s.json' % jobid)
 
 
+@app.route('/reports/overview/<jobid>')
+def reports_overview(jobid):
+    #-- check if job is in the database
+    db = query_db('select * from tasks where jid = ?', [jobid], one=True)
+    if db is None:
+        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
+    #-- it exists
+    if (db['validated'] == 0):
+        celtask = celery.AsyncResult(jobid)
+        if (celtask.ready() == False):
+            print "task not finished."
+            return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
+    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
+    return render_template("report_overview.html", thereport=j, myjobid=jobid) 
+
+
+@app.route('/reports/cityobjects/<jobid>')
+def reports_cityobjects(jobid):
+    #-- check if job is in the database
+    db = query_db('select * from tasks where jid = ?', [jobid], one=True)
+    if db is None:
+        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
+    #-- it exists
+    if (db['validated'] == 0):
+        celtask = celery.AsyncResult(jobid)
+        if (celtask.ready() == False):
+            print "task not finished."
+            return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
+    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
+    return render_template("report_CityObjects.html", thereport=j) 
+
+
+@app.route('/reports/primitives/<jobid>')
+def reports_primitives(jobid):
+    #-- check if job is in the database
+    db = query_db('select * from tasks where jid = ?', [jobid], one=True)
+    if db is None:
+        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
+    #-- it exists
+    if (db['validated'] == 0):
+        celtask = celery.AsyncResult(jobid)
+        if (celtask.ready() == False):
+            print "task not finished."
+            return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
+    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
+    return render_template("report_Primitives.html", thereport=j)     
