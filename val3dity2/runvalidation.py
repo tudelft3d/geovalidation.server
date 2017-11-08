@@ -5,7 +5,6 @@ import shutil
 import glob
 import subprocess
 import json
-from lxml import etree
 from StringIO import StringIO
 
 
