@@ -31,29 +31,28 @@
         <hr>
 
         <div class="form-group">
-          <label class="col-sm-5 control-label">Snap tolerance <i class="fa fa-question-circle" data-toggle="tooltip" title="if 2 points are closer than this value then we assume they are the same" ></i></label>
+          <label class="col-sm-5 control-label">Snap tolerance <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#snap-tol"><i class="fa fa-question-circle" data-toggle="tooltip" title="if 2 points are closer than this value then we assume they are the same" ></i></a></label>
           <div class="col-sm-7">
             <input name="snap_tol" type="text" class="form-control" value="0.001">
           </div>
         </div>
 
         <div class="form-group">
-          <label class="col-sm-5 control-label">Planarity tolerance <i class="fa fa-question-circle" data-toggle="tooltip" title="maximum distance between a point and a fitted plane" ></i></label>
+          <label class="col-sm-5 control-label">Planarity tolerance <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#planarity-d2p-tol"><i class="fa fa-question-circle" data-toggle="tooltip" title="maximum distance between a point and a fitted plane" ></i></a></label>
           <div class="col-sm-7">
             <input name="planarity_d2p_tol" type="text" class="form-control" value="0.01">
           </div>
         </div>
         
         <div class="form-group">
-          <label class="col-sm-5 control-label">Overlap tolerance <i class="fa fa-question-circle" data-toggle="tooltip" title="tolerance used to validate CompositeSolids and BuildingParts; -1 is disabled" ></i></label>
+          <label class="col-sm-5 control-label">Overlap tolerance <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#overlap-tol"><i class="fa fa-question-circle" data-toggle="tooltip" title="tolerance used to validate CompositeSolids and BuildingParts; -1 is disabled" ></i></a></label>
           <div class="col-sm-7">
             <input name="overlap_tol" type="text" class="form-control" value="-1">
           </div>
         </div>
  
-
         <div class="form-group">
-          <label class="col-sm-5 control-label">3D primitives <i class="fa fa-question-circle" data-toggle="tooltip" title="which 3D primitives to validate?" ></i></label>
+          <label class="col-sm-5 control-label">3D primitives <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#p-primitive"><i class="fa fa-question-circle" data-toggle="tooltip" title="which 3D primitives to validate?" ></i></a></label>
           <div class="col-sm-7">
             <div class="btn-group" data-toggle="buttons">
               <label class="btn btn-default active">
@@ -70,7 +69,7 @@
         </div> 
 
         <div class="form-group">
-          <label class="col-sm-5 control-label">ignore error 204 <a href="http://val3dity.readthedocs.io/"><i class="fa fa-question-circle" data-toggle="tooltip" title="ignore error 204" ></i></a></label>
+          <label class="col-sm-5 control-label">ignore error 204 <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#ignore204"><i class="fa fa-question-circle" data-toggle="tooltip" title="ignore error 204" ></i></a></label>
           <div class="col-sm-7">
             <div class="checkbox">
               <label>
@@ -81,7 +80,7 @@
         </div>
 
         <div class="form-group">
-          <label class="col-sm-5 control-label">use semantic surfaces <i class="fa fa-question-circle" data-toggle="tooltip" title="use semantic surfaces" ></i></label>
+          <label class="col-sm-5 control-label">use semantic surfaces <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#geom-is-sem-surfaces"><i class="fa fa-question-circle" data-toggle="tooltip" title="use semantic surfaces as geometry" ></i></a></label>
           <div class="col-sm-7">
             <div class="checkbox">
               <label>
@@ -99,7 +98,7 @@
 
   <div class="alert alert-warning alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    This uses the new version of val3dity (v2 beta) 
+    This uses the new version of val3dity (v2 beta). <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/">Learn more about it.</a>
   </div>
 {% if problem %}
   <div class="alert alert-danger">
