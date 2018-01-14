@@ -191,9 +191,9 @@ def index():
               db.commit()
               return redirect('/val3dity/reports/%s' % jid)
             else:
-              return render_template("index.html", problem='Uploaded file is not a valid file.')
+              return render_template("index.html", problem='Uploaded file is not a valid file.', version=val3dityversion)
         else:
-            return render_template("index.html", problem='No file selected.')
+            return render_template("index.html", problem='No file selected.', version=val3dityversion)
     return render_template("index.html", version=val3dityversion)
 
 
