@@ -278,6 +278,8 @@ function summary_table_cells(tbl, type, dict, generic_type) {
         a.appendChild(linkText);
         a.title = type;
         a.className = "clickonme";
+        a.id = type;
+        a.name = "feature";
         a.href = "tree_template.html?feature_type=" + type;
         td0.appendChild(a);
     } else if (generic_type == "primitives") {
