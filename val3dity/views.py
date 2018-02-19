@@ -47,8 +47,8 @@ def validate(fname,
                1,
                summary['total_primitives'], 
                summary['invalid_primitives'], 
-               summary['total_cityobjects'], 
-               summary['invalid_cityobjects'], 
+               summary['total_features'], 
+               summary['invalid_features'], 
                summary['errors'], 
                validate.request.id])
     db.commit()
@@ -219,8 +219,8 @@ def reports(jobid):
                            jid=jobid, 
                            total_primitives=db["total_primitives"], 
                            invalid_primitives=db["invalid_primitives"], 
-                           total_cityobjects=db["total_cityobjects"], 
-                           invalid_cityobjects=db["invalid_cityobjects"], 
+                           total_features=db["total_cityobjects"], 
+                           invalid_features=db["invalid_cityobjects"], 
                            welldone=success) 
     
 
