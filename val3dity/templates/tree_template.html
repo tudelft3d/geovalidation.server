@@ -3,7 +3,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8"/>
-        <link rel="stylesheet" type="text/css" href="index.css" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/report.css') }}">
         <title id="title"></title>
     </head>
 
@@ -24,8 +24,10 @@
         <div id="tree"></div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="treeview.js"></script>
-        <script src="report.js"></script>
+        <script src="{{ url_for('static', filename='js/treeview.js') }}"></script>
+        <script type="text/javascript">
+            var report = {{ thereport | tojson }}; 
+        </script>
 
         <script>
             var getUrlParameter = function getUrlParameter(sParam) {
