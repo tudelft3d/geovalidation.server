@@ -165,7 +165,7 @@ var errors = {
     "609": {
         "name": "609 – CITYOBJECT_HAS_NO_GEOMETRY",
         "link": {
-            "href": "https://val3dity.readthedocs.io/en/v2/errors/#cityobject-has-no-geometry"
+            "href": "http://geovalidation.bk.tudelft.nl/val3dity/docs/errors/#cityobject-has-no-geometry"
         }
     },
     "901": {
@@ -268,25 +268,8 @@ function parse_valid_amounts(report) {
 
 function summary_table_cells(tbl, type, dict, generic_type) {
     var tr = tbl.insertRow();
-
-    if (generic_type == "features") {
-        // cell type
-        var td0 = tr.insertCell(0);
-        // td0.appendChild(document.createTextNode(type));
-        var a = document.createElement('a');
-        var linkText = document.createTextNode(type);
-        a.appendChild(linkText);
-        a.title = type;
-        a.className = "clickonme";
-        a.id = type;
-        a.name = "feature";
-        a.href = "tree_template.html?feature_type=" + type;
-        td0.appendChild(a);
-    } else if (generic_type == "primitives") {
-        // cell type
         var td0 = tr.insertCell(0);
         td0.appendChild(document.createTextNode(type));
-    }
     // cell Total
     var td_t = tr.insertCell(1);
     td_t.appendChild(document.createTextNode(dict[type]["total"]));
@@ -350,6 +333,16 @@ function idx_validation_summary(feat_dict, prim_dict){
         var tbl = summary_table("primitives", prim_dict);
         body.appendChild(tbl);
     }
+    //-- validation details
+    var h = document.createElement("H3")
+    var a = document.createElement('a');
+    var linkText = document.createTextNode("Click for validation details");
+    a.appendChild(linkText);
+    a.className = "clickonme";
+    a.href = "tree.html";
+    h.appendChild(a);
+    document.body.appendChild(h);
+    
 }
 
 

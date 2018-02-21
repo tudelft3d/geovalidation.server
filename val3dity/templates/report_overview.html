@@ -74,12 +74,9 @@
         </script>
         <script src="{{ url_for('static', filename='js/val3dityconfig.js') }}"></script>
         <script type="text/javascript">
-            var allf = document.getElementsByName("feature");
-            for (var i = 0; i < allf.length; i++) {
-                // alert(allf[i].id);
-                var ft = allf[i].id
-                allf[i].href = "{{ url_for('reports_features', jobid=myjobid) }}";;
-            }
+            var allf = document.getElementsByClassName("clickonme");
+            allf[0].href = "{{ url_for('reports_features', jobid=myjobid) }}";;
+            
         </script>
     </body>
 </html>

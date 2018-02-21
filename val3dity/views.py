@@ -258,7 +258,7 @@ def reports_features(jobid):
             print "task not finished."
             return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
     j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
-    return render_template("tree_template.html", thereport=j) 
+    return render_template("tree.html", thereport=j) 
 
 
 @app.route('/reports/cityobjects/<jobid>')
