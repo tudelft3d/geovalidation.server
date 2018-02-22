@@ -47,8 +47,8 @@ def validate(jid,
   j = json.loads(open(finfull).read())
   
   dSummary = {}
-  dSummary['total_cityobjects'] = j["total_cityobjects"]
-  dSummary['invalid_cityobjects'] = j["invalid_cityobjects"]
+  dSummary['total_features'] = j["total_features"]
+  dSummary['invalid_features'] = j["invalid_features"]
   dSummary['total_primitives'] = j["total_primitives"]
   dSummary['invalid_primitives'] = j["invalid_primitives"]
   if (j["overview_errors"] == None):

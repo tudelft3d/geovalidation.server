@@ -165,7 +165,7 @@ var errors = {
     "609": {
         "name": "609 – CITYOBJECT_HAS_NO_GEOMETRY",
         "link": {
-            "href": "https://val3dity.readthedocs.io/en/v2/errors/#cityobject-has-no-geometry"
+            "href": "http://geovalidation.bk.tudelft.nl/val3dity/docs/errors/#cityobject-has-no-geometry"
         }
     },
     "901": {
@@ -194,37 +194,191 @@ var errors = {
     }
 }
 
-function error_overview() {
+
+function parse_valid_amounts(report) {
+    // Get the amount of in/valids per feature and primitive type and
+    // get the amount of objects per error
+    var feature_list = report.overview_features;
+    var primitive_list = report.overview_primitives;
+    var error_list = report.overview_errors;
+    var feat_dict = {};
+    var prim_dict = {};
+    var err_dict = {};
+
+    if (feature_list != null) {
+        for (var i=0; i<feature_list.length; i++) {
+            feat_dict[feature_list[i]] = {"valid": 0, "total": 0};
+        }
+    }
+    if (primitive_list != null) {
+        for (var i=0; i<primitive_list.length; i++) {
+            prim_dict[primitive_list[i]] = {"valid": 0, "total": 0};
+        }
+    }
+    if (error_list != null) {
+        for (var i=0; i<error_list.length; i++) {
+            err_dict[error_list[i]] = 0;
+        }
+    }
+    if (report.features != null) {
+        for (var f=0; f<report.features.length; f++) {
+            var feature = report.features[f];
+            feat_dict[feature.type]["total"] += 1;
+            if (feature.validity) {
+                feat_dict[feature.type]["valid"] += 1;
+            } else {
+                if (feature.errors_feature != null) {
+                    for (var e=0; e<feature.errors_feature.length; e++) {
+                        err_dict[feature.errors_feature[e]["code"]] += 1;
+                    }
+                }
+            }
+
+            if (feature.primitives != null) {
+                for (var p=0; p<feature.primitives.length; p++) {
+                    var primitive = feature.primitives[p];
+                    prim_dict[primitive.type]["total"] += 1;
+                    if (primitive.validity) {
+                        prim_dict[primitive.type]["valid"] += 1;
+                    } else if (primitive.errors != null) {
+                        for (var e=0; e<primitive.errors.length; e++) {
+                            err_dict[primitive.errors[e]["code"]] += 1;
+                        }
+                    }
+                    // in case of CompositeSolids
+                    if ("primitives" in primitive) {
+                        for (var p=0; p<primitive.primitives.length; p++) {
+                            var pm = primitive.primitives[p];
+
+                            if (!pm.validity) {
+                                for (var e=0; e<pm.errors.length; e++) {
+                                    err_dict[pm.errors[e]["code"]] += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    console.log(prim_dict)
+    return [feat_dict, prim_dict, err_dict];
+}
+
+
+function summary_table_cells(tbl, type, dict, generic_type) {
+    var tr = tbl.insertRow();
+        var td0 = tr.insertCell(0);
+        td0.appendChild(document.createTextNode(type));
+    // cell Total
+    var td_t = tr.insertCell(1);
+    td_t.appendChild(document.createTextNode(dict[type]["total"]));
+    // cell Valid
+    var td_v = tr.insertCell(2);
+    var valid_pc = Math.round(dict[type]["valid"] / dict[type]["total"] * 100);
+    var v = dict[type]["valid"] + ' (' + valid_pc + '%)';
+    td_v.appendChild(document.createTextNode(v));
+    // cell Invalid
+    var td_i = tr.insertCell(3);
+    var invalid = dict[type]["total"] - dict[type]["valid"];
+    var invalid_pc = Math.round(invalid / dict[type]["total"] * 100);
+    var i = invalid + ' (' + invalid_pc + '%)';
+    td_i.appendChild(document.createTextNode(i));
+
+    return tbl;
+}
+
+
+function summary_table(generic_type, dict) {
+    // Validation summary table
+
+    var tbl = document.createElement('table');
+    var tr = tbl.insertRow(0);
+    if (generic_type == "features") {
+        tbl.setAttribute('id', "summary_features");
+        var headers = ["Features", "Total", "Valid", "Invalid"];
+        var overview = report.overview_features;
+    } else if (generic_type == "primitives") {
+        tbl.setAttribute('id', "summary_primitives");
+        var headers = ["Primitives", "Total", "Valid", "Invalid"];
+        // var overview = report.overview_primitives;
+        var overview = Object.keys(dict);
+    }
+
+    // table header
+    for (var i = 0; i < 4; i++){
+        var h = document.createElement('th');
+        h.appendChild(document.createTextNode(headers[i]));
+        tr.appendChild(h);
+    }
+
+    for (var f=0; f<overview.length; f++) {
+        var type = overview[f];
+        tbl = summary_table_cells(tbl, type, dict, generic_type);
+    }
+
+    return tbl;
+}
+
+
+function idx_validation_summary(feat_dict, prim_dict){
+    var body = document.body;
+
+    if (report.overview_features != null) {
+        var tbl = summary_table("features", feat_dict);
+        body.appendChild(tbl);
+    }
+
+    if (report.overview_primitives != null) {
+        var tbl = summary_table("primitives", prim_dict);
+        body.appendChild(tbl);
+    }
+    //-- validation details
+    var h = document.createElement("H3")
+    var a = document.createElement('a');
+    var linkText = document.createTextNode("Click for validation details");
+    a.appendChild(linkText);
+    a.className = "clickonme";
+    a.href = "tree.html";
+    h.appendChild(a);
+    document.body.appendChild(h);
+    
+}
+
+
+function error_overview(err_dict) {
 
   if (report.overview_errors == null) {
-    var h = document.createElement("H3")           
+    var h = document.createElement("H3")
     var t = document.createTextNode("No errors!");
     h.appendChild(t);
     document.body.appendChild(h);
     var x = document.createElement("IMG");
     x.setAttribute("src", "http://geovalidation.bk.tudelft.nl/val3dity/img/welldone.png");
-    x.setAttribute("alt", "The Pulpit Rock");
+    x.setAttribute("alt", "Well done!");
     document.body.appendChild(x);
     return;
   }
   else {
-    var h = document.createElement("H3")           
+    var h = document.createElement("H3")
     var t = document.createTextNode("Overview of errors");
     h.appendChild(t);
     document.body.appendChild(h);
-    idx_error_table();
+    idx_error_table(err_dict);
   }
 }
 
-function idx_error_table(){
-   
+
+
+function idx_error_table(err_dict){
+
     var body = document.body,
         tbl  = document.createElement('table');
     tbl.setAttribute('id', "errors");
 
 
     var tr = tbl.insertRow(0);
-    var headers = ['Error', '# of primitives'];
+    var headers = ['Error', '# of objects'];
     for (var i = 0; i < 2; i++){
         var h = document.createElement('th');
         h.appendChild(document.createTextNode(headers[i]));
@@ -233,13 +387,13 @@ function idx_error_table(){
 
     var nr_errors = report.overview_errors.length;
     var l_errors = report.overview_errors;
-    var nr_prims = report.overview_errors_no_primitives;
+    // var nr_prims = report.overview_errors_no_primitives;
 
-    for(var i = 0; i < nr_errors; i++){
+    for(var i=0; i<nr_errors; i++){
         var tr = tbl.insertRow();
         var td0 = tr.insertCell(0);
         var td1 = tr.insertCell(1);
-        var err = errors[l_errors[i]];
+        var err = errors[l_errors[i]]; // the error mapping with links and names and such
         var a = document.createElement('a');
         var linkText = document.createTextNode(err.name);
         a.appendChild(linkText);
@@ -247,11 +401,11 @@ function idx_error_table(){
         a.href = err.link.href;
         a.target = '_blank';
         td0.appendChild(a);
-        if (nr_prims[i] < 0) {
+        if (err_dict[l_errors[i]] < 0) {
             // this happens on input error
             td1.appendChild(document.createTextNode("\u2014"));
         } else {
-            td1.appendChild(document.createTextNode(nr_prims[i]));
+            td1.appendChild(document.createTextNode(err_dict[l_errors[i]]));
         }
 
         // set colour
@@ -274,74 +428,23 @@ function idx_error_table(){
     body.appendChild(tbl);
 }
 
-function idx_validation_summary(){
-    var body = document.body,
-        tbl  = document.createElement('table');
-    tbl.setAttribute('id', "summary");
 
-    var tr = tbl.insertRow(0);
-    var headers = [" ", "Total", "Valid", "Invalid"];
-    for (var i = 0; i < 4; i++){
-        var h = document.createElement('th');
-        h.appendChild(document.createTextNode(headers[i]));
-        tr.appendChild(h);
-    }
+var dicts = parse_valid_amounts(report);
+var feat_dict = dicts[0];
+var prim_dict = dicts[1];
+var err_dict = dicts[2];
 
-    if (report.CityObjects != null) {
-        var tr = tbl.insertRow();
+idx_validation_summary(feat_dict, prim_dict);
 
-        // cell CityObjects
-        var td0 = tr.insertCell(0);
-        var a = document.createElement('a');
-        var linkText = document.createTextNode('CityObjects (click for more details)');
-        a.appendChild(linkText);
-        a.title = "CityObjects";
-        a.href = "CityObjects.html";
-        a.id = "jobid_co";
-        td0.appendChild(a);
-        // cell Total
-        var td_t = tr.insertCell(1);
-        td_t.appendChild(document.createTextNode(report.total_cityobjects));
-        // cell Valid
-        var td_v = tr.insertCell(2);
-        var CO_valid_pc = Math.round(report.valid_cityobjects / report.total_cityobjects * 100);
-        var v = report.valid_cityobjects + ' (' + CO_valid_pc + '%)';
-        td_v.appendChild(document.createTextNode(v));
-        // cell Invalid
-        var td_i = tr.insertCell(3);
-        var CO_invalid_pc = Math.round(report.invalid_cityobjects / report.total_cityobjects * 100);
-        var i = report.invalid_cityobjects + ' (' + CO_invalid_pc + '%)';
-        td_i.appendChild(document.createTextNode(i));
-    }
+// Populate index.html with the validation results from the json report
+document.getElementById("in_file").innerHTML = report.input_file.split("/").pop();
+document.getElementById("version").innerHTML = report.val3dity_version;
+document.getElementById("time").innerHTML = report.time;
+document.getElementById("planarity_d2p_tol").innerHTML = report.planarity_d2p_tol;
+document.getElementById("planarity_n_tol").innerHTML = report.planarity_n_tol;
+document.getElementById("snap_tol").innerHTML = report.snap_tol;
+document.getElementById("overlap_tol").innerHTML = report.overlap_tol;
 
-    if (report.Primitives != null) {
-        var tr = tbl.insertRow();
-
-        // cell Primitives
-        var td0 = tr.insertCell(0);
-        var a = document.createElement('a');
-        var linkText = document.createTextNode('Primitives');
-        a.appendChild(linkText);
-        a.title = "Primitives";
-        a.href = "Primitives.html";
-        a.id = "jobid_p";
-        td0.appendChild(a);
-        // cell Total
-        var td_t = tr.insertCell(1);
-        td_t.appendChild(document.createTextNode(report.total_primitives));
-        // cell Valid
-        var td_v = tr.insertCell(2);
-        var p_valid_pc = Math.round(report.valid_primitives / report.total_primitives * 100);
-        var v = report.valid_primitives + ' (' + p_valid_pc + '%)';
-        td_v.appendChild(document.createTextNode(v));
-        // cell Invalid
-        var td_i = tr.insertCell(3);
-        var p_invalid_pc = Math.round(report.invalid_primitives / report.total_primitives * 100);
-        var i = report.invalid_primitives + ' (' + p_invalid_pc + '%)';
-        td_i.appendChild(document.createTextNode(i));
-    }
-
-    body.appendChild(tbl);
-}
-
+document.write('<br>');
+error_overview(err_dict);
 
