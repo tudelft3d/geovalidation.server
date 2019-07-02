@@ -1,4 +1,4 @@
-from simple import app
+from val3dity import app
 
 import runvalidation
 
@@ -87,7 +87,7 @@ def index():
                     app.config['REPORTS_FOLDER'])    
                 print summary
                 os.remove(app.config['UPLOAD_FOLDER']+fname)
-                return redirect('/simple/reports/%s' % jid)
+                return redirect('/val3dity/reports/%s' % jid)
             else:
                 return render_template("index.html", problem='Uploaded file is not a valid file.', version=val3dityversion)
         else:
