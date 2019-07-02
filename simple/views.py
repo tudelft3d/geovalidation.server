@@ -88,6 +88,21 @@ def index():
                     app.config['VAL3DITYEXE_FOLDER'],    
                     app.config['REPORTS_FOLDER'])    
                 print summary
+                #-- write summary to database
+                # print summary
+                db = sqlite3.connect(app.config['DATABASE'])
+                db.row_factory = sqlite3.Row
+                db.execute('update tasks set validated=?, total_primitives=?, invalid_primitives=?, total_cityobjects=?, invalid_cityobjects=?, errors=? where jid=?',
+                           [
+                           1,
+                           summary['total_primitives'], 
+                           summary['invalid_primitives'], 
+                           summary['total_features'], 
+                           summary['invalid_features'], 
+                           summary['errors'], 
+                           jid])
+                db.commit()
+                db.close()
                 os.remove(app.config['UPLOAD_FOLDER']+fname)
            
                 return redirect('/simple/reports/%s' % jid)
@@ -96,6 +111,7 @@ def index():
         else:
             return render_template("index.html", problem='No file selected.', version=val3dityversion)
     return render_template("index.html", version=val3dityversion)
+
 
 @app.route('/stats')
 def stats():
@@ -137,7 +153,90 @@ def stats():
                            last5=a
                           )
 
+@app.route('/reports/<jobid>')
+def reports(jobid):
+    #-- check if job is in the database
+    db = query_db('select * from tasks where jid = ?', [jobid], one=True)
+    if db is None:
+        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
+    #-- it exists
+    fname = db['file']
+    # print fname
+    if (db['validated'] == 0):
+        celtask = celery.AsyncResult(jobid)
+        if (celtask.ready() == False):
+            # print "task not finished."
+            return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
+    success = True
+    if (db['errors'] != "-1"):
+      success = False
+    return render_template("report.html", 
+                           filename=fname, 
+                           jid=jobid, 
+                           total_primitives=db["total_primitives"], 
+                           invalid_primitives=db["invalid_primitives"], 
+                           total_features=db["total_cityobjects"], 
+                           invalid_features=db["invalid_cityobjects"], 
+                           welldone=success) 
+    
+
+@app.route('/reports/download/<jobid>')
+def reports_download(jobid):
+    return send_from_directory(app.config['REPORTS_FOLDER'], '%s.json' % jobid)
 
 
+@app.route('/reports/overview/<jobid>')
+def reports_overview(jobid):
+    #-- check if file exists
+    if (os.path.isfile(app.config['REPORTS_FOLDER'] + jobid + ".json") == False):
+        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
+    #-- it exists
+    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
+    return render_template("report_overview.html", thereport=j, myjobid=jobid) 
+
+@app.route('/reports/features/<jobid>')
+def reports_features(jobid):
+    if (os.path.isfile(app.config['REPORTS_FOLDER'] + jobid + ".json") == False):
+        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
+    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
+    return render_template("tree.html", thereport=j) 
 
 
+@app.route('/reports/cityobjects/<jobid>')
+def reports_cityobjects(jobid):
+    if (os.path.isfile(app.config['REPORTS_FOLDER'] + jobid + ".json") == False):
+        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
+    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
+    return render_template("report_CityObjects.html", thereport=j) 
+
+
+@app.route('/reports/primitives/<jobid>')
+def reports_primitives(jobid):
+    if (os.path.isfile(app.config['REPORTS_FOLDER'] + jobid + ".json") == False):
+        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
+    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
+    return render_template("report_Primitives.html", thereport=j)   
+
+def get_db():
+    """Opens a new database connection if there is none yet for the
+    current application context.
+    """
+    top = _app_ctx_stack.top
+    if not hasattr(top, 'sqlite_db'):
+        sqlite_db = sqlite3.connect(app.config['DATABASE'])
+        sqlite_db.row_factory = sqlite3.Row
+        top.sqlite_db = sqlite_db
+    return top.sqlite_db
+
+@app.teardown_appcontext
+def close_db_connection(exception):
+    """Closes the database again at the end of the request."""
+    top = _app_ctx_stack.top
+    if hasattr(top, 'sqlite_db'):
+        top.sqlite_db.close()
+
+def query_db(query, args=(), one=False):
+    cur = get_db().execute(query, args)
+    rv = cur.fetchall()
+    cur.close()
+    return (rv[0] if rv else None) if one else rv
