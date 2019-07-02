@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <div class="page-header">
+    <h2><img src="{{ url_for('static', filename='img/val3dity2.png') }}" width=250 alt=""/><br>geometric validation of 3D primitives</h2>
+  </div>
+      
+  <div class="well">
+  <form class="form-horizontal" role="form" action="" method=post enctype=multipart/form-data>
+    <div class="form-group">
+      <label class="col-sm-5 control-label">Input file <i class="fa fa-question-circle" data-toggle="tooltip" title="formats accepted: GML, CityJSON, OBJ, OFF, POLY" ></i></label>
+      <div class="col-sm-7">
+          <div class="fileinput fileinput-new" data-provides="fileinput">
+          <span class="btn btn-default btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" name="file"></span>
+          <span class="fileinput-filename"></span>
+          <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
+        </div>
+      </div>
+    </div> 
+
+    <div class="form-group">
+      <div class="col-sm-offset-5 col-sm-7">
+        <button type="submit" class="btn btn-default">Upload + validate</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <label class="col-sm-5 control-label"><a href="#seeoptions" data-toggle="collapse">Validation options <i class="fa fa-toggle-down"></i></a></label>
+      <div id="seeoptions" class="collapse">
+
+        <hr>
+
+        <div class="form-group">
+          <label class="col-sm-5 control-label">Snap tolerance <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#snap-tol"><i class="fa fa-question-circle" data-toggle="tooltip" title="if 2 points are closer than this value then we assume they are the same" ></i></a></label>
+          <div class="col-sm-7">
+            <input name="snap_tol" type="text" class="form-control" value="0.001">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-5 control-label">Planarity tolerance <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#planarity-d2p-tol"><i class="fa fa-question-circle" data-toggle="tooltip" title="maximum distance between a point and a fitted plane" ></i></a></label>
+          <div class="col-sm-7">
+            <input name="planarity_d2p_tol" type="text" class="form-control" value="0.01">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="col-sm-5 control-label">Overlap tolerance <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#overlap-tol"><i class="fa fa-question-circle" data-toggle="tooltip" title="tolerance used to validate CompositeSolids and BuildingParts; -1 is disabled" ></i></a></label>
+          <div class="col-sm-7">
+            <input name="overlap_tol" type="text" class="form-control" value="-1">
+          </div>
+        </div>
+ 
+        <div class="form-group">
+          <label class="col-sm-5 control-label">3D primitives <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#p-primitive"><i class="fa fa-question-circle" data-toggle="tooltip" title="which 3D primitives to validate?" ></i></a></label>
+          <div class="col-sm-7">
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-default active">
+                <input type="radio" name="prim3d" value="Solid" checked> Solids
+              </label>
+              <label class="btn btn-default">
+                <input type="radio" name="prim3d" value="MultiSurface"> MultiSurfaces 
+              </label>
+              <label class="btn btn-default">
+                <input type="radio" name="prim3d" value="CompositeSurface"> CompositeSurface
+              </label>
+            </div>
+          </div>
+        </div> 
+
+        <div class="form-group">
+          <label class="col-sm-5 control-label">ignore error 204 <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#ignore204"><i class="fa fa-question-circle" data-toggle="tooltip" title="ignore error 204" ></i></a></label>
+          <div class="col-sm-7">
+            <div class="checkbox">
+              <label>
+                <input name="ignore204" type="checkbox" value="">
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-5 control-label">use semantic surfaces <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/usage/#geom-is-sem-surfaces"><i class="fa fa-question-circle" data-toggle="tooltip" title="use semantic surfaces as geometry" ></i></a></label>
+          <div class="col-sm-7">
+            <div class="checkbox">
+              <label>
+                <input name="geom_is_sem_surfaces" type="checkbox" value="">
+              </label>
+            </div>
+          </div>
+        </div>
+
+          </div>
+      </div>
+
+  </form>
+  <p class="version">v{{ version }}</p>
+  </div>
+
+  <div class="alert alert-warning alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    This uses the new release (version 2) of val3dity! <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/">Learn more about it.</a>
+  </div>
+{% if problem %}
+  <div class="alert alert-danger">
+    <p><i class="fa fa-exclamation-triangle"></i> {{ problem }}</p>
+  </div>
+{% endif %}
+
+{% endblock %}

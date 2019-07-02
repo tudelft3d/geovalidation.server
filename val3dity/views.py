@@ -39,7 +39,7 @@ def validate(fname,
                                      app.config['VAL3DITYEXE_FOLDER'],    
                                      app.config['REPORTS_FOLDER'])    
     #-- write summary to database
-    print summary
+    # print summary
     db = sqlite3.connect(app.config['DATABASE'])
     db.row_factory = sqlite3.Row
     db.execute('update tasks set validated=?, total_primitives=?, invalid_primitives=?, total_cityobjects=?, invalid_cityobjects=?, errors=? where jid=?',
@@ -205,11 +205,11 @@ def reports(jobid):
         return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
     #-- it exists
     fname = db['file']
-    print fname
+    # print fname
     if (db['validated'] == 0):
         celtask = celery.AsyncResult(jobid)
         if (celtask.ready() == False):
-            print "task not finished."
+            # print "task not finished."
             return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
     success = True
     if (db['errors'] != "-1"):
@@ -239,7 +239,7 @@ def reports_overview(jobid):
     if (db['validated'] == 0):
         celtask = celery.AsyncResult(jobid)
         if (celtask.ready() == False):
-            print "task not finished."
+            # print "task not finished."
             return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
     j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
     return render_template("report_overview.html", thereport=j, myjobid=jobid) 
@@ -255,7 +255,7 @@ def reports_features(jobid):
     if (db['validated'] == 0):
         celtask = celery.AsyncResult(jobid)
         if (celtask.ready() == False):
-            print "task not finished."
+            # print "task not finished."
             return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
     j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
     return render_template("tree.html", thereport=j) 
@@ -271,7 +271,7 @@ def reports_cityobjects(jobid):
     if (db['validated'] == 0):
         celtask = celery.AsyncResult(jobid)
         if (celtask.ready() == False):
-            print "task not finished."
+            # print "task not finished."
             return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
     j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
     return render_template("report_CityObjects.html", thereport=j) 
@@ -287,7 +287,7 @@ def reports_primitives(jobid):
     if (db['validated'] == 0):
         celtask = celery.AsyncResult(jobid)
         if (celtask.ready() == False):
-            print "task not finished."
+            # print "task not finished."
             return render_template("status.html", notask=False, info='Validation in progress: %s' % fname, refresh=True)
     j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
     return render_template("report_Primitives.html", thereport=j)     

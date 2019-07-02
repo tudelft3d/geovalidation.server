@@ -1,0 +1,60 @@
+
+{% extends "layout.html" %}
+{% block body %}
+<div class="page-header">
+    <h1>about</h1>
+</div>
+
+<p>The validator, which uses the open-source project <a href="https://github.com/tudelft3d/val3dity">val3dity</a> in the background, is maintained by <a href="https://3d.bk.tudelft.nl/hledoux">Hugo Ledoux</a> and the <a href="https://3d.bk.tudelft.nl">3D geoinformation group at TUDelft</a>.</p>
+
+<p>It allows us to validate 3D primitives according to the international standard ISO19107.
+Think of it as <a href="http://postgis.net/docs/ST_IsValid.html">PostGIS ST_IsValid</a>, but for 3D primitives (PostGIS only validates 2D primitives).</p>
+
+<p>In short, it verifies whether a 3D primitive respects the definition as given in <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO19107</a> and GML/CityGML.
+All the 3D primitives of GML are supported:</p>
+
+<ul>
+<li><code>&lt;gml:MultiSurface&gt;</code></li>
+<li><code>&lt;gml:CompositeSurface&gt;</code> </li>
+<li><code>&lt;gml:Solid&gt;</code></li>
+<li><code>&lt;gml:MultiSolid&gt;</code></li>
+<li><code>&lt;gml:CompositeSolid&gt;</code></li>
+</ul>
+
+<p>Unlike many other validation tools in 3D GIS, inner rings in polygons/surfaces are supported and so are cavities in solids (also called voids or inner shells).
+However, as is the case for CityGML, only planar and linear primitives are allowed: no curves or spheres or other parametrically-modelled primitives are supported. There is no plan to support these geometries, because val3dity is developed with 3D city models in focus.</p>
+
+<p>val3dity accepts as input:</p>
+
+<ul>
+<li><a href="https://www.citygml.org">CityGML</a></li>
+<li><a href="http://www.cityjson.org">CityJSON</a></li>
+<li>any <a href="https://en.wikipedia.org/wiki/Geography_Markup_Language">GML files</a> </li>
+<li><a href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">OBJ</a></li>
+<li><a href="https://en.wikipedia.org/wiki/OFF_(file_format)">OFF</a></li>
+</ul>
+
+<h3>Documentation</h3>
+
+<p>val3dity has a fairly <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/">extensive documentation</a>.</p>
+
+<h3>Bugs?</h3>
+
+<p>If you encounter a bug, please report it on the <a href="https://github.com/tudelft3d/val3dity/issues">issue page</a>.</p>
+
+<h3>Source code</h3>
+
+<p>The <a href="https://github.com/tudelft3d/val3dity">source code of the validator</a> is publicly available.
+The version used online is always the latest commit in master branch.</p>
+
+<h3>Acknowledgement</h3>
+
+<p>If you use val3dity for research-purposes and publish, please cite that scientific article (which contains all the details):</p>
+
+<blockquote>
+  <p>Ledoux, Hugo (2013). On the validation of solids represented with the
+  international standards for geographic information. <em>Computer-Aided Civil and Infrastructure Engineering</em>, 28(9):693-706. 
+  <a href="http://dx.doi.org/10.1111/mice.12043"><i class="fa fa-external-link"></i></a> <a href="https://3d.bk.tudelft.nl/hledoux/pdfs/13_cacaie.pdf"><i class="fa fa-file-pdf-o"></i></a></p>
+</blockquote>
+
+{% endblock %}
