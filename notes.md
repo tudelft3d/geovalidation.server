@@ -1,0 +1,4 @@
+lxml
+flask
+uwsgi
+gunicorn

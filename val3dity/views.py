@@ -1,6 +1,5 @@
 from val3dity import app
 
-import runvalidation
 
 from flask import Flask, render_template, request, flash, redirect, url_for, send_from_directory, _app_ctx_stack
 from werkzeug.utils import secure_filename
@@ -11,6 +10,7 @@ import time
 import json
 import copy
 
+from .runvalidation import validate
 
 TRUSTED_PROXIES = {'127.0.0.1'}  
 
@@ -85,7 +85,7 @@ def index():
                     geom_is_sem_surfaces, 
                     app.config['VAL3DITYEXE_FOLDER'],    
                     app.config['REPORTS_FOLDER'])    
-                print summary
+                print (summary)
                 os.remove(app.config['UPLOAD_FOLDER']+fname)
                 return redirect('/val3dity/reports/%s' % jid)
             else:

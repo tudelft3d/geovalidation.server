@@ -1,5 +1,6 @@
 from werkzeug.serving import run_simple
-from werkzeug.wsgi import DispatcherMiddleware
+# from werkzeug.wsgi import DispatcherMiddleware
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from val3dity       import app as val3dity_app
 from prepair        import app as prepair_app

@@ -12,7 +12,6 @@ def about():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    print "hugo"
     if request.method == 'POST':
         thewkt = request.form['thewkt']
         if thewkt == "":

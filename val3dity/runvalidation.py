@@ -5,7 +5,7 @@ import shutil
 import glob
 import subprocess
 import json
-from StringIO import StringIO
+from io import StringIO
 
 
 def validate(jid, 
@@ -36,7 +36,7 @@ def validate(jid,
   cmd.append("--report_json")
   finfull = reportsfolder + jid + ".json"
   cmd.append(finfull)
-  print " ".join(cmd)
+  print (" ".join(cmd))
   op = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   R = op.poll()
   if R:
@@ -71,4 +71,4 @@ if __name__ == '__main__':
                False,
                "/Users/hugo/projects/val3dity/build/",
                "/Users/hugo/temp/reports/")
-  print r
+  print (r)

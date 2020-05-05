@@ -4,7 +4,7 @@ from flask import render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 import os
 
-import valxsdcitygml
+from .valxsdcitygml import validateonefile
 
 ALLOWED_EXTENSIONS = set(['gml', 'xml'])
 
