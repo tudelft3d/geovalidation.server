@@ -1,8 +1,4 @@
 
-import os
-import sys
-import shutil
-import glob
 import subprocess
 import json
 from io import StringIO
@@ -13,9 +9,6 @@ def validate(jid,
              snap_tol, 
              planarity_d2p_tol, 
              overlap_tol, 
-             prim3d, 
-             ignore204, 
-             geom_is_sem_surfaces, 
              val3dityexefolder, 
              reportsfolder):
   cmd = []
@@ -27,13 +20,7 @@ def validate(jid,
   cmd.append(str(planarity_d2p_tol))
   cmd.append("--overlap_tol")
   cmd.append(str(overlap_tol))
-  cmd.append("-p")
-  cmd.append(prim3d)
-  if (ignore204 == True):
-    cmd.append("--ignore204")
-  if (geom_is_sem_surfaces == True):
-    cmd.append("--geom_is_sem_surfaces")
-  cmd.append("--report_json")
+  cmd.append("--report")
   finfull = reportsfolder + jid + ".json"
   cmd.append(finfull)
   print (" ".join(cmd))
@@ -46,29 +33,18 @@ def validate(jid,
   #-- read json report
   j = json.loads(open(finfull).read())
   
-  dSummary = {}
-  dSummary['total_features']     = j["total_features"]
-  dSummary['invalid_features']   = j["invalid_features"]
-  dSummary['total_primitives']   = j["total_primitives"]
-  dSummary['invalid_primitives'] = j["invalid_primitives"]
-  if (j["overview_errors"] == None):
-    dSummary['errors'] = "-1"
-  else:
-    dSummary['errors'] = "-".join(map(str, j["overview_errors"]))
-  return dSummary
+  return True
 
 
 if __name__ == '__main__':
   r = validate("myjid", 
-               "/Users/hugo/data/val3dity/Munchen/LOD2_4424_5482_solid.gml", 
+               # "/Users/hugo/data/val3dity/Munchen/LOD2_4424_5482_solid.gml", 
                # "/Users/hugo/projects/val3dity/data/cityjson/cube.json", 
                # "/Users/hugo/projects/val3dity/data/poly/cube5.off", 
+               '/Users/hugo/data/indoorgml_validation/datasets/FJK/FJK-Haus_IndoorGML_withEXR-corrected_1_0_3.gml',
                "0.001",
                "0.01", 
                "-1", 
-               "Solid",
-               False,
-               False,
                "/Users/hugo/projects/val3dity/build/",
                "/Users/hugo/temp/reports/")
   print (r)

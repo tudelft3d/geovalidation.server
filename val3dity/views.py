@@ -8,16 +8,13 @@ import subprocess
 import uuid
 import time
 import json
-import copy
+
 
 from .runvalidation import validate
 
 TRUSTED_PROXIES = {'127.0.0.1'}  
 
 ALLOWED_EXTENSIONS = set(['gml', 'xml', 'obj', 'poly', 'json', 'off'])
-
-
-ALLOWED_EXTENSIONS = set(['gml', 'xml'])
 
 
 def allowed_file(filename):
@@ -56,7 +53,7 @@ def index():
     if R:
         res = op.communicate()
         raise ValueError(res[1])
-    val3dityversion = op.communicate()[0].split()[2]
+    val3dityversion = (op.communicate()[0].split()[2]).decode('UTF-8')
     if request.method == 'POST':
         f = request.files['file']
         if f:
@@ -69,23 +66,16 @@ def index():
                 snap_tol = verify_tolerance(request.form['snap_tol'], '1e-3')
                 planarity_d2p_tol = verify_tolerance(request.form['planarity_d2p_tol'], '1e-2')
                 overlap_tol = verify_tolerance(request.form['overlap_tol'], '-1')
-                prim3d = request.form['prim3d']
-                ignore204 = 'ignore204' in request.form
-                geom_is_sem_surfaces = 'geom_is_sem_surfaces' in request.form
                 uploadtime = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime())
                 jid = str(uuid.uuid4())
-                summary = runvalidation.validate(
+                validate(
                     jid, 
                     app.config['UPLOAD_FOLDER']+fname, 
                     snap_tol, 
                     planarity_d2p_tol, 
                     overlap_tol, 
-                    prim3d,
-                    ignore204,
-                    geom_is_sem_surfaces, 
                     app.config['VAL3DITYEXE_FOLDER'],    
                     app.config['REPORTS_FOLDER'])    
-                print (summary)
                 os.remove(app.config['UPLOAD_FOLDER']+fname)
                 return redirect('/val3dity/reports/%s' % jid)
             else:
@@ -104,54 +94,30 @@ def reports(jobid):
     j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
     fname = j["input_file"]
     fname = fname[fname.rfind('/')+1:]
-    if j["invalid_primitives"] == 0 and j["invalid_features"] == 0:
-        success = True
-    else:
-        success = False
+    ftype = j["input_file_type"]
+    success = j["validity"]
+    ft = 0
+    fi = 0
+    for f in j["features_overview"]:
+        ft += f["total"]
+        fi += f["total"] - f["valid"]
+    pt = 0
+    pi = 0
+    for p in j["primitives_overview"]:
+        pt += p["total"]
+        pi += p["total"] - p["valid"]        
     return render_template("report.html", 
                            filename=fname, 
+                           filetype=ftype,
                            jid=jobid, 
-                           total_primitives=j["total_primitives"], 
-                           invalid_primitives=j["invalid_primitives"], 
-                           total_features=j["total_features"], 
-                           invalid_features=j["invalid_features"], 
+                           total_primitives=pt, 
+                           invalid_primitives=pi, 
+                           total_features=ft, 
+                           invalid_features=fi, 
                            welldone=success) 
     
 
 @app.route('/reports/download/<jobid>')
 def reports_download(jobid):
     return send_from_directory(app.config['REPORTS_FOLDER'], '%s.json' % jobid)
-
-
-@app.route('/reports/overview/<jobid>')
-def reports_overview(jobid):
-    #-- check if file exists
-    if (os.path.isfile(app.config['REPORTS_FOLDER'] + jobid + ".json") == False):
-        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
-    #-- it exists
-    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
-    return render_template("report_overview.html", thereport=j, myjobid=jobid) 
-
-@app.route('/reports/features/<jobid>')
-def reports_features(jobid):
-    if (os.path.isfile(app.config['REPORTS_FOLDER'] + jobid + ".json") == False):
-        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
-    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
-    return render_template("tree.html", thereport=j) 
-
-
-@app.route('/reports/cityobjects/<jobid>')
-def reports_cityobjects(jobid):
-    if (os.path.isfile(app.config['REPORTS_FOLDER'] + jobid + ".json") == False):
-        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
-    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
-    return render_template("report_CityObjects.html", thereport=j) 
-
-
-@app.route('/reports/primitives/<jobid>')
-def reports_primitives(jobid):
-    if (os.path.isfile(app.config['REPORTS_FOLDER'] + jobid + ".json") == False):
-        return render_template("status.html", notask=True, info="Error: this report number doesn't exist.", refresh=False)
-    j = json.loads(open(app.config['REPORTS_FOLDER'] + jobid + ".json").read())
-    return render_template("report_Primitives.html", thereport=j)   
 

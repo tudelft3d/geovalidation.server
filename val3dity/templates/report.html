@@ -2,12 +2,13 @@
 {% block body %}
 
   <div class="page-header">
-    <h1>{{ filename }} </h1>
+    <h2>{{ filename }} </h2>
+    <p class="text-center">({{ filetype }})</p>
   </div>
 
 {% if welldone %}
   <div class="panel panel-success">
-    <div class="panel-heading">Summary: all 3D primitives are valid</div>
+    <div class="panel-heading">Summary: 100% valid!</div>
 {% else %}
   <div class="panel panel-danger">
     <div class="panel-heading">Summary: there are errors</div>
@@ -40,7 +41,7 @@
 
 
   <div class="well">  
-    <p><a href="{{ url_for('index') }}reports/overview/{{ jid }}">See the full report online</a></p>
+    <p><a href="http://geovalidation.bk.tudelft.nl/val3dity/browser/?f={{ url_for('index') }}reports/download/{{ jid }}">Browse the full report</a></p>
     <p><a href="{{ url_for('index') }}reports/download/{{ jid }}">Download the JSON report</a></p>
   </div>
 
