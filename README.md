@@ -1,7 +1,6 @@
 
 # geovalidation.server
 
-
 [Flask-based](http://flask.pocoo.org) server for some of our geovalidation tools:
 
 1. [val3dity](https://github.com/tudelft3d/val3dity)
@@ -11,10 +10,8 @@ These 2 should be installed and compiled, also the python scripts inside `val3di
 
 ## Installation
 
-First, [Redis](http://redis.io) must be installed.
-
 The recommended way to install the geovalidation server is using `virtualenv` and `pip`. 
-Assuming you have working python (2.7.x) installation with these utilities, run these commands:
+Assuming you have working python (3.7+) installation with these utilities, run these commands:
 
 ```
 virtualenv venv
@@ -33,21 +30,12 @@ Edit the configuration file `geovalidation.cfg` for you server and export them:
 cd val3dity
 mkdir uploads
 mkdir reports
-mkdir tmp
 ```
-
-## sqlite database
-
-A small database (`val3dity.sql`) must be used to store the results:
-
-`sqlite3 val3dity.sqlite < schema.sql`
 
 
 ## Running the server
 
 ```
-redis-server
-celery -A val3dity.celery worker
 python runserver.py
 ```
 

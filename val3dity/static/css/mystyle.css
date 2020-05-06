@@ -35,3 +35,7 @@ p, ul {
 label > a {
   color: #2C2B37
 }
+
+.seelinks > a {
+  color: #87898B;
+}

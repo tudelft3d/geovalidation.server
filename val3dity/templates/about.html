@@ -7,36 +7,40 @@
 
 <p>The validator, which uses the open-source project <a href="https://github.com/tudelft3d/val3dity">val3dity</a> in the background, is maintained by <a href="https://3d.bk.tudelft.nl/hledoux">Hugo Ledoux</a> and the <a href="https://3d.bk.tudelft.nl">3D geoinformation group at TUDelft</a>.</p>
 
-<p>It allows us to validate 3D primitives according to the international standard ISO19107.
-Think of it as <a href="http://postgis.net/docs/ST_IsValid.html">PostGIS ST_IsValid</a>, but for 3D primitives (PostGIS only validates 2D primitives).</p>
+<p>It allows us to validate 3D primitives according to the international standard ISO19107.</p>
 
-<p>In short, it verifies whether a 3D primitive respects the definition as given in <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO19107</a> and GML/CityGML.
-All the 3D primitives of GML are supported:</p>
+<p>In short, it verifies whether a 3D primitive respects the definition as given in <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO 19107</a> and <a href="https://en.wikipedia.org/wiki/Geography_Markup_Language">GML</a>.</p>
+
+<p>The validation of the following 3D primitives is fully supported:</p>
 
 <ul>
-<li><code>&lt;gml:MultiSurface&gt;</code></li>
-<li><code>&lt;gml:CompositeSurface&gt;</code> </li>
-<li><code>&lt;gml:Solid&gt;</code></li>
-<li><code>&lt;gml:MultiSolid&gt;</code></li>
-<li><code>&lt;gml:CompositeSolid&gt;</code></li>
+<li><code>MultiSurface</code></li>
+<li><code>CompositeSurface&gt;</code> </li>
+<li><code>Solid</code></li>
+<li><code>MultiSolid</code></li>
+<li><code>CompositeSolid</code></li>
 </ul>
 
 <p>Unlike many other validation tools in 3D GIS, inner rings in polygons/surfaces are supported and so are cavities in solids (also called voids or inner shells).
-However, as is the case for CityGML, only planar and linear primitives are allowed: no curves or spheres or other parametrically-modelled primitives are supported. There is no plan to support these geometries, because val3dity is developed with 3D city models in focus.</p>
+However, as is the case for many formats used in practice, only planar and linear primitives are allowed: no curves or spheres or other parametrically-modelled primitives are supported. 
+There is no plan to support these geometries.</p>
 
 <p>val3dity accepts as input:</p>
 
 <ul>
-<li><a href="https://www.citygml.org">CityGML</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Geography_Markup_Language">GML files</a> of any flavour</li>
 <li><a href="http://www.cityjson.org">CityJSON</a></li>
-<li>any <a href="https://en.wikipedia.org/wiki/Geography_Markup_Language">GML files</a> </li>
+<li><a href="https://www.citygml.org">CityGML (v1 &amp; v2 only, v3 will not be supported)</a></li>
+<li><a href="http://indoorgml.net/">IndoorGML</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">OBJ</a></li>
 <li><a href="https://en.wikipedia.org/wiki/OFF_(file_format)">OFF</a></li>
 </ul>
 
+<p>For the City/JSON/GML and IndoorGML formats, extra validations (specific to the format) are performed, eg the overlap between different parts of a building, or the validation of the navigation graph in IndoorGML.</p>
+
 <h3>Documentation</h3>
 
-<p>val3dity has a fairly <a href="http://geovalidation.bk.tudelft.nl/val3dity/docs/">extensive documentation</a>.</p>
+<p>val3dity has an <a href="https://val3dity.rtfd.io">extensive documentation</a>.</p>
 
 <h3>Bugs?</h3>
 
@@ -47,14 +51,10 @@ However, as is the case for CityGML, only planar and linear primitives are allow
 <p>The <a href="https://github.com/tudelft3d/val3dity">source code of the validator</a> is publicly available.
 The version used online is always the latest commit in master branch.</p>
 
-<h3>Acknowledgement</h3>
+<h3>If you use val3dity in a scientific context, please cite these articles:</h3>
 
-<p>If you use val3dity for research-purposes and publish, please cite that scientific article (which contains all the details):</p>
+<p>Ledoux, Hugo (2019). val3dity: validation of 3D GIS primitives according to the international standards. <em>Open Geospatial Data, Software and Standards</em>, 3(1), 2018, pp.1 <a href="http://dx.doi.org/10.1186/s40965-018-0043-x">DOI</a> </p>
 
-<blockquote>
-  <p>Ledoux, Hugo (2013). On the validation of solids represented with the
-  international standards for geographic information. <em>Computer-Aided Civil and Infrastructure Engineering</em>, 28(9):693-706. 
-  <a href="http://dx.doi.org/10.1111/mice.12043"><i class="fa fa-external-link"></i></a> <a href="https://3d.bk.tudelft.nl/hledoux/pdfs/13_cacaie.pdf"><i class="fa fa-file-pdf-o"></i></a></p>
-</blockquote>
+<p>Ledoux, Hugo (2013). On the validation of solids represented with the international standards for geographic information. Computer-Aided Civil and Infrastructure Engineering, 28(9):693-706. <a href="https://3d.bk.tudelft.nl/hledoux/pdfs/13_cacaie.pdf">PDF</a> <a href="http://dx.doi.org/10.1111/mice.12043">DOI</a></p>
 
 {% endblock %}
