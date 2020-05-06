@@ -1,6 +1,5 @@
 from val3dity import app
 
-
 from flask import Flask, render_template, request, flash, redirect, url_for, send_from_directory, _app_ctx_stack
 from werkzeug.utils import secure_filename
 import os
@@ -8,9 +7,9 @@ import subprocess
 import uuid
 import time
 import json
+import subprocess
+from io import StringIO
 
-
-from .runvalidation import validate
 
 TRUSTED_PROXIES = {'127.0.0.1'}  
 
@@ -121,3 +120,34 @@ def reports(jobid):
 def reports_download(jobid):
     return send_from_directory(app.config['REPORTS_FOLDER'], '%s.json' % jobid)
 
+
+def validate(jid, 
+             fin, 
+             snap_tol, 
+             planarity_d2p_tol, 
+             overlap_tol, 
+             val3dityexefolder, 
+             reportsfolder):
+  cmd = []
+  cmd.append(val3dityexefolder + "val3dity")
+  cmd.append(fin)
+  cmd.append("--snap_tol")
+  cmd.append(str(snap_tol))
+  cmd.append("--planarity_d2p_tol")
+  cmd.append(str(planarity_d2p_tol))
+  cmd.append("--overlap_tol")
+  cmd.append(str(overlap_tol))
+  cmd.append("--report")
+  finfull = reportsfolder + jid + ".json"
+  cmd.append(finfull)
+  print (" ".join(cmd))
+  op = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  R = op.poll()
+  if R:
+    res = op.communicate()
+    raise ValueError(res[1])
+  re =  op.communicate()[0]
+  #-- read json report
+  j = json.loads(open(finfull).read())
+  
+  return True
