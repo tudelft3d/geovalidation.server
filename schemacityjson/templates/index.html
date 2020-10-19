@@ -43,8 +43,7 @@
       {{ e }} 
     {% endfor %}
   </samp>  
-  
-{% else %}
+{% elif valid == -1 %}
   <div class="alert alert-danger" role="alert">
     The file '{{ fname }}' is invalid.
   </div>
