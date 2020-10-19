@@ -32,7 +32,7 @@ def index():
             if allowed_file(f.filename):
                 fname = secure_filename(f.filename)
                 f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-                bValid, woWarnings, errors, warnings = validateonefile(app.config['UPLOAD_FOLDER']+fname, app.config['ROOT'])
+                bValid, woWarnings, errors, warnings = validateonefile(app.config['UPLOAD_FOLDER']+fname, app.config['CJSCHEMAROOT'])
                 os.remove(app.config['UPLOAD_FOLDER']+fname)
                 if bValid == True:
                     return render_template("index.html", valid=1, warnings=warnings, fname=fname)           
