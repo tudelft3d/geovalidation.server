@@ -16,26 +16,9 @@ def allowed_file(filename):
 def validateonefile(fIn, folder):
     cj_file = open(fIn, 'r')
     cm = cityjson.reader(file=cj_file)
-    bValid, woWarnings, errors, warnings = cm.validate()
+    return cm.validate()
 
-    print(bValid)
-    return True
-    # doc, xsd = getXML(fIn, folder)
-    # if (doc == None) and (xsd == None):
-    #     return "Invalid CityGML document: not a CityGML document."
-    # xmlschema = etree.XMLSchema(xsd)
-    # valid = doc.xmlschema(xsd)
-    # if valid == True:
-    #     return True
-    # else:
-    #     try:
-    #         xmlschema.assert_(doc)
-    #     except AssertionError as e:
-    #         return str(e)
-
-
-
-
+    
 @app.route('/about')
 def about():
     return render_template("about.html")
@@ -49,16 +32,16 @@ def index():
             if allowed_file(f.filename):
                 fname = secure_filename(f.filename)
                 f.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-                re = validateonefile(app.config['UPLOAD_FOLDER']+fname, app.config['SCHEMAROOT'])
+                bValid, woWarnings, errors, warnings = validateonefile(app.config['UPLOAD_FOLDER']+fname, app.config['ROOT'])
                 os.remove(app.config['UPLOAD_FOLDER']+fname)
-                if re == True:
-                    return render_template("index.html", valid=True, fname=fname)           
+                if bValid == True:
+                    return render_template("index.html", valid=1, warnings=warnings, fname=fname)           
                 else:
-                    return render_template("index.html", valid=True, error=re, fname=fname)           
+                    return render_template("index.html", valid=-1, errors=errors, warnings=warnings, fname=fname)           
             else:
-                return render_template("index.html", problem='Uploaded file is not a JSON file.')
+                return render_template("index.html", valid=-1, errors=['Uploaded file is not a JSON file.'])
         else:
-            return render_template("index.html", problem='No file selected.')
+            return render_template("index.html", valid=0, errors=['No file selected.'])
     return render_template("index.html")
 
 

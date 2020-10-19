@@ -25,25 +25,34 @@
 </form>
 </div>
 
-{% if valid %}
-  {% if error %}
-  <div class="alert alert-danger" role="alert">
-    The file '{{ fname }}' is invalid.
-  </div>
-  <pre>
-    {{ error }}
-  </pre>  
-  {% else %}
+{% if valid == 1 %}
   <div class="alert alert-success" role="alert">
     The file '{{ fname }}' is valid.
   </div>
-  {% endif %}
-{% endif %}
-
-{% if problem %}
-  <div class="alert alert-danger">
-    {{ problem }}
+  <samp>
+    {% for w in warnings %}
+      {{ w }} 
+    {% endfor %}
+  </samp>  
+{% elif valid == 0 %}
+  <div class="alert alert-warning" role="alert">
+    The file '{{ fname }}' is invalid.
   </div>
+  <samp>
+    {% for e in errors %}
+      {{ e }} 
+    {% endfor %}
+  </samp>  
+  
+{% else %}
+  <div class="alert alert-danger" role="alert">
+    The file '{{ fname }}' is invalid.
+  </div>
+  <samp>
+    {% for e in errors %}
+      {{ e }} 
+    {% endfor %}
+  </samp>  
 {% endif %}
 
 {% endblock %}

@@ -1,6 +1,6 @@
 body {
   font-family: 'Karla', sans-serif;
-  background-color: #eae4ff;
+  background-color: #f9f7ff;
   color: #333333;
   padding-top: 50px;
 }
@@ -10,7 +10,7 @@ h1 {
 }
 
 .well {
-  background: #eae4ff;
+  background: #d5c9ff;
 }
 
 .page-header {
