@@ -14,6 +14,7 @@ setup(
                         ,'redis>=2.9.1'
 						,'lxml>=3.3.3'
 						,'subprocess32>=3.2.6'
+                        ,'cjio>=0.5'
                      ]
 	author='Hugo Ledoux',
     author_email='h.ledoux@tudelft.nl'
