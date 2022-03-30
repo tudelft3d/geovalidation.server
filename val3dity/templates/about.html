@@ -9,7 +9,7 @@
 
 <p>It allows us to validate 3D primitives according to the international standard ISO19107.</p>
 
-<p>In short, it verifies whether a 3D primitive respects the definition as given in <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO 19107</a> and <a href="https://en.wikipedia.org/wiki/Geography_Markup_Language">GML</a>.</p>
+<p>In short, it verifies whether a 3D primitive respects the definition as given in <a href="http://www.iso.org/iso/catalogue_detail.htm?csnumber=26012">ISO 19107</a>.</p>
 
 <p>The validation of the following 3D primitives is fully supported:</p>
 
@@ -28,12 +28,11 @@ There is no plan to support these geometries.</p>
 <p>val3dity accepts as input:</p>
 
 <ul>
-<li><a href="https://en.wikipedia.org/wiki/Geography_Markup_Language">GML files</a> of any flavour</li>
-<li><a href="http://www.cityjson.org">CityJSON</a></li>
-<li><a href="https://www.citygml.org">CityGML (v1 &amp; v2 only, v3 will not be supported)</a></li>
-<li><a href="http://indoorgml.net/">IndoorGML</a></li>
+<li><a href="https://www.cityjson.org">CityJSON</a></li>
+<li><a href="https://github.com/tudelft3d/tu3djson">tu3djson</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">OBJ</a></li>
 <li><a href="https://en.wikipedia.org/wiki/OFF_(file_format)">OFF</a></li>
+<li><a href="http://indoorgml.net/">IndoorGML</a></li>
 </ul>
 
 <p>For the City/JSON/GML and IndoorGML formats, extra validations (specific to the format) are performed, eg the overlap between different parts of a building, or the validation of the navigation graph in IndoorGML.</p>
